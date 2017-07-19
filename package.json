@@ -1,0 +1,25 @@
+{
+  "name": "koa-swagger-decorator",
+  "version": "0.0.1",
+  "description": "using decorator to automatically generate swagger doc for koa-router",
+  "main": "dist/index.js",
+  "dependencies": {
+    "lodash": "^4.17.4"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-env": "^1.6.0"
+  },
+  "scripts": {
+    "build": "babel lib --out-dir dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "decorator",
+    "swagger",
+    "koa",
+    "koa-router"
+  ],
+  "author": "cody",
+  "license": "MIT"
+}
