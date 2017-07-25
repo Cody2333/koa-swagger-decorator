@@ -74,6 +74,7 @@ const buildSwaggerJson = options => {
     const path = _value$request.path,
           method = _value$request.method;
 
+    const security = value.security;
     const summary = value.summary ? value.summary : '';
     const description = value.description ? value.description : summary;
     const responses = { 200: { description: '成功' } };
@@ -91,7 +92,7 @@ const buildSwaggerJson = options => {
     // 如果不存在该path对象，首先初始化
     if (!swaggerJSON.paths[path]) swaggerJSON.paths[path] = {};
 
-    swaggerJSON.paths[path][method] = { summary, description, parameters, responses, tags };
+    swaggerJSON.paths[path][method] = { summary, description, parameters, responses, tags, security };
 
     return null;
   }).value();
