@@ -45,9 +45,9 @@ const validateMiddleware = parameters => (() => {
     if (parameters.path) {
       ctx.request.params = ctx.params = (0, _validate2.default)(ctx.params, parameters.path);
     }
-    if (parameters.body instanceof Array && parameters.body.length > 0) {
-      const bodyExpect = Object.keys(parameters.body[0].schema.properties).map(function (key) {
-        return Object.assign({ name: key }, parameters.body[0].schema.properties[key]);
+    if (parameters.body) {
+      const bodyExpect = Object.keys(parameters.body).map(function (key) {
+        return Object.assign({ name: key }, parameters.body[key]);
       });
       ctx.request.body = (0, _validate2.default)(ctx.request.body, bodyExpect);
     }
@@ -71,7 +71,7 @@ const buildSwaggerJson = options => {
 
   const swaggerJSON = (0, _swaggerTemplate.init)(title, description, version);
   _lodash2.default.chain(_index.apiObjects).map(value => {
-    if (!Object.keys(value).includes('request')) throw new Error('缺少request字段');
+    if (!Object.keys(value).includes('request')) throw new Error('缺少 request 字段');
 
     var _value$request = value.request;
     const path = _value$request.path,
@@ -105,7 +105,28 @@ const buildSwaggerJson = options => {
  * 封装router对象，添加map方法用途遍历静态类中的方法
  * @param {Object} router
  */
-const wrapper = (router, options) => {
+const wrapper = router => {
+  router.swagger = options => {
+    // 设置swagger路由
+    router.get('/swagger-json', (() => {
+      var _ref3 = _asyncToGenerator(function* (ctx) {
+        ctx.body = buildSwaggerJson(options);
+      });
+
+      return function (_x3) {
+        return _ref3.apply(this, arguments);
+      };
+    })());
+    router.get('/swagger-html', (() => {
+      var _ref4 = _asyncToGenerator(function* (ctx) {
+        ctx.body = (0, _swaggerHTML.swaggerHTML)('/swagger-json');
+      });
+
+      return function (_x4) {
+        return _ref4.apply(this, arguments);
+      };
+    })());
+  };
   router.map = StaticClass => {
     const methods = Object.getOwnPropertyNames(StaticClass);
     // 移除无用的属性 constructor, length, name
@@ -132,26 +153,6 @@ const wrapper = (router, options) => {
       if (!reqMethods.includes(method)) throw new Error(`illegal API: ${method} ${path} at [${item}]`);
       router[method](`${convertPath(path)}`, validateMiddleware(StaticClass[item].parameters), StaticClass[item]);
     });
-
-    // 设置swagger路由
-    router.get('/swagger-json', (() => {
-      var _ref3 = _asyncToGenerator(function* (ctx) {
-        ctx.body = buildSwaggerJson(options);
-      });
-
-      return function (_x3) {
-        return _ref3.apply(this, arguments);
-      };
-    })());
-    router.get('/swagger-html', (() => {
-      var _ref4 = _asyncToGenerator(function* (ctx) {
-        ctx.body = (0, _swaggerHTML.swaggerHTML)('/swagger-json');
-      });
-
-      return function (_x4) {
-        return _ref4.apply(this, arguments);
-      };
-    })());
   };
 };
 
