@@ -4,16 +4,19 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-exports.default = function (input, expects) {
-  expects.forEach(expect => {
-    const key = expect.name;
+exports.default = function (input, expect) {
+  Object.keys(expect).forEach(key => {
+    if (expect[key] === undefined) {
+      delete input[key];
+      return;
+    }
     // if this key is required but not in input.
-    if (expect.required && input[key] === undefined) {
+    if (expect[key].required && input[key] === undefined) {
       throw new InputError(key);
     }
     // if this key is in input, but the type is wrong
     // first check the number type
-    if (input[key] !== undefined && expect.type === 'number') {
+    if (input[key] !== undefined && expect[key].type === 'number') {
       if (typeof input[key] === 'number') {
         return;
       }
@@ -24,7 +27,7 @@ exports.default = function (input, expects) {
       return;
     }
     // second check the boolean type
-    if (input[key] !== undefined && expect.type === 'boolean') {
+    if (input[key] !== undefined && expect[key].type === 'boolean') {
       if (typeof input[key] === 'boolean') {
         return;
       }
@@ -39,29 +42,30 @@ exports.default = function (input, expects) {
       throw new InputError(key);
     }
     // third check the string type
-    if (input[key] !== undefined && expect.type === 'string') {
+    if (input[key] !== undefined && expect[key].type === 'string') {
       if (typeof input[key] !== 'string') {
         input[key] = String(input[key]);
         return;
       }
     }
-    // last check the object type
-    if (input[key] !== undefined && expect.type === 'object') {
+    // forth check the object type
+    if (input[key] !== undefined && expect[key].type === 'object') {
       if (typeof input[key] === 'object') {
         return;
       }
       throw new InputError(key);
     }
     // last check the array type
-    if (input[key] !== undefined && expect.type === 'array') {
+    if (input[key] !== undefined && expect[key].type === 'array') {
+      console.log('test');
       if (input[key] instanceof Array) {
         return;
       }
       throw new InputError(key);
     }
     // if this key is not in input and need a default value
-    if (input[key] === undefined && expect.default !== undefined) {
-      input[key] = expect.default;
+    if (input[key] === undefined && expect[key].default !== undefined) {
+      input[key] = expect[key].default;
     }
   });
   return input;

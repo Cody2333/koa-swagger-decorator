@@ -29,6 +29,9 @@ const _desc = (type, text) => (target, name, descriptor) => {
 };
 
 const _params = (type, parameters) => (target, name, descriptor) => {
+  if (!descriptor.value.parameters) descriptor.value.parameters = {};
+  descriptor.value.parameters[type] = parameters;
+
   // 对 body 要再裹一层
   let swaggerParameters = parameters;
   if (type === 'body') {
@@ -40,13 +43,12 @@ const _params = (type, parameters) => (target, name, descriptor) => {
         properties: parameters
       }
     }];
+  } else {
+    swaggerParameters = Object.keys(swaggerParameters).map(key => Object.assign({ name: key }, swaggerParameters[key]));
   }
-
   swaggerParameters.forEach(item => {
     item.in = type;
   });
-  if (!descriptor.value.parameters) descriptor.value.parameters = {};
-  descriptor.value.parameters[type] = parameters;
 
   _addToApiObject(target, name, apiObjects, { [type]: swaggerParameters });
   return descriptor;

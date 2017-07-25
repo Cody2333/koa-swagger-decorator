@@ -46,10 +46,7 @@ const validateMiddleware = parameters => (() => {
       ctx.request.params = ctx.params = (0, _validate2.default)(ctx.params, parameters.path);
     }
     if (parameters.body) {
-      const bodyExpect = Object.keys(parameters.body).map(function (key) {
-        return Object.assign({ name: key }, parameters.body[key]);
-      });
-      ctx.request.body = (0, _validate2.default)(ctx.request.body, bodyExpect);
+      ctx.request.body = (0, _validate2.default)(ctx.request.body, parameters.body);
     }
     yield next();
   });
