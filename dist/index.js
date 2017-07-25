@@ -32,7 +32,8 @@ const _params = (type, parameters) => (target, name, descriptor) => {
   parameters.forEach(item => {
     item.in = type;
   });
-  descriptor.value[type] = parameters;
+  if (!descriptor.value.parameters) descriptor.value.parameters = {};
+  descriptor.value.parameters[type] = parameters;
   _addToApiObject(target, name, apiObjects, { [type]: parameters });
   return descriptor;
 };
