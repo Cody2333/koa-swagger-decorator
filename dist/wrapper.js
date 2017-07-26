@@ -40,13 +40,13 @@ const convertPath = path => {
 const validateMiddleware = parameters => (() => {
   var _ref = _asyncToGenerator(function* (ctx, next) {
     if (parameters.query) {
-      ctx.request.query = ctx.query = (0, _validate2.default)(ctx.request.query, parameters.query);
+      ctx.validatedQuery = (0, _validate2.default)(ctx.request.query, parameters.query);
     }
     if (parameters.path) {
-      ctx.request.params = ctx.params = (0, _validate2.default)(ctx.params, parameters.path);
+      ctx.validatedParams = (0, _validate2.default)(ctx.params, parameters.path);
     }
     if (parameters.body) {
-      ctx.request.body = (0, _validate2.default)(ctx.request.body, parameters.body);
+      ctx.validatedBody = (0, _validate2.default)(ctx.request.body, parameters.body);
     }
     yield next();
   });
