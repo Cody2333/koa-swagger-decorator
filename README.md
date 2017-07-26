@@ -47,8 +47,11 @@ import { wrapper } from 'koa-swagger-decorator';
 
 const router = new Router();
 
-// get swagger json doc at endpoint: /swagger-json and /swgger-html
 wrapper(router);
+
+// open /swagger-html to show the swagger ui page
+// open /swagger-json to show the swagger json data
+router.swagger({ title: 'SWAGGER API DOC', description: 'API DOC', version: '1.0.0' });
 
 // map all static methods at Test class for router
 router.map(Test);
@@ -66,35 +69,33 @@ import { request, summary, query, path, body, tags } from 'koa-swagger-decorator
 const testTag = tags(['test']);
 
 const userSchema = {
-  type: 'object',
-  properties: {
-    name: { type: 'string' },
-    gender: { type: 'string' }
+  name: { type: 'string', required: true },
+  gender: { type: 'string', required: false, example: '男' },
+  groups: {
+    type: 'array',
+    required: true,
+    items: { type: 'string', example: '组1' }
   }
 };
 
 export default class Test {
   @request('get', '/users')
-  @summary('get user list')
+  @summary('获取用户列表')
   @testTag
-  @query([{
-    name: 'type',
-    required: false,
-    type: 'string',
-    description: 'type for filter',
-  }])
+  @query({
+    type: { type: 'number', required: true, default: 1, description: '筛选的种类' }
+  })
   static async getUsers(ctx) {
     const users = await User.findAll();
     ctx.body = { users };
   }
 
   @request('get', '/users/{id}')
-  @summary('get user by id')
-  @path([{
-    name: 'id',
-    required: true,
-    type: 'string',
-  }])
+  @summary('根据id获取用户信息')
+  @testTag
+  @path({
+    id: { type: 'number', required: true, default: 1, description: '对应用户 id' }
+  })
   static async getUser(ctx) {
     const { id } = ctx.params;
     const user = await User.findById(id);
@@ -103,21 +104,17 @@ export default class Test {
 
   @request('post', '/users')
   @testTag
-  @body([{
-    name: 'data',
-    description: 'example',
-    schema: userSchema,
-  }])
+  @body(userSchema)
   static async postUser(ctx) {
     const body = ctx.request.body;
     ctx.body = { result: body };
   }
 
-  // normal methods without @request decorator
   static async temp(ctx) {
     ctx.body = { result: 'success' };
   }
 }
+
 ```
 
 runing the project and it will generate docs through swagger ui
