@@ -132,11 +132,10 @@ const wrapper = router => {
   };
   router.map = StaticClass => {
     const methods = Object.getOwnPropertyNames(StaticClass);
-    // 移除无用的属性 constructor, length, name
 
-    methods.shift();
-    methods.shift();
-    methods.splice(-1);
+    // 移除无用的属性 constructor, length, name
+    _lodash2.default.pull(methods, 'name', 'constructor', 'length', 'prototype');
+
     // 遍历该类中的所有方法
     methods
     // 过滤没有@request注解的方法
