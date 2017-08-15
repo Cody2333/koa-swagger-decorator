@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.apiObjects = exports.wrapper = exports.tags = exports.body = exports.path = exports.query = exports.description = exports.desc = exports.params = exports.summary = exports.request = undefined;
+exports.middlewares = exports.apiObjects = exports.wrapper = exports.tags = exports.body = exports.path = exports.query = exports.description = exports.desc = exports.params = exports.summary = exports.request = undefined;
 
 var _lodash = require('lodash');
 
@@ -56,9 +56,18 @@ const _params = (type, parameters) => (target, name, descriptor) => {
 
 const request = (method, path) => (target, name, descriptor) => {
   // 设置请求方法,路径
-  descriptor.value.method = method;
+  descriptor.value.method = _lodash2.default.toLower(method);
   descriptor.value.path = path;
-  _addToApiObject(target, name, apiObjects, { request: { method, path }, security: [{ ApiKeyAuth: [] }] });
+  _addToApiObject(target, name, apiObjects, {
+    request: { method: _lodash2.default.toLower(method),
+      path },
+    security: [{ ApiKeyAuth: [] }] });
+  return descriptor;
+};
+
+const middlewares = middlewares => (target, name, descriptor) => {
+  // 设置请求方法,路径
+  descriptor.value.middlewares = middlewares;
   return descriptor;
 };
 
@@ -94,3 +103,4 @@ exports.body = body;
 exports.tags = tags;
 exports.wrapper = _wrapper.wrapper;
 exports.apiObjects = apiObjects;
+exports.middlewares = middlewares;

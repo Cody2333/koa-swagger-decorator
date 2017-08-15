@@ -149,11 +149,42 @@ const wrapper = router => {
     })
     // 遍历添加路由
     .forEach(item => {
-      const path = StaticClass[item].path;
+      var _StaticClass$item2 = StaticClass[item];
+      const path = _StaticClass$item2.path,
+            method = _StaticClass$item2.method;
+      var _StaticClass$item$mid = StaticClass[item].middlewares;
+      let middlewares = _StaticClass$item$mid === undefined ? [] : _StaticClass$item$mid;
 
-      const method = (0, _lodash2.default)(StaticClass[item].method).toLower();
+      if (typeof middlewares === 'function') middlewares = [middlewares];
+      if (!Array.isArray(middlewares)) throw new Error('middlewares params must be an array or function');
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = middlewares[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          const item = _step.value;
+
+          if (typeof item !== 'function') throw new Error('item in middlewares must be a function');
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
       if (!reqMethods.includes(method)) throw new Error(`illegal API: ${method} ${path} at [${item}]`);
-      router[method](`${convertPath(path)}`, validateMiddleware(StaticClass[item].parameters), StaticClass[item]);
+      const chain = [`${convertPath(path)}`, validateMiddleware(StaticClass[item].parameters), ...middlewares, StaticClass[item]];
+      router[method](...chain);
     });
   };
 };
