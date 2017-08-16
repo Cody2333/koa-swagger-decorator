@@ -56,11 +56,11 @@ const _params = (type, parameters) => (target, name, descriptor) => {
 
 const request = (method, path) => (target, name, descriptor) => {
   // 设置请求方法,路径
-  descriptor.value.method = _lodash2.default.toLower(method);
+  method = _lodash2.default.toLower(method);
+  descriptor.value.method = method;
   descriptor.value.path = path;
   _addToApiObject(target, name, apiObjects, {
-    request: { method: _lodash2.default.toLower(method),
-      path },
+    request: { method, path },
     security: [{ ApiKeyAuth: [] }] });
   return descriptor;
 };
@@ -92,6 +92,7 @@ const path = params('path');
 // body 参数
 const body = params('body');
 
+// formData 参数
 const formData = params('formData');
 
 exports.request = request;
