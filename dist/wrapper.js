@@ -99,7 +99,10 @@ const buildSwaggerJson = options => {
     // 如果不存在该path对象，首先初始化
     if (!swaggerJSON.paths[path]) swaggerJSON.paths[path] = {};
 
-    swaggerJSON.paths[path][method] = { summary, description, parameters, responses, tags, security };
+    // add content type [multipart/form-data] to support file upload
+    const consumes = formData.length > 0 ? ['multipart/form-data'] : undefined;
+
+    swaggerJSON.paths[path][method] = { consumes, summary, description, parameters, responses, tags, security };
 
     return null;
   }).value();
