@@ -83,7 +83,7 @@ const buildSwaggerJson = options => {
     const summary = value.summary ? value.summary : '';
     const description = value.description ? value.description : summary;
     const responses = { 200: { description: '成功' } };
-
+    console.log(value);
     var _value$query = value.query;
     const query = _value$query === undefined ? [] : _value$query;
     var _value$path = value.path;
@@ -91,8 +91,10 @@ const buildSwaggerJson = options => {
     var _value$body = value.body;
     const body = _value$body === undefined ? [] : _value$body,
           tags = value.tags;
+    var _value$formData = value.formData;
+    const formData = _value$formData === undefined ? [] : _value$formData;
 
-    const parameters = [...pathParams, ...query, ...body];
+    const parameters = [...pathParams, ...query, ...formData, ...body];
 
     // 如果不存在该path对象，首先初始化
     if (!swaggerJSON.paths[path]) swaggerJSON.paths[path] = {};

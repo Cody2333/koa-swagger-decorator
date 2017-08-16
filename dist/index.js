@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.middlewares = exports.apiObjects = exports.wrapper = exports.tags = exports.body = exports.path = exports.query = exports.description = exports.desc = exports.params = exports.summary = exports.request = undefined;
+exports.formData = exports.middlewares = exports.apiObjects = exports.wrapper = exports.tags = exports.body = exports.path = exports.query = exports.description = exports.desc = exports.params = exports.summary = exports.request = undefined;
 
 var _lodash = require('lodash');
 
@@ -92,6 +92,8 @@ const path = params('path');
 // body 参数
 const body = params('body');
 
+const formData = params('formData');
+
 exports.request = request;
 exports.summary = summary;
 exports.params = params;
@@ -104,3 +106,4 @@ exports.tags = tags;
 exports.wrapper = _wrapper.wrapper;
 exports.apiObjects = apiObjects;
 exports.middlewares = middlewares;
+exports.formData = formData;
