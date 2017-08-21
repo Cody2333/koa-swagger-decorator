@@ -12,9 +12,9 @@ npm install koa-swagger-decorator
 
 ### Koa Swagger Decorator
 
-[working in progress]
 using decorator to auto generate swagger json docs
 
+based on [Swagger OpenAPI Specification 2.0](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md)
 ### Requirements
 
 - Koa2
@@ -35,7 +35,7 @@ npm install --save-dev babel-plugin-transform-decorators-legacy
 ```
 ### Introduction
 
-first wrapper the koa-router object
+#### first wrapper the koa-router object
 
 ```
 // router.js
@@ -58,7 +58,7 @@ router.map(Test);
 
 ```
 
-using decorator to make api definition
+#### using decorator to make api definition
 
 ```
 // test.js
@@ -117,7 +117,46 @@ export default class Test {
 
 ```
 
-runing the project and it will generate docs through swagger ui
+#### avaliable annotations:
+
+- tag         
+- query
+- path
+- body
+- formData
+- middlewares
+- summary
+- description
+
+
+```
+
+request      // @request('POST', '/users')
+
+tag          // @tag(['example'])
+
+query        // @query({limit: {type: 'number', required: true, default: 10, description: 'desc'}})
+
+path         // @path({limit: {type: 'number', required: true, default: 10, description: 'desc'}})
+
+body         // @body({groups: {type: 'array', required: true, items: { type: 'string', example: 'group1' }}})
+
+formData     // @formData({file: {type: 'file', required: true, description: 'file content'}})
+
+middlewares  
+// support koa middlewares. 
+// eg. @middlewares([func1,func2])
+
+summary      // @summary('api summary')
+
+description  // @description('api description')
+
+
+```
+
+
+
+##### runing the project and it will generate docs through swagger ui
 
 ![image.png](http://upload-images.jianshu.io/upload_images/2563527-4b6ed895183a0055.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 ## License
