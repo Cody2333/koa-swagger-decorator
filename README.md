@@ -119,7 +119,7 @@ export default class Test {
 
 #### avaliable annotations:
 
-- tag         
+- tags         
 - query
 - path
 - body
@@ -133,7 +133,7 @@ export default class Test {
 
 request      // @request('POST', '/users')
 
-tag          // @tag(['example'])
+tags         // @tags(['example'])
 
 query        // @query({limit: {type: 'number', required: true, default: 10, description: 'desc'}})
 
