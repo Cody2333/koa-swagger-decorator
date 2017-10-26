@@ -24,9 +24,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 /**
- * 允许的http请求方法
+ * allowed http methods
  */
-const reqMethods = ['get', 'post', 'put', 'delete'];
+const reqMethods = ['get', 'post', 'put', 'patch', 'delete'];
 
 /**
  * swagger 和 koa 中 定义url中变量的方式不同，将 {id} 转换为 :id 的形式
@@ -81,7 +81,7 @@ const buildSwaggerJson = options => {
 
     const summary = value.summary ? value.summary : '';
     const description = value.description ? value.description : summary;
-    const responses = { 200: { description: '成功' } };
+    const responses = value.responses ? value.responses : { 200: { description: 'success' } };
     var _value$query = value.query;
     const query = _value$query === undefined ? [] : _value$query;
     var _value$path = value.path;

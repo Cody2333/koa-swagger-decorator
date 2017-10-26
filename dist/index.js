@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.formData = exports.middlewares = exports.apiObjects = exports.wrapper = exports.tags = exports.body = exports.path = exports.query = exports.description = exports.desc = exports.params = exports.summary = exports.request = undefined;
+exports.responses = exports.formData = exports.middlewares = exports.apiObjects = exports.wrapper = exports.tags = exports.body = exports.path = exports.query = exports.description = exports.desc = exports.params = exports.summary = exports.request = undefined;
 
 var _lodash = require('lodash');
 
@@ -22,7 +22,6 @@ const _addToApiObject = (target, name, apiObjects, content) => {
 };
 
 const _desc = (type, text) => (target, name, descriptor) => {
-  // 设置简介
   descriptor.value[type] = text;
   _addToApiObject(target, name, apiObjects, { [type]: text });
   return descriptor;
@@ -37,7 +36,7 @@ const _params = (type, parameters) => (target, name, descriptor) => {
   if (type === 'body') {
     swaggerParameters = [{
       name: 'data',
-      description: '请求体',
+      description: 'request body',
       schema: {
         type: 'object',
         properties: parameters
@@ -55,7 +54,6 @@ const _params = (type, parameters) => (target, name, descriptor) => {
 };
 
 const request = (method, path) => (target, name, descriptor) => {
-  // 设置请求方法,路径
   method = _lodash2.default.toLower(method);
   descriptor.value.method = method;
   descriptor.value.path = path;
@@ -66,14 +64,18 @@ const request = (method, path) => (target, name, descriptor) => {
 };
 
 const middlewares = middlewares => (target, name, descriptor) => {
-  // 设置请求方法,路径
   descriptor.value.middlewares = middlewares;
   return descriptor;
 };
 
+const responses = (responses = { 200: { description: 'success' } }) => (target, name, descriptor) => {
+  descriptor.value.responses = responses;
+  _addToApiObject(target, name, apiObjects, { responses });
+  return descriptor;
+};
 const desc = _lodash2.default.curry(_desc);
-// description 和 summary 参数
 
+// description 和 summary 参数
 const description = desc('description');
 
 const summary = desc('summary');
@@ -95,6 +97,10 @@ const body = params('body');
 // formData 参数
 const formData = params('formData');
 
+const Doc = { request, summary, params, desc, description, query, path, body, tags,
+  wrapper: _wrapper.wrapper, apiObjects, middlewares, formData, responses };
+
+exports.default = Doc;
 exports.request = request;
 exports.summary = summary;
 exports.params = params;
@@ -108,3 +114,4 @@ exports.wrapper = _wrapper.wrapper;
 exports.apiObjects = apiObjects;
 exports.middlewares = middlewares;
 exports.formData = formData;
+exports.responses = responses;
