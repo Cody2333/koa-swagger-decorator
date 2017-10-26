@@ -15,6 +15,8 @@ npm install koa-swagger-decorator
 using decorator to auto generate swagger json docs
 
 based on [Swagger OpenAPI Specification 2.0](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md)
+
+**Example** avaliable at [koa-swagger-decorator-example](https://github.com/Cody2333/koa-swagger-decorator-example)
 ### Requirements
 
 - Koa2
@@ -51,7 +53,7 @@ wrapper(router);
 
 // open /swagger-html to show the swagger ui page
 // open /swagger-json to show the swagger json data
-router.swagger({ title: 'SWAGGER API DOC', description: 'API DOC', version: '1.0.0' });
+router.swagger({ title: 'SERVER', description: 'API DOC', version: '1.0.0' });
 
 // map all static methods at Test class for router
 router.map(Test);
@@ -127,7 +129,7 @@ export default class Test {
 - middlewares
 - summary
 - description
-
+- responses
 
 ```
 
@@ -151,7 +153,9 @@ summary      // @summary('api summary')
 
 description  // @description('api description')
 
-
+responses 
+// @responses({ 200: { description: 'success'}, 400: { description: 'error'}})
+// responses is optional
 ```
 
 
