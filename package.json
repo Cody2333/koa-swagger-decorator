@@ -1,6 +1,6 @@
 {
   "name": "koa-swagger-decorator",
-  "version": "0.1.16",
+  "version": "1.0.0",
   "description": "using decorator to automatically generate swagger doc for koa-router",
   "main": "dist/index.js",
   "dependencies": {
