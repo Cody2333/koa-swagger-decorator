@@ -115,8 +115,14 @@ const buildSwaggerJson = options => {
  */
 const wrapper = router => {
   router.swagger = options => {
+    var _options$swaggerJsonE = options.swaggerJsonEndpoint;
+    const swaggerJsonEndpoint = _options$swaggerJsonE === undefined ? '/swagger-json' : _options$swaggerJsonE;
+    var _options$swaggerHtmlE = options.swaggerHtmlEndpoint;
+    const swaggerHtmlEndpoint = _options$swaggerHtmlE === undefined ? '/swagger-html' : _options$swaggerHtmlE;
+
     // 设置swagger路由
-    router.get('/swagger-json', (() => {
+
+    router.get(swaggerJsonEndpoint, (() => {
       var _ref3 = _asyncToGenerator(function* (ctx) {
         ctx.body = buildSwaggerJson(options);
       });
@@ -125,9 +131,9 @@ const wrapper = router => {
         return _ref3.apply(this, arguments);
       };
     })());
-    router.get('/swagger-html', (() => {
+    router.get(swaggerHtmlEndpoint, (() => {
       var _ref4 = _asyncToGenerator(function* (ctx) {
-        ctx.body = (0, _swaggerHTML.swaggerHTML)('/swagger-json');
+        ctx.body = (0, _swaggerHTML.swaggerHTML)(swaggerJsonEndpoint);
       });
 
       return function (_x4) {
