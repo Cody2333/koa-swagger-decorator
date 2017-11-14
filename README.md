@@ -51,9 +51,17 @@ const router = new Router();
 
 wrapper(router);
 
-// open /swagger-html to show the swagger ui page
+
 // open /swagger-json to show the swagger json data
-router.swagger({ title: 'SERVER', description: 'API DOC', version: '1.0.0' });
+router.swagger({
+  swaggerHtmlEndpoint: '/swagger-html', // open /swagger-html to show the swagger ui page
+  swaggerJsonEndpoint: '/swagger-json', // open /swagger-json to show the swagger json data
+
+  // swagger options
+  title: 'SERVER', 
+  description: 'API DOC', 
+  version: '1.0.0' 
+});
 
 // map all static methods at Test class for router
 router.map(Test);
