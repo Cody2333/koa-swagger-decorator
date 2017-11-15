@@ -13,10 +13,6 @@ var _validate = require('./validate');
 
 var _validate2 = _interopRequireDefault(_validate);
 
-var _url = require('url');
-
-var _url2 = _interopRequireDefault(_url);
-
 var _swaggerHTML = require('./swaggerHTML');
 
 var _swaggerTemplate = require('./swaggerTemplate');
