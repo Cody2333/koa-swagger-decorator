@@ -54,6 +54,7 @@ wrapper(router);
 
 // open /swagger-json to show the swagger json data
 router.swagger({
+  prefix: '', // [options] if you are using koa-swagger-decorator within nested router, using this param to let swagger know your current router point
   swaggerHtmlEndpoint: '/swagger-html', // open /swagger-html to show the swagger ui page
   swaggerJsonEndpoint: '/swagger-json', // open /swagger-json to show the swagger json data
 
