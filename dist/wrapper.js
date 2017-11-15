@@ -13,6 +13,10 @@ var _validate = require('./validate');
 
 var _validate2 = _interopRequireDefault(_validate);
 
+var _url = require('url');
+
+var _url2 = _interopRequireDefault(_url);
+
 var _swaggerHTML = require('./swaggerHTML');
 
 var _swaggerTemplate = require('./swaggerTemplate');
@@ -61,24 +65,27 @@ const validateMiddleware = parameters => (() => {
   };
 })();
 
+const getPath = (prefix, path) => `${prefix}${path}`;
 /**
  * 构建swagger的json
  */
-const buildSwaggerJson = options => {
+const buildSwaggerJson = (options, apiObjects) => {
   var _ref2 = options || {};
 
   const title = _ref2.title,
         description = _ref2.description,
         version = _ref2.version;
+  var _ref2$prefix = _ref2.prefix;
+  const prefix = _ref2$prefix === undefined ? '' : _ref2$prefix;
 
   const swaggerJSON = (0, _swaggerTemplate.init)(title, description, version);
-  _lodash2.default.chain(_index.apiObjects).map(value => {
+  _lodash2.default.chain(apiObjects).map(value => {
     if (!Object.keys(value).includes('request')) throw new Error('缺少 request 字段');
 
-    var _value$request = value.request;
-    const path = _value$request.path,
-          method = _value$request.method;
+    const method = value.request.method;
+    let path = value.request.path;
 
+    path = getPath(prefix, path); // 根据前缀补全path
     const summary = value.summary ? value.summary : '';
     const description = value.description ? value.description : summary;
     const responses = value.responses ? value.responses : { 200: { description: 'success' } };
@@ -119,12 +126,14 @@ const wrapper = router => {
     const swaggerJsonEndpoint = _options$swaggerJsonE === undefined ? '/swagger-json' : _options$swaggerJsonE;
     var _options$swaggerHtmlE = options.swaggerHtmlEndpoint;
     const swaggerHtmlEndpoint = _options$swaggerHtmlE === undefined ? '/swagger-html' : _options$swaggerHtmlE;
+    var _options$prefix = options.prefix;
+    const prefix = _options$prefix === undefined ? '' : _options$prefix;
 
     // 设置swagger路由
 
     router.get(swaggerJsonEndpoint, (() => {
       var _ref3 = _asyncToGenerator(function* (ctx) {
-        ctx.body = buildSwaggerJson(options);
+        ctx.body = buildSwaggerJson(options, _index.apiObjects);
       });
 
       return function (_x3) {
@@ -133,7 +142,7 @@ const wrapper = router => {
     })());
     router.get(swaggerHtmlEndpoint, (() => {
       var _ref4 = _asyncToGenerator(function* (ctx) {
-        ctx.body = (0, _swaggerHTML.swaggerHTML)(swaggerJsonEndpoint);
+        ctx.body = (0, _swaggerHTML.swaggerHTML)(`${prefix}${swaggerJsonEndpoint}`);
       });
 
       return function (_x4) {

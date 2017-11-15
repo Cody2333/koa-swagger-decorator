@@ -57,6 +57,7 @@ exports.default = function (input, expect) {
     }
     // last check the array type
     if (input[key] !== undefined && expect[key].type === 'array') {
+      console.log('test');
       if (input[key] instanceof Array) {
         return;
       }
