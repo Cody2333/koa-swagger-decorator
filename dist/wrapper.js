@@ -73,8 +73,10 @@ const buildSwaggerJson = (options, apiObjects) => {
         version = _ref2.version;
   var _ref2$prefix = _ref2.prefix;
   const prefix = _ref2$prefix === undefined ? '' : _ref2$prefix;
+  var _ref2$definitions = _ref2.definitions;
+  const definitions = _ref2$definitions === undefined ? {} : _ref2$definitions;
 
-  const swaggerJSON = (0, _swaggerTemplate.init)(title, description, version);
+  const swaggerJSON = (0, _swaggerTemplate.init)(title, description, version, definitions);
   _lodash2.default.chain(apiObjects).map(value => {
     if (!Object.keys(value).includes('request')) throw new Error('缺少 request 字段');
 
