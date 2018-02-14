@@ -16,7 +16,24 @@ using decorator to auto generate swagger json docs
 
 based on [Swagger OpenAPI Specification 2.0](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md)
 
-**Example** avaliable at [koa-swagger-decorator-example](https://github.com/Cody2333/koa-swagger-decorator-example)
+## Example
+
+```
+// using commonds below to start and test the example server
+
+git clone https://github.com/Cody2333/koa-swagger-decorator.git
+
+cd koa-swagger-decorator
+
+npm install
+
+npm run start
+
+finally open:
+http://localhost:3000/api/swagger-html
+
+```
+
 ### Requirements
 
 - Koa2
@@ -37,6 +54,8 @@ npm install --save-dev babel-plugin-transform-decorators-legacy
 ```
 ### Introduction
 
+for more detail please take a look at the [example koa server](https://github.com/Cody2333/koa-swagger-decorator/tree/master/example)
+
 #### first wrapper the koa-router object
 
 ```
@@ -51,19 +70,35 @@ const router = new Router();
 
 wrapper(router);
 
-
-// open /swagger-json to show the swagger json data
+// swagger docs avaliable at http://localhost:3000/api/swagger-html
 router.swagger({
-  prefix: '', // [options] if you are using koa-swagger-decorator within nested router, using this param to let swagger know your current router point
-  swaggerHtmlEndpoint: '/swagger-html', // open /swagger-html to show the swagger ui page
-  swaggerJsonEndpoint: '/swagger-json', // open /swagger-json to show the swagger json data
 
-  // swagger options
-  title: 'SERVER', 
-  description: 'API DOC', 
-  version: '1.0.0' 
+  title: 'Example Server',
+  description: 'API DOC',
+  version: '1.0.0',
+
+  // [optional] default is root path.
+  // if you are using koa-swagger-decorator within nested router, using this param to let swagger know your current router point
+  prefix: '/api',
+
+  // [optional] default is /swagger-html
+  swaggerHtmlEndpoint: '/swagger-html',
+
+  // [optional] default is /swagger-json
+  swaggerJsonEndpoint: '/swagger-json',
+
+  // [optional] additional options for building swagger doc
+  // eg. add api_key as shown below
+  swaggerOptions: {
+    securityDefinitions: {
+      api_key: {
+        type: 'apiKey',
+        in: 'header',
+        name: 'api_key'
+      }
+    },
+  }
 });
-
 // map all static methods at Test class for router
 router.map(Test);
 
@@ -81,20 +116,20 @@ const testTag = tags(['test']);
 
 const userSchema = {
   name: { type: 'string', required: true },
-  gender: { type: 'string', required: false, example: '男' },
+  gender: { type: 'string', required: false, example: 'male' },
   groups: {
     type: 'array',
     required: true,
-    items: { type: 'string', example: '组1' }
+    items: { type: 'string', example: 'group1' }
   }
 };
 
 export default class Test {
   @request('get', '/users')
-  @summary('获取用户列表')
+  @summary('get user list')
   @testTag
   @query({
-    type: { type: 'number', required: true, default: 1, description: '筛选的种类' }
+    type: { type: 'number', required: true, default: 1, description: 'type' }
   })
   static async getUsers(ctx) {
     const users = await User.findAll();
@@ -102,10 +137,10 @@ export default class Test {
   }
 
   @request('get', '/users/{id}')
-  @summary('根据id获取用户信息')
+  @summary('get user info by id')
   @testTag
   @path({
-    id: { type: 'number', required: true, default: 1, description: '对应用户 id' }
+    id: { type: 'number', required: true, default: 1, description: 'id' }
   })
   static async getUser(ctx) {
     const { id } = ctx.params;

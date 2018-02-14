@@ -31,7 +31,8 @@
     "no-confusing-arrow": 0,
     "no-underscore-dangle": 0,
     "import/no-extraneous-dependencies": 0,
-    "import/no-named-as-default-member": 0
+    "import/no-named-as-default-member": 0,
+    "no-restricted-globals": 0
   },
   "settings": {
     "import/parser": "babel-eslint"

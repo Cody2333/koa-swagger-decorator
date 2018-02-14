@@ -9,12 +9,12 @@ const {
 
 
 function getFileUrl(filename) {
-  return `${config.baseUrl}/file/${filename}`;
+  return `${config.baseUrl}/temp/${filename}`;
 }
 const tag = tags(['Sample']);
 
 const storage = multer.diskStorage({
-  destination: _path.resolve('file/'),
+  destination: _path.resolve('temp/'),
   filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`)
 });
 
