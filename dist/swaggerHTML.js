@@ -97,4 +97,5 @@ const swaggerHTML = apiPath => `
 
 `;
 
+exports.default = swaggerHTML;
 exports.swaggerHTML = swaggerHTML;

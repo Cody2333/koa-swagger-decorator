@@ -11,8 +11,13 @@ var _lodash2 = _interopRequireDefault(_lodash);
 
 var _wrapper = require('./wrapper');
 
+var _wrapper2 = _interopRequireDefault(_wrapper);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+/**
+ * used for building swagger docs object
+ */
 const apiObjects = {};
 
 const _addToApiObject = (target, name, apiObjects, content) => {
@@ -31,7 +36,7 @@ const _params = (type, parameters) => (target, name, descriptor) => {
   if (!descriptor.value.parameters) descriptor.value.parameters = {};
   descriptor.value.parameters[type] = parameters;
 
-  // 对 body 要再裹一层
+  // additional wrapper for body
   let swaggerParameters = parameters;
   if (type === 'body') {
     swaggerParameters = [{
@@ -59,7 +64,8 @@ const request = (method, path) => (target, name, descriptor) => {
   descriptor.value.path = path;
   _addToApiObject(target, name, apiObjects, {
     request: { method, path },
-    security: [{ ApiKeyAuth: [] }] });
+    security: [{ ApiKeyAuth: [] }]
+  });
   return descriptor;
 };
 
@@ -75,7 +81,7 @@ const responses = (responses = { 200: { description: 'success' } }) => (target, 
 };
 const desc = _lodash2.default.curry(_desc);
 
-// description 和 summary 参数
+// description and summary
 const description = desc('description');
 
 const summary = desc('summary');
@@ -83,22 +89,37 @@ const summary = desc('summary');
 const tags = desc('tags');
 
 const params = _lodash2.default.curry(_params);
-// 下面是parameters参数
 
-// query 参数
+// below are [parameters]
+
+// query params
 const query = params('query');
 
-// path 参数
+// path params
 const path = params('path');
 
-// body 参数
+// body params
 const body = params('body');
 
-// formData 参数
+// formData params
 const formData = params('formData');
 
-const Doc = { request, summary, params, desc, description, query, path, body, tags,
-  wrapper: _wrapper.wrapper, apiObjects, middlewares, formData, responses };
+const Doc = {
+  request,
+  summary,
+  params,
+  desc,
+  description,
+  query,
+  path,
+  body,
+  tags,
+  wrapper: _wrapper2.default,
+  apiObjects,
+  middlewares,
+  formData,
+  responses
+};
 
 exports.default = Doc;
 exports.request = request;
@@ -110,7 +131,7 @@ exports.query = query;
 exports.path = path;
 exports.body = body;
 exports.tags = tags;
-exports.wrapper = _wrapper.wrapper;
+exports.wrapper = _wrapper2.default;
 exports.apiObjects = apiObjects;
 exports.middlewares = middlewares;
 exports.formData = formData;

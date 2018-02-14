@@ -70,17 +70,17 @@ exports.default = function (input, expect) {
   return input;
 };
 
-class InputError extends Error {
+let InputError = class InputError extends Error {
   /**
    * Constructor
    * @param {string} field the error field in request parameters.
    */
   constructor(field) {
-    super(`参数 '${field}' 不正确, 请检查!`);
+    super(`incorrect field: '${field}', please check again!`);
     this.field = field;
     this.status = 400;
   }
-}
+};
 
 /**
  * validate the input values

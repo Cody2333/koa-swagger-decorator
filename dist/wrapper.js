@@ -3,7 +3,11 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.wrapper = undefined;
+exports.getPath = exports.convertPath = undefined;
+
+var _path2 = require('path');
+
+var _path3 = _interopRequireDefault(_path2);
 
 var _lodash = require('lodash');
 
@@ -17,11 +21,11 @@ var _swaggerHTML = require('./swaggerHTML');
 
 var _swaggerTemplate = require('./swaggerTemplate');
 
+var _swaggerTemplate2 = _interopRequireDefault(_swaggerTemplate);
+
 var _index = require('./index');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 /**
  * allowed http methods
@@ -29,7 +33,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 const reqMethods = ['get', 'post', 'put', 'patch', 'delete'];
 
 /**
- * swagger 和 koa 中 定义url中变量的方式不同，将 {id} 转换为 :id 的形式
+ * eg. /api/{id} -> /api/:id
  * @param {String} path
  */
 const convertPath = path => {
@@ -37,174 +41,151 @@ const convertPath = path => {
   return path.replace(re, ':$1');
 };
 
-const validateMiddleware = parameters => (() => {
-  var _ref = _asyncToGenerator(function* (ctx, next) {
-    if (!parameters) {
-      yield next();
-      return;
-    }
+/**
+ * middlewara for validating [query, path, body] params
+ * @param {Object} parameters
+ */
+const validator = parameters => async (ctx, next) => {
+  if (!parameters) {
+    await next();
+    return;
+  }
 
-    if (parameters.query) {
-      ctx.validatedQuery = (0, _validate2.default)(ctx.request.query, parameters.query);
-    }
-    if (parameters.path) {
-      ctx.validatedParams = (0, _validate2.default)(ctx.params, parameters.path);
-    }
-    if (parameters.body) {
-      ctx.validatedBody = (0, _validate2.default)(ctx.request.body, parameters.body);
-    }
-    yield next();
-  });
+  if (parameters.query) {
+    ctx.validatedQuery = (0, _validate2.default)(ctx.request.query, parameters.query);
+  }
+  if (parameters.path) {
+    ctx.validatedParams = (0, _validate2.default)(ctx.params, parameters.path);
+  }
+  if (parameters.body) {
+    ctx.validatedBody = (0, _validate2.default)(ctx.request.body, parameters.body);
+  }
+  await next();
+};
 
-  return function (_x, _x2) {
-    return _ref.apply(this, arguments);
-  };
-})();
-
-const getPath = (prefix, path) => `${prefix}${path}`;
+const getPath = (prefix, path) => `${prefix}${path}`.replace('//', '/');
 /**
  * 构建swagger的json
  */
-const buildSwaggerJson = (options, apiObjects) => {
-  var _ref2 = options || {};
+const buildSwaggerJson = (options = {}, apiObjects) => {
+  const {
+    title,
+    description,
+    version,
+    prefix = '',
+    swaggerOptions = {}
+  } = options;
+  const swaggerJSON = (0, _swaggerTemplate2.default)(title, description, version, swaggerOptions);
 
-  const title = _ref2.title,
-        description = _ref2.description,
-        version = _ref2.version;
-  var _ref2$prefix = _ref2.prefix;
-  const prefix = _ref2$prefix === undefined ? '' : _ref2$prefix;
-  var _ref2$definitions = _ref2.definitions;
-  const definitions = _ref2$definitions === undefined ? {} : _ref2$definitions;
+  _lodash2.default.chain(apiObjects).forEach(value => {
+    if (!Object.keys(value).includes('request')) {
+      throw new Error('missing [request] field');
+    }
 
-  const swaggerJSON = (0, _swaggerTemplate.init)(title, description, version, definitions);
-  _lodash2.default.chain(apiObjects).map(value => {
-    if (!Object.keys(value).includes('request')) throw new Error('缺少 request 字段');
-
-    const method = value.request.method;
-    let path = value.request.path;
-
+    const { method } = value.request;
+    let { path } = value.request;
     path = getPath(prefix, path); // 根据前缀补全path
     const summary = value.summary ? value.summary : '';
     const description = value.description ? value.description : summary;
-    const responses = value.responses ? value.responses : { 200: { description: 'success' } };
-    var _value$query = value.query;
-    const query = _value$query === undefined ? [] : _value$query;
-    var _value$path = value.path;
-    const pathParams = _value$path === undefined ? [] : _value$path;
-    var _value$body = value.body;
-    const body = _value$body === undefined ? [] : _value$body,
-          tags = value.tags;
-    var _value$formData = value.formData;
-    const formData = _value$formData === undefined ? [] : _value$formData,
-          security = value.security;
-
+    const responses = value.responses ? value.responses : {
+      200: {
+        description: 'success'
+      }
+    };
+    const {
+      query = [],
+      path: pathParams = [],
+      body = [],
+      tags,
+      formData = [],
+      security
+    } = value;
 
     const parameters = [...pathParams, ...query, ...formData, ...body];
 
-    // 如果不存在该path对象，首先初始化
-    if (!swaggerJSON.paths[path]) swaggerJSON.paths[path] = {};
+    // init path object first
+    if (!swaggerJSON.paths[path]) {
+      swaggerJSON.paths[path] = {};
+    }
 
     // add content type [multipart/form-data] to support file upload
     const consumes = formData.length > 0 ? ['multipart/form-data'] : undefined;
 
-    swaggerJSON.paths[path][method] = { consumes, summary, description, parameters, responses, tags, security };
-
-    return null;
+    swaggerJSON.paths[path][method] = {
+      consumes,
+      summary,
+      description,
+      parameters,
+      responses,
+      tags,
+      security
+    };
   }).value();
   return swaggerJSON;
 };
 
 /**
- * 封装router对象，添加map方法用途遍历静态类中的方法
+ * add [ router.map ] and [ router.swagger ] for router object
  * @param {Object} router
  */
-const wrapper = router => {
+
+exports.default = router => {
   router.swagger = options => {
-    var _options$swaggerJsonE = options.swaggerJsonEndpoint;
-    const swaggerJsonEndpoint = _options$swaggerJsonE === undefined ? '/swagger-json' : _options$swaggerJsonE;
-    var _options$swaggerHtmlE = options.swaggerHtmlEndpoint;
-    const swaggerHtmlEndpoint = _options$swaggerHtmlE === undefined ? '/swagger-html' : _options$swaggerHtmlE;
-    var _options$prefix = options.prefix;
-    const prefix = _options$prefix === undefined ? '' : _options$prefix;
+    const {
+      swaggerJsonEndpoint = '/swagger-json',
+      swaggerHtmlEndpoint = '/swagger-html',
+      prefix = ''
+    } = options;
 
-    // 设置swagger路由
-
-    router.get(swaggerJsonEndpoint, (() => {
-      var _ref3 = _asyncToGenerator(function* (ctx) {
-        ctx.body = buildSwaggerJson(options, _index.apiObjects);
-      });
-
-      return function (_x3) {
-        return _ref3.apply(this, arguments);
-      };
-    })());
-    router.get(swaggerHtmlEndpoint, (() => {
-      var _ref4 = _asyncToGenerator(function* (ctx) {
-        ctx.body = (0, _swaggerHTML.swaggerHTML)(`${prefix}${swaggerJsonEndpoint}`);
-      });
-
-      return function (_x4) {
-        return _ref4.apply(this, arguments);
-      };
-    })());
+    // setup swagger router
+    router.get(swaggerJsonEndpoint, async ctx => {
+      ctx.body = buildSwaggerJson(options, _index.apiObjects);
+    });
+    router.get(swaggerHtmlEndpoint, async ctx => {
+      ctx.body = (0, _swaggerHTML.swaggerHTML)(getPath(prefix, swaggerJsonEndpoint));
+    });
   };
   router.map = StaticClass => {
     const methods = Object.getOwnPropertyNames(StaticClass);
 
-    // 移除无用的属性 constructor, length, name
+    // remove useless field in class object:  constructor, length, name, prototype
     _lodash2.default.pull(methods, 'name', 'constructor', 'length', 'prototype');
 
-    // 遍历该类中的所有方法
+    // map all method in methods
     methods
-    // 过滤没有@request注解的方法
+    // filter methods withour @request decorator
     .filter(item => {
-      var _StaticClass$item = StaticClass[item];
-      const path = _StaticClass$item.path,
-            method = _StaticClass$item.method;
-
-      if (!path && !method) return false;
+      const { path, method } = StaticClass[item];
+      if (!path && !method) {
+        return false;
+      }
       return true;
     })
-    // 遍历添加路由
+    // add router
     .forEach(item => {
-      var _StaticClass$item2 = StaticClass[item];
-      const path = _StaticClass$item2.path,
-            method = _StaticClass$item2.method;
-      var _StaticClass$item$mid = StaticClass[item].middlewares;
-      let middlewares = _StaticClass$item$mid === undefined ? [] : _StaticClass$item$mid;
-
-      if (typeof middlewares === 'function') middlewares = [middlewares];
-      if (!Array.isArray(middlewares)) throw new Error('middlewares params must be an array or function');
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = middlewares[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          const item = _step.value;
-
-          if (typeof item !== 'function') throw new Error('item in middlewares must be a function');
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
+      const { path, method } = StaticClass[item];
+      let {
+        middlewares = []
+      } = StaticClass[item];
+      if (typeof middlewares === 'function') {
+        middlewares = [middlewares];
       }
-
-      if (!reqMethods.includes(method)) throw new Error(`illegal API: ${method} ${path} at [${item}]`);
-      const chain = [`${convertPath(path)}`, validateMiddleware(StaticClass[item].parameters), ...middlewares, StaticClass[item]];
+      if (!Array.isArray(middlewares)) {
+        throw new Error('middlewares params must be an array or function');
+      }
+      middlewares.forEach(item => {
+        if (typeof item !== 'function') {
+          throw new Error('item in middlewares must be a function');
+        }
+      });
+      if (!reqMethods.includes(method)) {
+        throw new Error(`illegal API: ${method} ${path} at [${item}]`);
+      }
+      const chain = [`${convertPath(path)}`, validator(StaticClass[item].parameters), ...middlewares, StaticClass[item]];
       router[method](...chain);
     });
   };
 };
 
-exports.wrapper = wrapper;
+exports.convertPath = convertPath;
+exports.getPath = getPath;
