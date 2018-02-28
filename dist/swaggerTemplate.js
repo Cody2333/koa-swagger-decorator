@@ -21,7 +21,7 @@ exports.default = (title = 'API DOC', description = 'API DOC', version = '1.0.0'
   tags: [],
   swagger: '2.0',
   securityDefinitions: {
-    api_key: {
+    ApiKeyAuth: {
       type: 'apiKey',
       in: 'header',
       name: 'Authorization'
