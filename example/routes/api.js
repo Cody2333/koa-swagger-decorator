@@ -29,10 +29,10 @@ router.swagger({
   // eg. add api_key as shown below
   swaggerOptions: {
     securityDefinitions: {
-      api_key: {
+      ApiKeyAuth: {
         type: 'apiKey',
         in: 'header',
-        name: 'api_key'
+        name: 'Authorization'
       }
     },
   }
