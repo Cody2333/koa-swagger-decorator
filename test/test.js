@@ -1,5 +1,6 @@
+import _path from 'path';
 import app from '../example/main';
-import { getPath, convertPath } from '../lib/wrapper';
+import { getPath, convertPath, readSync } from '../lib/utils';
 
 const request = require('supertest')(app);
 const { expect } = require('chai');
@@ -48,6 +49,35 @@ describe('HTTP API generation test:', async () => {
         });
     });
   });
+  describe('Construct api from router.mapDir:', async () => {
+    it('GET /api/other should return data if success', (done) => {
+      request.get('/api/other')
+        .expect(200)
+        .expect(res => expect(res.body.other).to.be.an('array'))
+        .end((err) => {
+          if (err) return done(err);
+          done();
+        });
+    });
+    it('GET /api/other/what should return data if success', (done) => {
+      request.get('/api/other/what')
+        .expect(200)
+        .expect(res => expect(res.body.other).to.be.an('array'))
+        .end((err) => {
+          if (err) return done(err);
+          done();
+        });
+    });
+    it('GET /api/other/how should return data if options:{rescursive: true}', (done) => {
+      request.get('/api/other/how')
+        .expect(200)
+        .expect(res => expect(res.body.other).to.be.an('array'))
+        .end((err) => {
+          if (err) return done(err);
+          done();
+        });
+    });
+  });
 });
 
 describe('Function Test:', () => {
@@ -62,6 +92,18 @@ describe('Function Test:', () => {
     it('should convert /api + /user -> /api/user', () => {
       const r = getPath('/api', '/user');
       expect(r).to.equal('/api/user');
+    });
+  });
+  describe('ReadSync:', () => {
+    it('should return an array,length = 2 when recursive=false', () => {
+      const dir = _path.resolve(__dirname, '../example/routes/sub_routes');
+      const r = readSync(dir);
+      expect(r).to.be.an('array').to.have.lengthOf(2);
+    });
+    it('should return an array,length = 3 when recursive=true', () => {
+      const dir = _path.resolve(__dirname, '../example/routes/sub_routes');
+      const r = readSync(dir, [], true);
+      expect(r).to.be.an('array').to.have.lengthOf(3);
     });
   });
 });

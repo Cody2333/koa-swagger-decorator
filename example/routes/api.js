@@ -1,5 +1,5 @@
 import Router from 'koa-router';
-
+import _path from 'path';
 import SampleRouter from './sample';
 import UserRouter from './user';
 
@@ -40,5 +40,8 @@ router.swagger({
 
 router.map(SampleRouter);
 router.map(UserRouter);
+
+// mapDir will scan the input dir, and automatically call router.map to all Router Class
+router.mapDir(_path.resolve(__dirname, './sub_routes'), { recursive: true });
 
 export default router;

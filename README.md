@@ -102,6 +102,11 @@ router.swagger({
 // map all static methods at Test class for router
 router.map(Test);
 
+// automatically call router.map for all classes in dir
+// recursive: whether recursively traverse all files or not, default is false
+router.mapDir(_path.resolve(__dirname, './sub_routes_dir'), { recursive: true });
+
+
 ```
 
 #### using decorator to make api definition
