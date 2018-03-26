@@ -3,11 +3,6 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getPath = exports.convertPath = undefined;
-
-var _path2 = require('path');
-
-var _path3 = _interopRequireDefault(_path2);
 
 var _lodash = require('lodash');
 
@@ -19,11 +14,11 @@ var _validate2 = _interopRequireDefault(_validate);
 
 var _swaggerHTML = require('./swaggerHTML');
 
-var _swaggerTemplate = require('./swaggerTemplate');
-
-var _swaggerTemplate2 = _interopRequireDefault(_swaggerTemplate);
+var _swaggerJSON = require('./swaggerJSON');
 
 var _index = require('./index');
+
+var _utils = require('./utils');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -31,15 +26,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * allowed http methods
  */
 const reqMethods = ['get', 'post', 'put', 'patch', 'delete'];
-
-/**
- * eg. /api/{id} -> /api/:id
- * @param {String} path
- */
-const convertPath = path => {
-  const re = new RegExp('{(.*?)}', 'g');
-  return path.replace(re, ':$1');
-};
 
 /**
  * middlewara for validating [query, path, body] params
@@ -63,67 +49,6 @@ const validator = parameters => async (ctx, next) => {
   await next();
 };
 
-const getPath = (prefix, path) => `${prefix}${path}`.replace('//', '/');
-/**
- * 构建swagger的json
- */
-const buildSwaggerJson = (options = {}, apiObjects) => {
-  const {
-    title,
-    description,
-    version,
-    prefix = '',
-    swaggerOptions = {}
-  } = options;
-  const swaggerJSON = (0, _swaggerTemplate2.default)(title, description, version, swaggerOptions);
-
-  _lodash2.default.chain(apiObjects).forEach(value => {
-    if (!Object.keys(value).includes('request')) {
-      throw new Error('missing [request] field');
-    }
-
-    const { method } = value.request;
-    let { path } = value.request;
-    path = getPath(prefix, path); // 根据前缀补全path
-    const summary = value.summary ? value.summary : '';
-    const description = value.description ? value.description : summary;
-    const responses = value.responses ? value.responses : {
-      200: {
-        description: 'success'
-      }
-    };
-    const {
-      query = [],
-      path: pathParams = [],
-      body = [],
-      tags,
-      formData = [],
-      security
-    } = value;
-
-    const parameters = [...pathParams, ...query, ...formData, ...body];
-
-    // init path object first
-    if (!swaggerJSON.paths[path]) {
-      swaggerJSON.paths[path] = {};
-    }
-
-    // add content type [multipart/form-data] to support file upload
-    const consumes = formData.length > 0 ? ['multipart/form-data'] : undefined;
-
-    swaggerJSON.paths[path][method] = {
-      consumes,
-      summary,
-      description,
-      parameters,
-      responses,
-      tags,
-      security
-    };
-  }).value();
-  return swaggerJSON;
-};
-
 /**
  * add [ router.map ] and [ router.swagger ] for router object
  * @param {Object} router
@@ -139,18 +64,18 @@ exports.default = router => {
 
     // setup swagger router
     router.get(swaggerJsonEndpoint, async ctx => {
-      ctx.body = buildSwaggerJson(options, _index.apiObjects);
+      ctx.body = (0, _swaggerJSON.swaggerJSON)(options, _index.apiObjects);
     });
     router.get(swaggerHtmlEndpoint, async ctx => {
-      ctx.body = (0, _swaggerHTML.swaggerHTML)(getPath(prefix, swaggerJsonEndpoint));
+      ctx.body = (0, _swaggerHTML.swaggerHTML)((0, _utils.getPath)(prefix, swaggerJsonEndpoint));
     });
   };
   router.map = StaticClass => {
+    if (!(0, _utils.isSwaggerRouter)(StaticClass)) return;
     const methods = Object.getOwnPropertyNames(StaticClass);
 
     // remove useless field in class object:  constructor, length, name, prototype
     _lodash2.default.pull(methods, 'name', 'constructor', 'length', 'prototype');
-
     // map all method in methods
     methods
     // filter methods withour @request decorator
@@ -181,11 +106,19 @@ exports.default = router => {
       if (!reqMethods.includes(method)) {
         throw new Error(`illegal API: ${method} ${path} at [${item}]`);
       }
-      const chain = [`${convertPath(path)}`, validator(StaticClass[item].parameters), ...middlewares, StaticClass[item]];
+      const chain = [`${(0, _utils.convertPath)(path)}`, validator(StaticClass[item].parameters), ...middlewares, StaticClass[item]];
       router[method](...chain);
     });
   };
-};
 
-exports.convertPath = convertPath;
-exports.getPath = getPath;
+  router.mapDir = (dir, options = {}) => {
+    const { recursive = false } = options;
+    const filenames = (0, _utils.readSync)(dir, [], recursive);
+    /* eslint-disable*/
+    const classes = filenames.map(filename => require(filename));
+    /* eslint-disable*/
+    classes.map(c => c.default).forEach(c => {
+      router.map(c);
+    });
+  };
+};
