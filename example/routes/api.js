@@ -1,13 +1,8 @@
-import Router from 'koa-router';
 import _path from 'path';
-import SampleRouter from './sample';
-import UserRouter from './user';
+import { SwaggerRouter } from '../../lib';
 
-import { wrapper } from '../../lib';
+const router = new SwaggerRouter();
 
-const router = new Router();
-
-wrapper(router);
 
 // swagger docs avaliable at http://localhost:3000/api/swagger-html
 router.swagger({
@@ -38,10 +33,8 @@ router.swagger({
   }
 });
 
-router.map(SampleRouter);
-router.map(UserRouter);
 
 // mapDir will scan the input dir, and automatically call router.map to all Router Class
-router.mapDir(_path.resolve(__dirname, './sub_routes'), { recursive: true });
+router.mapDir(_path.resolve(__dirname), { recursive: true });
 
 export default router;
