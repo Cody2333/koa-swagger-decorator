@@ -36,6 +36,12 @@ router.swagger({
 
 
 // mapDir will scan the input dir, and automatically call router.map to all Router Class
-router.mapDir(_path.resolve(__dirname), { recursive: true });
+router.mapDir(_path.resolve(__dirname), {
+  // default: true. To recursively scan the dir to make router. If false, will not scan subroutes dir
+  // recursive: true,
+
+  // default: true, if true, you can call ctx.validatedBody[Query|Params] to get validated data.
+  // doValidation: true,
+});
 
 export default router;
