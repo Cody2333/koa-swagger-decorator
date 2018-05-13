@@ -1,8 +1,9 @@
 import _path from 'path';
-import { SwaggerRouter } from '../../lib';
+import Router from 'koa-router';
+import { wrapper } from '../../lib';
 
-const router = new SwaggerRouter();
-
+const router = new Router();
+wrapper(router);
 
 // swagger docs avaliable at http://localhost:3000/api/swagger-html
 router.swagger({

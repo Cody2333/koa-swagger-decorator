@@ -1,11 +1,17 @@
 import _path from 'path';
-import app from '../example/main';
+import assert from 'assert';
+import server from '../example/main';
 import { getPath, convertPath, readSync } from '../lib/utils';
+import validate from '../lib/validate';
 
-const request = require('supertest')(app);
+const request = require('supertest')(server);
 const { expect } = require('chai');
 
 describe('HTTP API generation test:', async () => {
+  after(() => {
+    server.close();
+  });
+
   describe('Init Swagger Doc:', async () => {
     it('GET /api/swagger-html should return success for swagger ui page', (done) => {
       request.get('/api/swagger-html')
@@ -108,3 +114,123 @@ describe('Function Test:', () => {
   });
 });
 
+describe('Validate:', () => {
+  it('should return validated input when meets expects requirement', () => {
+    const input = {
+      foo: '1',
+      bar: 'fwq',
+      fpk: false,
+      nax: 12,
+      qoa: [
+        1, 2
+      ],
+      baz: {
+        b: 'f'
+      },
+      addon: 'ttt',
+      boo: 'true',
+      coo: 'false',
+      sst: 666,
+    };
+    const expect = {
+      nax: { type: 'number' },
+      foo: {
+        type: 'number',
+        required: true
+      },
+      bar: {
+        type: 'string',
+        required: false
+      },
+      baz: {
+        type: 'object',
+        required: true
+      },
+      qoa: {
+        type: 'array',
+        required: true
+      },
+      fpk: {
+        type: 'boolean',
+        required: true
+      },
+      boo: {
+        type: 'boolean',
+      },
+      coo: {
+        type: 'boolean',
+      },
+      default: {
+        type: 'string',
+        required: false,
+        default: 'ddd'
+      },
+      sst: {
+        type: 'string',
+      },
+      addon: undefined
+    };
+    const validatedInput = validate(input, expect);
+    assert(validatedInput.foo === 1);
+    assert(validatedInput.default === 'ddd');
+    assert(!validatedInput.addon);
+    assert(validatedInput.boo === true);
+    assert(validatedInput.coo === false);
+    assert(typeof validatedInput.sst === 'string');
+  });
+  it('should throw error when no required input', () => {
+    const input = {};
+    const expect = {
+      foo: {
+        type: 'string',
+        required: true
+      }
+    };
+    try {
+      validate(input, expect);
+      throw new Error();
+    } catch (err) {
+      assert(err.message === "incorrect field: 'foo', please check again!");
+    }
+  });
+  it('should throw error when not a number while type=number', () => {
+    const input = { foo: 'r' };
+    const expect = { foo: { type: 'number' } };
+    try {
+      validate(input, expect);
+      throw new Error();
+    } catch (err) {
+      assert(err.message === "incorrect field: 'foo', please check again!");
+    }
+  });
+  it('should throw error when not a boolean while type=boolean', () => {
+    const input = { foo: 'r' };
+    const expect = { foo: { type: 'boolean' } };
+    try {
+      validate(input, expect);
+      throw new Error();
+    } catch (err) {
+      assert(err.message === "incorrect field: 'foo', please check again!");
+    }
+  });
+  it('should throw error when not a number while type=object', () => {
+    const input = { foo: 'r' };
+    const expect = { foo: { type: 'object' } };
+    try {
+      validate(input, expect);
+      throw new Error();
+    } catch (err) {
+      assert(err.message === "incorrect field: 'foo', please check again!");
+    }
+  });
+  it('should throw error when not a number while type=array', () => {
+    const input = { foo: 'r' };
+    const expect = { foo: { type: 'array' } };
+    try {
+      validate(input, expect);
+      throw new Error();
+    } catch (err) {
+      assert(err.message === "incorrect field: 'foo', please check again!");
+    }
+  });
+});
