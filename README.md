@@ -58,7 +58,7 @@ for more detail please take a look at the [example koa server](https://github.co
 
 #### first wrapper the koa-router object
 
-```
+```javascript
 // router.js
 import Router from 'koa-router';
 
@@ -103,7 +103,7 @@ router.swagger({
 router.map(Test);
 
 // automatically call router.map for all classes in dir
-// recursive: whether recursively traverse all files or not, default is false
+// recursive: whether recursively traverse all files or not, default is true
 router.mapDir(_path.resolve(__dirname, './sub_routes_dir'), { recursive: true });
 
 
@@ -111,7 +111,7 @@ router.mapDir(_path.resolve(__dirname, './sub_routes_dir'), { recursive: true })
 
 #### using decorator to make api definition
 
-```
+```javascript
 // test.js
 
 import User from 'models/user';
@@ -148,7 +148,7 @@ export default class Test {
     id: { type: 'number', required: true, default: 1, description: 'id' }
   })
   static async getUser(ctx) {
-    const { id } = ctx.params;
+    const { id } = ctx.validatedParams;
     const user = await User.findById(id);
     ctx.body = { user };
   }
@@ -157,7 +157,8 @@ export default class Test {
   @testTag
   @body(userSchema)
   static async postUser(ctx) {
-    const body = ctx.request.body;
+    // const body = ctx.request.body;
+    const body = ctx.validatedBody;
     ctx.body = { result: body };
   }
 
@@ -207,6 +208,24 @@ responses
 // responses is optional
 ```
 
+#### validation
+
+support validation type: `string, number, boolean, object, array.`
+
+`properties` in `{type: 'object'}` and `items` in `{type: 'array'}` can alse be validated.
+
+other types eg. `integer` will not be validated.
+
+by default, validation is activated and you can call ctx.validatedQuery[Body|Params] to access the validated value.
+
+to turn off validation:
+
+```javascript
+router.mapDir(_path.resolve(__dirname), {
+  // default: true, if true, you can call ctx.validatedBody[Query|Params] to get validated data.
+  doValidation: false,
+});
+```
 
 
 ##### runing the project and it will generate docs through swagger ui

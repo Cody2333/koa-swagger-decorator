@@ -1,7 +1,7 @@
 import _path from 'path';
 import assert from 'assert';
 import server from '../example/main';
-import { getPath, convertPath, readSync } from '../lib/utils';
+import { getPath, convertPath, getFilepaths } from '../lib/utils';
 import validate from '../lib/validate';
 
 const request = require('supertest')(server);
@@ -100,15 +100,15 @@ describe('Function Test:', () => {
       expect(r).to.equal('/api/user');
     });
   });
-  describe('ReadSync:', () => {
+  describe('getFilepaths:', () => {
     it('should return an array,length = 2 when recursive=false', () => {
       const dir = _path.resolve(__dirname, '../example/routes/sub_routes');
-      const r = readSync(dir);
+      const r = getFilepaths(dir, false);
       expect(r).to.be.an('array').to.have.lengthOf(2);
     });
     it('should return an array,length = 3 when recursive=true', () => {
       const dir = _path.resolve(__dirname, '../example/routes/sub_routes');
-      const r = readSync(dir, [], true);
+      const r = getFilepaths(dir, true);
       expect(r).to.be.an('array').to.have.lengthOf(3);
     });
   });

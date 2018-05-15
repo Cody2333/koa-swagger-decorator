@@ -1,6 +1,6 @@
 import { request, summary, tags } from '../../../../lib';
 
-const tag = tags(['Other']);
+const tag = tags(['PP']);
 
 
 export default class Other3Router {

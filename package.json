@@ -4,6 +4,7 @@
   "description": "using decorator to automatically generate swagger doc for koa-router",
   "main": "dist/index.js",
   "dependencies": {
+    "globby": "^8.0.1",
     "is-type-of": "^1.2.0",
     "koa-router": "^7.2.1",
     "ramda": "^0.25.0"
