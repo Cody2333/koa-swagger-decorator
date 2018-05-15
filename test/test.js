@@ -262,7 +262,7 @@ describe('Validate:', () => {
     const input = {
       o1: {
         aaaa: 'gg',
-        bbbb: { yy: 'rr', zz: { pp: 'false' } },
+        bbbb: { yy: 'rr', zz: { pp: 'false' }, aa: '66' },
         cccc: 'dd',
       }
     };
@@ -292,10 +292,11 @@ describe('Validate:', () => {
       type: 'object',
       properties: {
         url: { type: 'string', required: true },
-        name: { type: 'string', example: 'Bob' }
+        name: { type: 'string', example: 'Bob' },
+        nnn: { type: 'number' }
       }
     };
-    input.arr = [{ url: 'a', other: 'b' }, { url: 'a', name: 'b' }];
+    input.arr = [{ url: 'a', other: 'b', num: '33' }, { url: 'a', name: 'b' }];
     validate(input, expect);
   });
 });
