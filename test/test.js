@@ -130,7 +130,7 @@ describe('Validate:', () => {
       addon: 'ttt',
       boo: 'true',
       coo: 'false',
-      sst: 666,
+      sst: '666',
     };
     const expect = {
       nax: { type: 'number' },
@@ -183,7 +183,7 @@ describe('Validate:', () => {
     const expect = {
       foo: {
         type: 'string',
-        required: true
+        required: true,
       }
     };
     try {
@@ -232,5 +232,70 @@ describe('Validate:', () => {
     } catch (err) {
       assert(err.message === "incorrect field: 'foo', please check again!");
     }
+  });
+
+  it('shoud support complex object data', () => {
+    const expect = {
+      o1: {
+        type: 'object',
+        properties: {
+          aaaa: { type: 'string', example: 'http://www.baidu.com', required: true },
+          bbbb: {
+            type: 'object',
+            required: true,
+            properties: {
+              yy: { type: 'string', required: true },
+              zz: {
+                type: 'object',
+                required: true,
+                properties: {
+                  pp: { type: 'string' }
+                }
+              },
+              aa: { type: 'number', required: false }
+            }
+          }
+        }
+      }
+    };
+
+    const input = {
+      o1: {
+        aaaa: 'gg',
+        bbbb: { yy: 'rr', zz: { pp: 'false' } },
+        cccc: 'dd',
+      }
+    };
+    validate(input, expect);
+  });
+  it('shoud support complex array data', () => {
+    const expect = {
+      arr: {
+        type: 'array',
+        items: 'string',
+        required: true,
+      }
+    };
+
+    const input = { arr: ['eee', 'tt'] };
+    validate(input, expect);
+    expect.arr.items = 'number';
+    input.arr = [3, 4];
+    validate(input, expect);
+    expect.arr.items = 'boolean';
+    input.arr = [true, false];
+    validate(input, expect);
+    expect.arr.items = 'object';
+    input.arr = [{}, { a: 3 }];
+    validate(input, expect);
+    expect.arr.items = {
+      type: 'object',
+      properties: {
+        url: { type: 'string', required: true },
+        name: { type: 'string', example: 'Bob' }
+      }
+    };
+    input.arr = [{ url: 'a', other: 'b' }, { url: 'a', name: 'b' }];
+    validate(input, expect);
   });
 });
