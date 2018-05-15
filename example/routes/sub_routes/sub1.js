@@ -11,7 +11,7 @@ const exampleItem = {
   }
 };
 
-export default class OtherRouter {
+module.exports = class OtherRouter {
   @request('get', '/other')
   @summary('something in sub routes')
   @tag
@@ -46,5 +46,5 @@ export default class OtherRouter {
   static async testPost(ctx) {
     ctx.body = ctx.validatedBody;
   }
-}
+};
 
