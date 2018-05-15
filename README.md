@@ -1,5 +1,8 @@
-# koa-swagger-decorator [npm-url]
+# koa-swagger-decorator
 > using decorator to auto generate swagger json docs
+
+[![build status][travis-image]][travis-url]
+[![npm](https://img.shields.io/npm/l/express.svg)](https://www.npmjs.com/package/koa-swagger-decorator)
 
 ## Installation
 
@@ -100,11 +103,16 @@ router.swagger({
   }
 });
 // map all static methods at Test class for router
-router.map(Test);
+// router.map(Test);
 
-// automatically call router.map for all classes in dir
-// recursive: whether recursively traverse all files or not, default is true
-router.mapDir(_path.resolve(__dirname, './sub_routes_dir'), { recursive: true });
+// mapDir will scan the input dir, and automatically call router.map to all Router Class
+router.mapDir(_path.resolve(__dirname), {
+  // default: true. To recursively scan the dir to make router. If false, will not scan subroutes dir
+  // recursive: true,
+
+  // default: true, if true, you can call ctx.validatedBody[Query|Params] to get validated data.
+  // doValidation: true,
+});
 
 
 ```
@@ -237,3 +245,5 @@ router.mapDir(_path.resolve(__dirname), {
 
 
 [npm-url]: https://npmjs.org/package/koa-swagger-decorator
+[travis-image]: https://travis-ci.org/Cody2333/koa-swagger-decorator.svg?branch=develop
+[travis-url]: https://travis-ci.org/Cody2333/koa-swagger-decorator
