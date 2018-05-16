@@ -1,4 +1,3 @@
-import _path from 'path';
 import Router from 'koa-router';
 import { wrapper } from '../../lib';
 
@@ -36,7 +35,7 @@ router.swagger({
 
 
 // mapDir will scan the input dir, and automatically call router.map to all Router Class
-router.mapDir(_path.resolve(__dirname), {
+router.mapDir(__dirname, {
   // default: true. To recursively scan the dir to make router. If false, will not scan subroutes dir
   // recursive: true,
 
