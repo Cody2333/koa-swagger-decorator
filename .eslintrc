@@ -32,7 +32,10 @@
     "no-underscore-dangle": 0,
     "import/no-extraneous-dependencies": 0,
     "import/no-named-as-default-member": 0,
-    "no-restricted-globals": 0
+    "no-restricted-globals": 0,
+    "no-use-before-define": 0,
+    "no-restricted-syntax": 0,
+    "import/no-dynamic-require": 0
   },
   "settings": {
     "import/parser": "babel-eslint"

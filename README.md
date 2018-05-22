@@ -1,5 +1,8 @@
-# koa-swagger-decorator [npm-url]
+# koa-swagger-decorator
 > using decorator to auto generate swagger json docs
+
+[![build status][travis-image]][travis-url]
+[![npm](https://img.shields.io/npm/l/express.svg)](https://www.npmjs.com/package/koa-swagger-decorator)
 
 ## Installation
 
@@ -58,7 +61,7 @@ for more detail please take a look at the [example koa server](https://github.co
 
 #### first wrapper the koa-router object
 
-```
+```javascript
 // router.js
 import Router from 'koa-router';
 
@@ -100,18 +103,23 @@ router.swagger({
   }
 });
 // map all static methods at Test class for router
-router.map(Test);
+// router.map(Test);
 
-// automatically call router.map for all classes in dir
-// recursive: whether recursively traverse all files or not, default is false
-router.mapDir(_path.resolve(__dirname, './sub_routes_dir'), { recursive: true });
+// mapDir will scan the input dir, and automatically call router.map to all Router Class
+router.mapDir(_path.resolve(__dirname), {
+  // default: true. To recursively scan the dir to make router. If false, will not scan subroutes dir
+  // recursive: true,
+
+  // default: true, if true, you can call ctx.validatedBody[Query|Params] to get validated data.
+  // doValidation: true,
+});
 
 
 ```
 
 #### using decorator to make api definition
 
-```
+```javascript
 // test.js
 
 import User from 'models/user';
@@ -148,7 +156,7 @@ export default class Test {
     id: { type: 'number', required: true, default: 1, description: 'id' }
   })
   static async getUser(ctx) {
-    const { id } = ctx.params;
+    const { id } = ctx.validatedParams;
     const user = await User.findById(id);
     ctx.body = { user };
   }
@@ -157,7 +165,8 @@ export default class Test {
   @testTag
   @body(userSchema)
   static async postUser(ctx) {
-    const body = ctx.request.body;
+    // const body = ctx.request.body;
+    const body = ctx.validatedBody;
     ctx.body = { result: body };
   }
 
@@ -207,6 +216,24 @@ responses
 // responses is optional
 ```
 
+#### validation
+
+support validation type: `string, number, boolean, object, array.`
+
+`properties` in `{type: 'object'}` and `items` in `{type: 'array'}` can alse be validated.
+
+other types eg. `integer` will not be validated.
+
+by default, validation is activated and you can call ctx.validatedQuery[Body|Params] to access the validated value.
+
+to turn off validation:
+
+```javascript
+router.mapDir(_path.resolve(__dirname), {
+  // default: true, if true, you can call ctx.validatedBody[Query|Params] to get validated data.
+  doValidation: false,
+});
+```
 
 
 ##### runing the project and it will generate docs through swagger ui
@@ -218,3 +245,5 @@ responses
 
 
 [npm-url]: https://npmjs.org/package/koa-swagger-decorator
+[travis-image]: https://travis-ci.org/Cody2333/koa-swagger-decorator.svg?branch=develop
+[travis-url]: https://travis-ci.org/Cody2333/koa-swagger-decorator

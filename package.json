@@ -4,7 +4,10 @@
   "description": "using decorator to automatically generate swagger doc for koa-router",
   "main": "dist/index.js",
   "dependencies": {
-    "lodash": "^4.17.4"
+    "globby": "^8.0.1",
+    "is-type-of": "^1.2.0",
+    "koa-router": "^7.2.1",
+    "ramda": "^0.25.0"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
@@ -16,15 +19,16 @@
     "eslint": "^4.17.0",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.8.0",
+    "intelli-espower-loader": "^1.0.1",
     "koa": "^2.3.0",
     "koa-bodyparser": "^4.2.0",
     "koa-cors": "^0.0.16",
     "koa-multer": "^1.0.2",
-    "koa-router": "^7.2.1",
     "koa-static": "^4.0.1",
     "lodash": "^4.17.4",
-    "mocha": "^5.0.1",
+    "mocha": "^5.1.1",
     "nodemon": "^1.11.0",
+    "power-assert": "^1.5.0",
     "sha1": "^1.1.1",
     "supertest": "^2.0.1",
     "url": "^0.11.0"

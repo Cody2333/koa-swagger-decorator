@@ -1,12 +1,7 @@
 import Router from 'koa-router';
-import _path from 'path';
-import SampleRouter from './sample';
-import UserRouter from './user';
-
 import { wrapper } from '../../lib';
 
 const router = new Router();
-
 wrapper(router);
 
 // swagger docs avaliable at http://localhost:3000/api/swagger-html
@@ -38,10 +33,14 @@ router.swagger({
   }
 });
 
-router.map(SampleRouter);
-router.map(UserRouter);
 
 // mapDir will scan the input dir, and automatically call router.map to all Router Class
-router.mapDir(_path.resolve(__dirname, './sub_routes'), { recursive: true });
+router.mapDir(__dirname, {
+  // default: true. To recursively scan the dir to make router. If false, will not scan subroutes dir
+  // recursive: true,
+
+  // default: true, if true, you can call ctx.validatedBody[Query|Params] to get validated data.
+  // doValidation: true,
+});
 
 export default router;
