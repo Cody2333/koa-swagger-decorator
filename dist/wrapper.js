@@ -3,10 +3,15 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.SwaggerRouter = exports.wrapper = undefined;
 
-var _lodash = require('lodash');
+var _koaRouter = require('koa-router');
 
-var _lodash2 = _interopRequireDefault(_lodash);
+var _koaRouter2 = _interopRequireDefault(_koaRouter);
+
+var _isTypeOf = require('is-type-of');
+
+var _isTypeOf2 = _interopRequireDefault(_isTypeOf);
 
 var _validate = require('./validate');
 
@@ -16,7 +21,9 @@ var _swaggerHTML = require('./swaggerHTML');
 
 var _swaggerJSON = require('./swaggerJSON');
 
-var _index = require('./index');
+var _swaggerObject = require('./swaggerObject');
+
+var _swaggerObject2 = _interopRequireDefault(_swaggerObject);
 
 var _utils = require('./utils');
 
@@ -49,76 +56,94 @@ const validator = parameters => async (ctx, next) => {
   await next();
 };
 
-/**
- * add [ router.map ] and [ router.swagger ] for router object
- * @param {Object} router
- */
+const handleSwagger = (router, options) => {
+  const {
+    swaggerJsonEndpoint = '/swagger-json',
+    swaggerHtmlEndpoint = '/swagger-html',
+    prefix = ''
+  } = options;
 
-exports.default = router => {
+  // setup swagger router
+  router.get(swaggerJsonEndpoint, async ctx => {
+    ctx.body = (0, _swaggerJSON.swaggerJSON)(options, _swaggerObject2.default.data);
+  });
+  router.get(swaggerHtmlEndpoint, async ctx => {
+    ctx.body = (0, _swaggerHTML.swaggerHTML)((0, _utils.getPath)(prefix, swaggerJsonEndpoint));
+  });
+};
+
+const handleMap = (router, SwaggerClass, { doValidation = true }) => {
+  if (!(0, _utils.isSwaggerRouter)(SwaggerClass)) return;
+  // remove useless field in class object:  constructor, length, name, prototype
+  const methods = Object.getOwnPropertyNames(SwaggerClass).filter(method => !['name', 'constructor', 'length', 'prototype'].includes(method));
+  // map all method in methods
+  methods
+  // filter methods withour @request decorator
+  .filter(item => {
+    const { path, method } = SwaggerClass[item];
+    if (!path && !method) {
+      return false;
+    }
+    return true;
+  })
+  // add router
+  .forEach(item => {
+    const { path, method } = SwaggerClass[item];
+    let {
+      middlewares = []
+    } = SwaggerClass[item];
+    if (_isTypeOf2.default.function(middlewares)) {
+      middlewares = [middlewares];
+    }
+    if (!_isTypeOf2.default.array(middlewares)) {
+      throw new Error('middlewares params must be an array or function');
+    }
+    middlewares.forEach(item => {
+      if (!_isTypeOf2.default.function(item)) {
+        throw new Error('item in middlewares must be a function');
+      }
+    });
+    if (!reqMethods.includes(method)) {
+      throw new Error(`illegal API: ${method} ${path} at [${item}]`);
+    }
+    const chain = [`${(0, _utils.convertPath)(path)}`, doValidation ? validator(SwaggerClass[item].parameters) : async (ctx, next) => {
+      await next();
+    }, ...middlewares, SwaggerClass[item]];
+    router[method](...chain);
+  });
+};
+
+const handleMapDir = (router, dir, options) => {
+  (0, _utils.loadSwaggerClasses)(dir, options).forEach(c => {
+    router.map(c, options);
+  });
+};
+
+const wrapper = router => {
   router.swagger = options => {
-    const {
-      swaggerJsonEndpoint = '/swagger-json',
-      swaggerHtmlEndpoint = '/swagger-html',
-      prefix = ''
-    } = options;
-
-    // setup swagger router
-    router.get(swaggerJsonEndpoint, async ctx => {
-      ctx.body = (0, _swaggerJSON.swaggerJSON)(options, _index.apiObjects);
-    });
-    router.get(swaggerHtmlEndpoint, async ctx => {
-      ctx.body = (0, _swaggerHTML.swaggerHTML)((0, _utils.getPath)(prefix, swaggerJsonEndpoint));
-    });
+    handleSwagger(router, options);
   };
-  router.map = StaticClass => {
-    if (!(0, _utils.isSwaggerRouter)(StaticClass)) return;
-    const methods = Object.getOwnPropertyNames(StaticClass);
-
-    // remove useless field in class object:  constructor, length, name, prototype
-    _lodash2.default.pull(methods, 'name', 'constructor', 'length', 'prototype');
-    // map all method in methods
-    methods
-    // filter methods withour @request decorator
-    .filter(item => {
-      const { path, method } = StaticClass[item];
-      if (!path && !method) {
-        return false;
-      }
-      return true;
-    })
-    // add router
-    .forEach(item => {
-      const { path, method } = StaticClass[item];
-      let {
-        middlewares = []
-      } = StaticClass[item];
-      if (typeof middlewares === 'function') {
-        middlewares = [middlewares];
-      }
-      if (!Array.isArray(middlewares)) {
-        throw new Error('middlewares params must be an array or function');
-      }
-      middlewares.forEach(item => {
-        if (typeof item !== 'function') {
-          throw new Error('item in middlewares must be a function');
-        }
-      });
-      if (!reqMethods.includes(method)) {
-        throw new Error(`illegal API: ${method} ${path} at [${item}]`);
-      }
-      const chain = [`${(0, _utils.convertPath)(path)}`, validator(StaticClass[item].parameters), ...middlewares, StaticClass[item]];
-      router[method](...chain);
-    });
+  router.map = (SwaggerClass, options) => {
+    handleMap(router, SwaggerClass, options);
   };
 
   router.mapDir = (dir, options = {}) => {
-    const { recursive = false } = options;
-    const filenames = (0, _utils.readSync)(dir, [], recursive);
-    /* eslint-disable*/
-    const classes = filenames.map(filename => require(filename));
-    /* eslint-disable*/
-    classes.map(c => c.default).forEach(c => {
-      router.map(c);
-    });
+    handleMapDir(router, dir, options);
   };
 };
+
+let SwaggerRouter = class SwaggerRouter extends _koaRouter2.default {
+  swagger(options) {
+    handleSwagger(this, options);
+  }
+
+  map(SwaggerClass, options) {
+    handleMap(this, SwaggerClass, options);
+  }
+
+  mapDir(dir, options = {}) {
+    handleMapDir(this, dir, options);
+  }
+};
+exports.wrapper = wrapper;
+exports.SwaggerRouter = SwaggerRouter;

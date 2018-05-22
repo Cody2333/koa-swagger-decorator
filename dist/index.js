@@ -3,32 +3,23 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.responses = exports.formData = exports.middlewares = exports.apiObjects = exports.wrapper = exports.tags = exports.body = exports.path = exports.query = exports.description = exports.desc = exports.params = exports.summary = exports.request = undefined;
+exports.SwaggerRouter = exports.responses = exports.formData = exports.middlewares = exports.wrapper = exports.tags = exports.body = exports.path = exports.query = exports.description = exports.desc = exports.params = exports.summary = exports.request = undefined;
 
-var _lodash = require('lodash');
+var _ramda = require('ramda');
 
-var _lodash2 = _interopRequireDefault(_lodash);
+var _ramda2 = _interopRequireDefault(_ramda);
+
+var _swaggerObject = require('./swaggerObject');
+
+var _swaggerObject2 = _interopRequireDefault(_swaggerObject);
 
 var _wrapper = require('./wrapper');
 
-var _wrapper2 = _interopRequireDefault(_wrapper);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * used for building swagger docs object
- */
-const apiObjects = {};
-
-const _addToApiObject = (target, name, apiObjects, content) => {
-  const key = `${target.name}-${name}`;
-  if (!apiObjects[key]) apiObjects[key] = {};
-  Object.assign(apiObjects[key], content);
-};
 
 const _desc = (type, text) => (target, name, descriptor) => {
   descriptor.value[type] = text;
-  _addToApiObject(target, name, apiObjects, { [type]: text });
+  _swaggerObject2.default.add(target, name, { [type]: text });
   return descriptor;
 };
 
@@ -54,15 +45,15 @@ const _params = (type, parameters) => (target, name, descriptor) => {
     item.in = type;
   });
 
-  _addToApiObject(target, name, apiObjects, { [type]: swaggerParameters });
+  _swaggerObject2.default.add(target, name, { [type]: swaggerParameters });
   return descriptor;
 };
 
 const request = (method, path) => (target, name, descriptor) => {
-  method = _lodash2.default.toLower(method);
+  method = _ramda2.default.toLower(method);
   descriptor.value.method = method;
   descriptor.value.path = path;
-  _addToApiObject(target, name, apiObjects, {
+  _swaggerObject2.default.add(target, name, {
     request: { method, path },
     security: [{ ApiKeyAuth: [] }]
   });
@@ -76,10 +67,10 @@ const middlewares = middlewares => (target, name, descriptor) => {
 
 const responses = (responses = { 200: { description: 'success' } }) => (target, name, descriptor) => {
   descriptor.value.responses = responses;
-  _addToApiObject(target, name, apiObjects, { responses });
+  _swaggerObject2.default.add(target, name, { responses });
   return descriptor;
 };
-const desc = _lodash2.default.curry(_desc);
+const desc = _ramda2.default.curry(_desc);
 
 // description and summary
 const description = desc('description');
@@ -88,7 +79,7 @@ const summary = desc('summary');
 
 const tags = desc('tags');
 
-const params = _lodash2.default.curry(_params);
+const params = _ramda2.default.curry(_params);
 
 // below are [parameters]
 
@@ -114,11 +105,11 @@ const Doc = {
   path,
   body,
   tags,
-  wrapper: _wrapper2.default,
-  apiObjects,
+  wrapper: _wrapper.wrapper,
   middlewares,
   formData,
-  responses
+  responses,
+  SwaggerRouter: _wrapper.SwaggerRouter
 };
 
 exports.default = Doc;
@@ -131,8 +122,8 @@ exports.query = query;
 exports.path = path;
 exports.body = body;
 exports.tags = tags;
-exports.wrapper = _wrapper2.default;
-exports.apiObjects = apiObjects;
+exports.wrapper = _wrapper.wrapper;
 exports.middlewares = middlewares;
 exports.formData = formData;
 exports.responses = responses;
+exports.SwaggerRouter = _wrapper.SwaggerRouter;
