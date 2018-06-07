@@ -38,13 +38,34 @@ export default class SampleRouter {
   })
   @responses({
     200:
-    { description: 'file upload success' },
+      { description: 'file upload success' },
     500:
-    { description: 'something wrong about server' }
+      { description: 'something wrong about server' }
   })
   static async upload(ctx) {
     const { file } = ctx.req;
     file.url = getFileUrl(file.filename);
     ctx.body = { result: file };
+  }
+
+  @request('get', '/enum')
+  @summary('example of  enum')
+  @description('example of  enum')
+  @tag
+  @middlewares([upload.single('file')])
+  @query({
+    page: {
+      type: 'string', enum: ['1', '2', '3'], description: 'page number'
+    }
+  })
+  @responses({
+    200:
+      { description: 'success' },
+    500:
+      { description: 'something wrong about server' }
+  })
+  static async enum(ctx) {
+    const { page } = ctx.request.query;
+    ctx.body = { result: page };
   }
 }
