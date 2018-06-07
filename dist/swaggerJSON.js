@@ -5,10 +5,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.swaggerJSON = undefined;
 
-var _lodash = require('lodash');
-
-var _lodash2 = _interopRequireDefault(_lodash);
-
 var _swaggerTemplate = require('./swaggerTemplate');
 
 var _swaggerTemplate2 = _interopRequireDefault(_swaggerTemplate);
@@ -29,8 +25,8 @@ const swaggerJSON = (options = {}, apiObjects) => {
     swaggerOptions = {}
   } = options;
   const swaggerJSON = (0, _swaggerTemplate2.default)(title, description, version, swaggerOptions);
-
-  _lodash2.default.chain(apiObjects).forEach(value => {
+  Object.keys(apiObjects).forEach(key => {
+    const value = apiObjects[key];
     if (!Object.keys(value).includes('request')) {
       throw new Error('missing [request] field');
     }
@@ -73,7 +69,7 @@ const swaggerJSON = (options = {}, apiObjects) => {
       tags,
       security
     };
-  }).value();
+  });
   return swaggerJSON;
 };
 
