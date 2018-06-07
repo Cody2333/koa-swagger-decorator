@@ -120,10 +120,10 @@ const handleMapDir = (router, dir, options) => {
 };
 
 const wrapper = router => {
-  router.swagger = options => {
+  router.swagger = (options = {}) => {
     handleSwagger(router, options);
   };
-  router.map = (SwaggerClass, options) => {
+  router.map = (SwaggerClass, options = {}) => {
     handleMap(router, SwaggerClass, options);
   };
 
