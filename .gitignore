@@ -43,3 +43,4 @@ jspm_packages
 #.idea
 /.idea
 /temp
+/.nyc_output
