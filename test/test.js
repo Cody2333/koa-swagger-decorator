@@ -324,7 +324,7 @@ describe('Validate:', () => {
     }
   });
 
-  it(' when enum doesnot include input', () => {
+  it(' when enum include input', () => {
     const input = { foo: '1' };
     const expect = {
       foo: { type: 'string', enum: ['1', '2', '3', '4'] }
