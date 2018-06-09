@@ -299,4 +299,37 @@ describe('Validate:', () => {
     input.arr = [{ url: 'a', other: 'b', num: '33' }, { url: 'a', name: 'b' }];
     validate(input, expect);
   });
+
+  it('throw error when enum is an empty array', () => {
+    const input = { foo: '1' };
+    const expect = {
+      foo: { type: 'string', enum: [] }
+    };
+    try {
+      validate(input, expect);
+    } catch (err) {
+      assert(err.message === "incorrect field: 'foo', please check again!");
+    }
+  });
+
+  it('throw error when enum doesnot include input', () => {
+    const input = { foo: '1' };
+    const expect = {
+      foo: { type: 'string', enum: ['2', '3', '4'] }
+    };
+    try {
+      validate(input, expect);
+    } catch (err) {
+      assert(err.message === "incorrect field: 'foo', please check again!");
+    }
+  });
+
+  it(' when enum doesnot include input', () => {
+    const input = { foo: '1' };
+    const expect = {
+      foo: { type: 'string', enum: ['1', '2', '3', '4'] }
+    };
+    const { foo } = validate(input, expect);
+    assert(foo === '1');
+  });
 });
