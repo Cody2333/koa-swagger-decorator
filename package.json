@@ -9,6 +9,15 @@
     "koa-router": "^7.2.1",
     "ramda": "^0.25.0"
   },
+  "nyc": {
+    "include": [
+      "lib/**/*.js"
+    ],
+    "exclude": [
+      "example/**/*.js",
+      "test/**/*.js"
+    ]
+  },
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-core": "^6.26.0",
