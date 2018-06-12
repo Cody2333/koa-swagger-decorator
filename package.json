@@ -47,8 +47,10 @@
     "build": "babel lib -d dist",
     "start:babel": "babel-node example/main",
     "start": "nodemon --watch example --exec npm run start:babel -L",
-    "test": "./node_modules/mocha/bin/mocha --require babel-core/register test/**/*.js --bail -t 2000000",
+    "test": "npm run lint && ./node_modules/mocha/bin/mocha --require babel-core/register test/**/*.js --bail -t 2000000",
     "prepublish": "npm run build",
+    "lint": "eslint .",
+    "format": "eslint . --fix",
     "debug": "babel-node example/main --inspect --debug-brk --nolazy example/main",
     "cov": "nyc --reporter=lcov npm run test"
   },
