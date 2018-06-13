@@ -1,11 +1,11 @@
 # koa-swagger-decorator
+
 > using decorator to auto generate swagger json docs
 
 [![build status][travis-image]][travis-url]
 [![npm](https://img.shields.io/npm/l/express.svg)](https://www.npmjs.com/package/koa-swagger-decorator)
 
 ## Installation
-
 
 ```bash
 npm install koa-swagger-decorator
@@ -21,7 +21,7 @@ based on [Swagger OpenAPI Specification 2.0](https://github.com/OAI/OpenAPI-Spec
 
 ## Example
 
-```
+```bash
 // using commonds below to start and test the example server
 
 git clone https://github.com/Cody2333/koa-swagger-decorator.git
@@ -34,7 +34,6 @@ npm run start
 
 finally open:
 http://localhost:3000/api/swagger-html
-
 ```
 
 ### Requirements
@@ -43,7 +42,7 @@ http://localhost:3000/api/swagger-html
 - koa-router
 - babel support for decorator
 
-```
+```bash
 // add [transform-decorators-legacy] to .babelrc
 
 npm install --save-dev babel-plugin-transform-decorators-legacy
@@ -55,6 +54,7 @@ npm install --save-dev babel-plugin-transform-decorators-legacy
   "plugins": ["transform-decorators-legacy"]
 }
 ```
+
 ### Introduction
 
 for more detail please take a look at the [example koa server](https://github.com/Cody2333/koa-swagger-decorator/tree/master/example)
@@ -63,19 +63,18 @@ for more detail please take a look at the [example koa server](https://github.co
 
 ```javascript
 // router.js
-import Router from 'koa-router';
+import Router from 'koa-router'
 
-import Test from './test';
+import Test from './test'
 
-import { wrapper } from 'koa-swagger-decorator';
+import { wrapper } from 'koa-swagger-decorator'
 
-const router = new Router();
+const router = new Router()
 
-wrapper(router);
+wrapper(router)
 
 // swagger docs avaliable at http://localhost:3000/api/swagger-html
 router.swagger({
-
   title: 'Example Server',
   description: 'API DOC',
   version: '1.0.0',
@@ -97,11 +96,11 @@ router.swagger({
       api_key: {
         type: 'apiKey',
         in: 'header',
-        name: 'api_key'
-      }
+        name: 'api_key',
+      },
     },
-  }
-});
+  },
+})
 // map all static methods at Test class for router
 // router.map(Test);
 
@@ -109,12 +108,9 @@ router.swagger({
 router.mapDir(_path.resolve(__dirname), {
   // default: true. To recursively scan the dir to make router. If false, will not scan subroutes dir
   // recursive: true,
-
   // default: true, if true, you can call ctx.validatedBody[Query|Params] to get validated data.
   // doValidation: true,
-});
-
-
+})
 ```
 
 #### using decorator to make api definition
@@ -122,10 +118,10 @@ router.mapDir(_path.resolve(__dirname), {
 ```javascript
 // test.js
 
-import User from 'models/user';
-import { request, summary, query, path, body, tags } from 'koa-swagger-decorator';
+import User from 'models/user'
+import { request, summary, query, path, body, tags } from 'koa-swagger-decorator'
 
-const testTag = tags(['test']);
+const testTag = tags(['test'])
 
 const userSchema = {
   name: { type: 'string', required: true },
@@ -133,32 +129,32 @@ const userSchema = {
   groups: {
     type: 'array',
     required: true,
-    items: { type: 'string', example: 'group1' }
-  }
-};
+    items: { type: 'string', example: 'group1' },
+  },
+}
 
 export default class Test {
   @request('get', '/users')
   @summary('get user list')
   @testTag
   @query({
-    type: { type: 'number', required: true, default: 1, description: 'type' }
+    type: { type: 'number', required: true, default: 1, description: 'type' },
   })
   static async getUsers(ctx) {
-    const users = await User.findAll();
-    ctx.body = { users };
+    const users = await User.findAll()
+    ctx.body = { users }
   }
 
   @request('get', '/users/{id}')
   @summary('get user info by id')
   @testTag
   @path({
-    id: { type: 'number', required: true, default: 1, description: 'id' }
+    id: { type: 'number', required: true, default: 1, description: 'id' },
   })
   static async getUser(ctx) {
-    const { id } = ctx.validatedParams;
-    const user = await User.findById(id);
-    ctx.body = { user };
+    const { id } = ctx.validatedParams
+    const user = await User.findById(id)
+    ctx.body = { user }
   }
 
   @request('post', '/users')
@@ -166,20 +162,19 @@ export default class Test {
   @body(userSchema)
   static async postUser(ctx) {
     // const body = ctx.request.body;
-    const body = ctx.validatedBody;
-    ctx.body = { result: body };
+    const body = ctx.validatedBody
+    ctx.body = { result: body }
   }
 
   static async temp(ctx) {
-    ctx.body = { result: 'success' };
+    ctx.body = { result: 'success' }
   }
 }
-
 ```
 
 #### avaliable annotations:
 
-- tags         
+- tags
 - query
 - path
 - body
@@ -188,32 +183,33 @@ export default class Test {
 - summary
 - description
 - responses
+- deprecated
 
 ```
+request // @request('POST', '/users')
 
-request      // @request('POST', '/users')
+tags // @tags(['example'])
+query // @query({limit: {type: 'number', required: true, default: 10, description: 'desc'}})
 
-tags         // @tags(['example'])
+path // @path({limit: {type: 'number', required: true, default: 10, description: 'desc'}})
 
-query        // @query({limit: {type: 'number', required: true, default: 10, description: 'desc'}})
+body // @body({groups: {type: 'array', required: true, items: { type: 'string', example: 'group1' }}})
 
-path         // @path({limit: {type: 'number', required: true, default: 10, description: 'desc'}})
+formData // @formData({file: {type: 'file', required: true, description: 'file content'}})
 
-body         // @body({groups: {type: 'array', required: true, items: { type: 'string', example: 'group1' }}})
-
-formData     // @formData({file: {type: 'file', required: true, description: 'file content'}})
-
-middlewares  
-// support koa middlewares. 
+middlewares
+// support koa middlewares.
 // eg. @middlewares([func1,func2])
 
-summary      // @summary('api summary')
+summary // @summary('api summary')
 
-description  // @description('api description')
+description // @description('api description')
 
-responses 
+responses
 // @responses({ 200: { description: 'success'}, 400: { description: 'error'}})
 // responses is optional
+
+deprecated // @deprecated
 ```
 
 #### validation
@@ -232,17 +228,16 @@ to turn off validation:
 router.mapDir(_path.resolve(__dirname), {
   // default: true, if true, you can call ctx.validatedBody[Query|Params] to get validated data.
   doValidation: false,
-});
+})
 ```
-
 
 ##### runing the project and it will generate docs through swagger ui
 
 ![image.png](http://upload-images.jianshu.io/upload_images/2563527-4b6ed895183a0055.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 ## License
 
- © MIT
-
+© MIT
 
 [npm-url]: https://npmjs.org/package/koa-swagger-decorator
 [travis-image]: https://travis-ci.org/Cody2333/koa-swagger-decorator.svg?branch=develop
