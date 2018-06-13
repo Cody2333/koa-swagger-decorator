@@ -4,7 +4,7 @@ import Doc, { description } from '../../lib'; // 2 import style avaliable
 import config from '../config';
 
 const {
-  request, summary, query, tags, formData, middlewares, responses
+  request, summary, query, tags, formData, middlewares, responses, deprecated
 } = Doc;
 
 function getFileUrl(filename) {
@@ -49,6 +49,7 @@ export default class SampleRouter {
     200: { description: 'file upload success' },
     500: { description: 'something wrong about server' }
   })
+  @deprecated
   static async upload(ctx) {
     const { file } = ctx.req;
     file.url = getFileUrl(file.filename);
