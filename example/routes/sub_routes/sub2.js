@@ -2,7 +2,6 @@ import { request, summary, tags } from '../../../lib';
 
 const tag = tags(['Other']);
 
-
 export default class Other2Router {
   @request('get', '/other/what')
   @summary('something else in sub routes ')
@@ -12,4 +11,3 @@ export default class Other2Router {
     ctx.body = { other };
   }
 }
-
