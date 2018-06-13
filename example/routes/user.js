@@ -1,10 +1,18 @@
-import { request, summary, body, tags, middlewares, path, description } from '../../lib';
+import {
+  request,
+  summary,
+  body,
+  tags,
+  middlewares,
+  path,
+  description
+} from '../../lib';
 
 const tag = tags(['User']);
 
 const userSchema = {
   name: { type: 'string', required: true },
-  password: { type: 'string', required: true },
+  password: { type: 'string', required: true }
 };
 
 const logTime = () => async (ctx, next) => {
@@ -12,7 +20,6 @@ const logTime = () => async (ctx, next) => {
   await next();
   console.log(`end: ${new Date()}`);
 };
-
 
 export default class UserRouter {
   @request('POST', '/user/register')
@@ -67,4 +74,3 @@ export default class UserRouter {
     ctx.body = { msg: 'success' };
   }
 }
-

@@ -14,7 +14,8 @@ describe('HTTP API generation test:', async () => {
 
   describe('Init Swagger Doc:', async () => {
     it('GET /api/swagger-html should return success for swagger ui page', (done) => {
-      request.get('/api/swagger-html')
+      request
+        .get('/api/swagger-html')
         .expect(200)
         .end((err) => {
           if (err) return done(err);
@@ -22,7 +23,8 @@ describe('HTTP API generation test:', async () => {
         });
     });
     it('GET /api/swagger-json should return swagger json data', (done) => {
-      request.get('/api/swagger-json')
+      request
+        .get('/api/swagger-json')
         .expect(200)
         .expect(res => expect(res.body.info).to.be.an('object'))
         .end((err) => {
@@ -33,10 +35,11 @@ describe('HTTP API generation test:', async () => {
   });
   describe('Construct api from router.map:', async () => {
     it('POST /api/user/login should return user data if success', (done) => {
-      request.post('/api/user/login')
+      request
+        .post('/api/user/login')
         .send({
           name: 'string',
-          password: '123456',
+          password: '123456'
         })
         .expect(200)
         .expect(res => expect(res.body.user).to.be.an('object'))
@@ -46,9 +49,11 @@ describe('HTTP API generation test:', async () => {
         });
     });
     it('POST /api/user/login should have corresponding swagger doc data', (done) => {
-      request.get('/api/swagger-json')
+      request
+        .get('/api/swagger-json')
         .expect(200)
-        .expect(res => expect(res.body.paths['/api/user/login']).to.be.an('object'))
+        .expect(res =>
+          expect(res.body.paths['/api/user/login']).to.be.an('object'))
         .end((err) => {
           if (err) return done(err);
           done();
@@ -57,7 +62,8 @@ describe('HTTP API generation test:', async () => {
   });
   describe('Construct api from router.mapDir:', async () => {
     it('GET /api/other should return data if success', (done) => {
-      request.get('/api/other')
+      request
+        .get('/api/other')
         .expect(200)
         .expect(res => expect(res.body.other).to.be.an('array'))
         .end((err) => {
@@ -66,7 +72,8 @@ describe('HTTP API generation test:', async () => {
         });
     });
     it('GET /api/other/what should return data if success', (done) => {
-      request.get('/api/other/what')
+      request
+        .get('/api/other/what')
         .expect(200)
         .expect(res => expect(res.body.other).to.be.an('array'))
         .end((err) => {
@@ -75,7 +82,8 @@ describe('HTTP API generation test:', async () => {
         });
     });
     it('GET /api/other/how should return data if options:{rescursive: true}', (done) => {
-      request.get('/api/other/how')
+      request
+        .get('/api/other/how')
         .expect(200)
         .expect(res => expect(res.body.other).to.be.an('array'))
         .end((err) => {
@@ -104,12 +112,16 @@ describe('Function Test:', () => {
     it('should return an array,length = 2 when recursive=false', () => {
       const dir = _path.resolve(__dirname, '../example/routes/sub_routes');
       const r = getFilepaths(dir, false);
-      expect(r).to.be.an('array').to.have.lengthOf(2);
+      expect(r)
+        .to.be.an('array')
+        .to.have.lengthOf(2);
     });
     it('should return an array,length = 3 when recursive=true', () => {
       const dir = _path.resolve(__dirname, '../example/routes/sub_routes');
       const r = getFilepaths(dir, true);
-      expect(r).to.be.an('array').to.have.lengthOf(3);
+      expect(r)
+        .to.be.an('array')
+        .to.have.lengthOf(3);
     });
   });
 });
@@ -121,16 +133,14 @@ describe('Validate:', () => {
       bar: 'fwq',
       fpk: false,
       nax: 12,
-      qoa: [
-        1, 2
-      ],
+      qoa: [1, 2],
       baz: {
         b: 'f'
       },
       addon: 'ttt',
       boo: 'true',
       coo: 'false',
-      sst: '666',
+      sst: '666'
     };
     const expect = {
       nax: { type: 'number' },
@@ -155,10 +165,10 @@ describe('Validate:', () => {
         required: true
       },
       boo: {
-        type: 'boolean',
+        type: 'boolean'
       },
       coo: {
-        type: 'boolean',
+        type: 'boolean'
       },
       default: {
         type: 'string',
@@ -166,7 +176,7 @@ describe('Validate:', () => {
         default: 'ddd'
       },
       sst: {
-        type: 'string',
+        type: 'string'
       },
       addon: undefined
     };
@@ -183,7 +193,7 @@ describe('Validate:', () => {
     const expect = {
       foo: {
         type: 'string',
-        required: true,
+        required: true
       }
     };
     try {
@@ -239,7 +249,11 @@ describe('Validate:', () => {
       o1: {
         type: 'object',
         properties: {
-          aaaa: { type: 'string', example: 'http://www.baidu.com', required: true },
+          aaaa: {
+            type: 'string',
+            example: 'http://www.baidu.com',
+            required: true
+          },
           bbbb: {
             type: 'object',
             required: true,
@@ -263,7 +277,7 @@ describe('Validate:', () => {
       o1: {
         aaaa: 'gg',
         bbbb: { yy: 'rr', zz: { pp: 'false' }, aa: '66' },
-        cccc: 'dd',
+        cccc: 'dd'
       }
     };
     validate(input, expect);
@@ -273,7 +287,7 @@ describe('Validate:', () => {
       arr: {
         type: 'array',
         items: 'string',
-        required: true,
+        required: true
       }
     };
 
