@@ -4,7 +4,14 @@ import Doc, { description } from '../../lib'; // 2 import style avaliable
 import config from '../config';
 
 const {
-  request, summary, query, tags, formData, middlewares, responses, deprecated
+  request,
+  summary,
+  query,
+  tags,
+  formData,
+  middlewares,
+  responses,
+  deprecated
 } = Doc;
 
 function getFileUrl(filename) {
