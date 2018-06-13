@@ -44,7 +44,7 @@ const cNum = (val, expect) => {
 
 const cBool = (val, expect) => {
   if (!cRequired(val, expect).is) return { is: false };
-  const cond = _ramda2.default.cond([[_ramda2.default.equals('true'), _ramda2.default.always({ is: true, val: true })], [_ramda2.default.equals('false'), _ramda2.default.always({ is: true, val: false })], [_ramda2.default.always(true), _ramda2.default.always({ is: typeof val === 'boolean', val })]]);
+  const cond = _ramda2.default.cond([[_ramda2.default.equals('true'), _ramda2.default.always({ is: true, val: true })], [_ramda2.default.equals('false'), _ramda2.default.always({ is: true, val: false })], [_ramda2.default.T, _ramda2.default.always({ is: typeof val === 'boolean', val })]]);
   return cond(val);
 };
 /**
@@ -122,7 +122,7 @@ const cArray = (input, expect) => {
   if (_isTypeOf2.default.string(expect.items)) {
     const check = func => () => input.length === input.filter(item => func(item)).length;
 
-    const cond = _ramda2.default.cond([[_ramda2.default.equals('string'), check(_isTypeOf2.default.string)], [_ramda2.default.equals('boolean'), check(_isTypeOf2.default.boolean)], [_ramda2.default.equals('number'), check(_isTypeOf2.default.number)], [_ramda2.default.equals('object'), check(_isTypeOf2.default.object)], [_ramda2.default.equals('array'), check(_isTypeOf2.default.array)], [_ramda2.default.always(true), true]]);
+    const cond = _ramda2.default.cond([[_ramda2.default.equals('string'), check(_isTypeOf2.default.string)], [_ramda2.default.equals('boolean'), check(_isTypeOf2.default.boolean)], [_ramda2.default.equals('number'), check(_isTypeOf2.default.number)], [_ramda2.default.equals('object'), check(_isTypeOf2.default.object)], [_ramda2.default.equals('array'), check(_isTypeOf2.default.array)], [_ramda2.default.T, true]]);
 
     return { is: cond(expect.items), val: input };
   }
@@ -131,7 +131,7 @@ const cArray = (input, expect) => {
 };
 
 const check = (input, expect) => {
-  const cond = _ramda2.default.cond([[_ramda2.default.equals('string'), () => cString(input, expect)], [_ramda2.default.equals('boolean'), () => cBool(input, expect)], [_ramda2.default.equals('number'), () => cNum(input, expect)], [_ramda2.default.equals('object'), () => cObject(input, expect)], [_ramda2.default.equals('array'), () => cArray(input, expect)], [_ramda2.default.always(true), () => ({ is: true })]]);
+  const cond = _ramda2.default.cond([[_ramda2.default.equals('string'), () => cString(input, expect)], [_ramda2.default.equals('boolean'), () => cBool(input, expect)], [_ramda2.default.equals('number'), () => cNum(input, expect)], [_ramda2.default.equals('object'), () => cObject(input, expect)], [_ramda2.default.equals('array'), () => cArray(input, expect)], [_ramda2.default.T, () => ({ is: true })]]);
 
   return cond(expect.type);
 };

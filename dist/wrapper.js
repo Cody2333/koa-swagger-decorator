@@ -89,9 +89,7 @@ const handleMap = (router, SwaggerClass, { doValidation = true }) => {
   // add router
   .forEach(item => {
     const { path, method } = SwaggerClass[item];
-    let {
-      middlewares = []
-    } = SwaggerClass[item];
+    let { middlewares = [] } = SwaggerClass[item];
     if (_isTypeOf2.default.function(middlewares)) {
       middlewares = [middlewares];
     }

@@ -34,12 +34,10 @@ const swaggerJSON = (options = {}, apiObjects) => {
     const { method } = value.request;
     let { path } = value.request;
     path = (0, _utils.getPath)(prefix, path); // 根据前缀补全path
-    const summary = value.summary ? value.summary : '';
-    const description = value.description ? value.description : summary;
-    const responses = value.responses ? value.responses : {
-      200: {
-        description: 'success'
-      }
+    const summary = value.summary || '';
+    const description = value.description || summary;
+    const responses = value.responses || {
+      200: { description: 'success' }
     };
     const {
       query = [],
@@ -47,7 +45,8 @@ const swaggerJSON = (options = {}, apiObjects) => {
       body = [],
       tags,
       formData = [],
-      security
+      security,
+      deprecated
     } = value;
 
     const parameters = [...pathParams, ...query, ...formData, ...body];
@@ -67,7 +66,8 @@ const swaggerJSON = (options = {}, apiObjects) => {
       parameters,
       responses,
       tags,
-      security
+      security,
+      deprecated
     };
   });
   return swaggerJSON;
