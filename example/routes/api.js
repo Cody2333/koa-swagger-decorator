@@ -6,7 +6,6 @@ wrapper(router);
 
 // swagger docs avaliable at http://localhost:3000/api/swagger-html
 router.swagger({
-
   title: 'Example Server',
   description: 'API DOC',
   version: '1.0.0',
@@ -29,16 +28,14 @@ router.swagger({
         in: 'header',
         name: 'Authorization'
       }
-    },
+    }
   }
 });
-
 
 // mapDir will scan the input dir, and automatically call router.map to all Router Class
 router.mapDir(__dirname, {
   // default: true. To recursively scan the dir to make router. If false, will not scan subroutes dir
   // recursive: true,
-
   // default: true, if true, you can call ctx.validatedBody[Query|Params] to get validated data.
   // doValidation: true,
 });

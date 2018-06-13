@@ -27,18 +27,25 @@ module.exports = class OtherRouter {
     str: { type: 'string' },
     boo: { type: 'boolean' },
     foo: {
-      type: 'array', required: true, items: 'string', example: ['填写内容']
+      type: 'array',
+      required: true,
+      items: 'string',
+      example: ['填写内容']
     },
     bar: {
       type: 'array',
       required: true,
-      items: exampleItem,
+      items: exampleItem
     },
     exampleItem,
     obb: {
       type: 'object',
       properties: {
-        aaaa: { type: 'string', example: 'http://www.baidu.com', required: true },
+        aaaa: {
+          type: 'string',
+          example: 'http://www.baidu.com',
+          required: true
+        },
         bbbb: { type: 'string', example: 'Bob' }
       }
     }
@@ -47,4 +54,3 @@ module.exports = class OtherRouter {
     ctx.body = ctx.validatedBody;
   }
 };
-

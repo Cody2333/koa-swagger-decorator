@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.SwaggerRouter = exports.responses = exports.formData = exports.middlewares = exports.wrapper = exports.tags = exports.body = exports.path = exports.query = exports.description = exports.desc = exports.params = exports.summary = exports.request = undefined;
+exports.SwaggerRouter = exports.deprecated = exports.responses = exports.formData = exports.middlewares = exports.wrapper = exports.tags = exports.body = exports.path = exports.query = exports.description = exports.desc = exports.params = exports.summary = exports.request = undefined;
 
 var _ramda = require('ramda');
 
@@ -65,6 +65,12 @@ const middlewares = middlewares => (target, name, descriptor) => {
   return descriptor;
 };
 
+const deprecated = (target, name, descriptor) => {
+  descriptor.value.deprecated = true;
+  _swaggerObject2.default.add(target, name, { deprecated: true });
+  return descriptor;
+};
+
 const responses = (responses = { 200: { description: 'success' } }) => (target, name, descriptor) => {
   descriptor.value.responses = responses;
   _swaggerObject2.default.add(target, name, { responses });
@@ -109,6 +115,7 @@ const Doc = {
   middlewares,
   formData,
   responses,
+  deprecated,
   SwaggerRouter: _wrapper.SwaggerRouter
 };
 
@@ -126,4 +133,5 @@ exports.wrapper = _wrapper.wrapper;
 exports.middlewares = middlewares;
 exports.formData = formData;
 exports.responses = responses;
+exports.deprecated = deprecated;
 exports.SwaggerRouter = _wrapper.SwaggerRouter;

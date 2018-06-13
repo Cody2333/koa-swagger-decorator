@@ -1,6 +1,6 @@
 {
   "name": "koa-swagger-decorator",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "using decorator to automatically generate swagger doc for koa-router",
   "main": "dist/index.js",
   "dependencies": {
@@ -8,6 +8,15 @@
     "is-type-of": "^1.2.0",
     "koa-router": "^7.2.1",
     "ramda": "^0.25.0"
+  },
+  "nyc": {
+    "include": [
+      "lib/**/*.js"
+    ],
+    "exclude": [
+      "example/**/*.js",
+      "test/**/*.js"
+    ]
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
@@ -30,6 +39,8 @@
     "nodemon": "^1.11.0",
     "nyc": "^12.0.2",
     "power-assert": "^1.5.0",
+    "pre-commit": "^1.2.2",
+    "prettier-eslint-cli": "^4.7.1",
     "sha1": "^1.1.1",
     "supertest": "^2.0.1",
     "url": "^0.11.0"
@@ -38,11 +49,20 @@
     "build": "babel lib -d dist",
     "start:babel": "babel-node example/main",
     "start": "nodemon --watch example --exec npm run start:babel -L",
-    "test": "./node_modules/mocha/bin/mocha --require babel-core/register test/**/*.js --bail -t 2000000",
+    "test": "npm run lint && ./node_modules/mocha/bin/mocha --require babel-core/register test/**/*.js --bail -t 2000000",
     "prepublish": "npm run build",
+    "lint": "eslint .",
+    "format": "prettier-eslint --write \"**/*.js\"",
     "debug": "babel-node example/main --inspect --debug-brk --nolazy example/main",
-    "cov": "nyc --reporter=lcov npm run test"
+    "cov": "nyc --reporter=lcov npm run test",
+    "add": "git add .",
+    "precommit-msg": "echo 'Pre-commit code formating...' && exit 0"
   },
+  "pre-commit": [
+    "precommit-msg",
+    "format",
+    "add"
+  ],
   "keywords": [
     "decorator",
     "swagger",

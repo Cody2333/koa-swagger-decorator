@@ -2,7 +2,6 @@ import { request, summary, tags } from '../../../../lib';
 
 const tag = tags(['PP']);
 
-
 export default class Other3Router {
   @request('get', '/other/how')
   @summary('something in sub sub routes')
@@ -12,4 +11,3 @@ export default class Other3Router {
     ctx.body = { other };
   }
 }
-

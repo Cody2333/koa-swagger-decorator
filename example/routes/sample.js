@@ -4,9 +4,15 @@ import Doc, { description } from '../../lib'; // 2 import style avaliable
 import config from '../config';
 
 const {
-  request, summary, query, tags, formData, middlewares, responses
+  request,
+  summary,
+  query,
+  tags,
+  formData,
+  middlewares,
+  responses,
+  deprecated
 } = Doc;
-
 
 function getFileUrl(filename) {
   return `${config.baseUrl}/temp/${filename}`;
@@ -25,23 +31,32 @@ export default class SampleRouter {
   @description('exampling [formdata] and [middlewares] decorators')
   @tag
   @formData({
-    file: { type: 'file', required: 'true', description: 'upload file, get url' }
+    file: {
+      type: 'file',
+      required: 'true',
+      description: 'upload file, get url'
+    }
   })
   @middlewares([upload.single('file')])
   @query({
     page: {
-      type: 'number', default: 1, required: false, description: 'page number'
+      type: 'number',
+      default: 1,
+      required: false,
+      description: 'page number'
     },
     limit: {
-      type: 'number', default: 10, required: false, description: 'return item number limit'
+      type: 'number',
+      default: 10,
+      required: false,
+      description: 'return item number limit'
     }
   })
   @responses({
-    200:
-      { description: 'file upload success' },
-    500:
-      { description: 'something wrong about server' }
+    200: { description: 'file upload success' },
+    500: { description: 'something wrong about server' }
   })
+  @deprecated
   static async upload(ctx) {
     const { file } = ctx.req;
     file.url = getFileUrl(file.filename);
@@ -55,14 +70,14 @@ export default class SampleRouter {
   @middlewares([upload.single('file')])
   @query({
     page: {
-      type: 'string', enum: ['1', '2', '3'], description: 'page number'
+      type: 'string',
+      enum: ['1', '2', '3'],
+      description: 'page number'
     }
   })
   @responses({
-    200:
-      { description: 'success' },
-    500:
-      { description: 'something wrong about server' }
+    200: { description: 'success' },
+    500: { description: 'something wrong about server' }
   })
   static async enum(ctx) {
     const { page } = ctx.request.query;
