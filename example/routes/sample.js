@@ -11,7 +11,10 @@ const {
   formData,
   middlewares,
   responses,
-  deprecated
+  deprecated,
+  tagsAll,
+  middlewaresAll
+  // deprecatedAll,
 } = Doc;
 
 function getFileUrl(filename) {
@@ -25,6 +28,25 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage });
+
+const log1 = async (ctx, next) => {
+  console.log('log1 middleware called');
+  await next();
+};
+
+const log2 = async (ctx, next) => {
+  console.log('log2 middleware called');
+  await next();
+};
+
+const log3 = async (ctx, next) => {
+  console.log('log3 middleware called');
+  await next();
+};
+
+@tagsAll(['A', 'B'])
+// @deprecatedAll
+@middlewaresAll([log1, log2]) // add middlewares [log1, log2] to all routers in this class
 export default class SampleRouter {
   @request('post', '/sample')
   @summary('showing upload files example using koa-multer')
@@ -67,7 +89,7 @@ export default class SampleRouter {
   @summary('example of  enum')
   @description('example of  enum')
   @tag
-  @middlewares([upload.single('file')])
+  @middlewares([log3])
   @query({
     page: {
       type: 'string',

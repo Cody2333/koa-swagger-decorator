@@ -185,7 +185,15 @@ export default class Test {
 - responses
 - deprecated
 
-```
+#### class annotations:
+
+- tagsAll
+- responsesAll
+- middlewaresAll
+- deprecatedAll
+
+
+``` javascript
 request // @request('POST', '/users')
 
 tags // @tags(['example'])
@@ -210,6 +218,13 @@ responses
 // responses is optional
 
 deprecated // @deprecated
+
+@tagsAll(['A', 'B'])
+@deprecatedAll
+@middlewaresAll([log1, log2]) // add middlewares [log1, log2] to all routers in this class
+export default class SampleRouter {
+  ...
+}
 ```
 
 #### validation
