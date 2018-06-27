@@ -74,8 +74,9 @@ const handleSwagger = (router, options) => {
 
 const handleMap = (router, SwaggerClass, { doValidation = true }) => {
   if (!(0, _utils.isSwaggerRouter)(SwaggerClass)) return;
+  const middlewaresAll = SwaggerClass.middlewares || [];
   // remove useless field in class object:  constructor, length, name, prototype
-  const methods = Object.getOwnPropertyNames(SwaggerClass).filter(method => !['name', 'constructor', 'length', 'prototype'].includes(method));
+  const methods = Object.getOwnPropertyNames(SwaggerClass).filter(method => !_utils.reservedMethodNames.includes(method));
   // map all method in methods
   methods
   // filter methods withour @request decorator
@@ -106,7 +107,7 @@ const handleMap = (router, SwaggerClass, { doValidation = true }) => {
     }
     const chain = [`${(0, _utils.convertPath)(path)}`, doValidation ? validator(SwaggerClass[item].parameters) : async (ctx, next) => {
       await next();
-    }, ...middlewares, SwaggerClass[item]];
+    }, ...middlewaresAll, ...middlewares, SwaggerClass[item]];
     router[method](...chain);
   });
 };

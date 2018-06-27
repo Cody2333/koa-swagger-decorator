@@ -3,11 +3,15 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.SwaggerRouter = exports.deprecated = exports.responses = exports.formData = exports.middlewares = exports.wrapper = exports.tags = exports.body = exports.path = exports.query = exports.description = exports.desc = exports.params = exports.summary = exports.request = undefined;
+exports.deprecatedAll = exports.middlewaresAll = exports.responsesAll = exports.tagsAll = exports.SwaggerRouter = exports.deprecated = exports.responses = exports.formData = exports.middlewares = exports.wrapper = exports.tags = exports.body = exports.path = exports.query = exports.description = exports.desc = exports.params = exports.summary = exports.request = undefined;
 
 var _ramda = require('ramda');
 
 var _ramda2 = _interopRequireDefault(_ramda);
+
+var _isTypeOf = require('is-type-of');
+
+var _isTypeOf2 = _interopRequireDefault(_isTypeOf);
 
 var _swaggerObject = require('./swaggerObject');
 
@@ -101,6 +105,25 @@ const body = params('body');
 // formData params
 const formData = params('formData');
 
+// class decorators
+const tagsAll = tags => target => {
+  tags = _isTypeOf2.default.array(tags) ? tags : [tags];
+  _swaggerObject2.default.addMulti(target, { tags });
+};
+
+const responsesAll = (responses = { 200: { description: 'success' } }) => target => {
+  _swaggerObject2.default.addMulti(target, { responses });
+};
+
+const middlewaresAll = items => target => {
+  items = _isTypeOf2.default.array(items) ? items : [items];
+  target.middlewares = items;
+};
+
+const deprecatedAll = target => {
+  _swaggerObject2.default.addMulti(target, { deprecated: true });
+};
+
 const Doc = {
   request,
   summary,
@@ -116,7 +139,11 @@ const Doc = {
   formData,
   responses,
   deprecated,
-  SwaggerRouter: _wrapper.SwaggerRouter
+  SwaggerRouter: _wrapper.SwaggerRouter,
+  tagsAll,
+  responsesAll,
+  middlewaresAll,
+  deprecatedAll
 };
 
 exports.default = Doc;
@@ -135,3 +162,7 @@ exports.formData = formData;
 exports.responses = responses;
 exports.deprecated = deprecated;
 exports.SwaggerRouter = _wrapper.SwaggerRouter;
+exports.tagsAll = tagsAll;
+exports.responsesAll = responsesAll;
+exports.middlewaresAll = middlewaresAll;
+exports.deprecatedAll = deprecatedAll;

@@ -1,11 +1,11 @@
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-/**
- * used for building swagger docs object
- */
+
+var _utils = require('./utils');
+
 let SwaggerObject = class SwaggerObject {
   constructor() {
     this.data = {};
@@ -15,8 +15,16 @@ let SwaggerObject = class SwaggerObject {
     if (!this.data[key]) this.data[key] = {};
     Object.assign(this.data[key], content);
   }
-};
 
+  addMulti(target, content) {
+    const methods = Object.getOwnPropertyNames(target).filter(method => !_utils.reservedMethodNames.includes(method));
+    methods.forEach(name => {
+      this.add(target, name, content);
+    });
+  }
+}; /**
+    * used for building swagger docs object
+    */
 
 const swaggerObject = new SwaggerObject();
 
