@@ -13,14 +13,15 @@ const {
   responses,
   deprecated,
   tagsAll,
-  middlewaresAll
-  // deprecatedAll,
+  middlewaresAll,
+  queryAll,
+  deprecatedAll
 } = Doc;
 
 function getFileUrl(filename) {
   return `${config.baseUrl}/temp/${filename}`;
 }
-const tag = tags(['Sample']);
+const tag = tags(['B']);
 
 const storage = multer.diskStorage({
   destination: _path.resolve('temp/'),
@@ -44,14 +45,18 @@ const log3 = async (ctx, next) => {
   await next();
 };
 
-@tagsAll(['A', 'B'])
-// @deprecatedAll
+@tagsAll(['A'])
+@deprecatedAll
 @middlewaresAll([log1, log2]) // add middlewares [log1, log2] to all routers in this class
+/**
+ * queryAll(query, filters) -> default to filters is ['ALL'], you can limit your query to specific methods.
+ * if filters = ['GET'], then only request using GET will have query param:[limit]
+ */
+@queryAll({ limit: { type: 'number', default: 444, required: true } }, ['GET'])
 export default class SampleRouter {
   @request('post', '/sample')
   @summary('showing upload files example using koa-multer')
   @description('exampling [formdata] and [middlewares] decorators')
-  @tag
   @formData({
     file: {
       type: 'file',
@@ -67,7 +72,7 @@ export default class SampleRouter {
       required: false,
       description: 'page number'
     },
-    limit: {
+    myLimit: {
       type: 'number',
       default: 10,
       required: false,
@@ -85,7 +90,7 @@ export default class SampleRouter {
     ctx.body = { result: file };
   }
 
-  @request('get', '/enum')
+  @request('GET', '/enum')
   @summary('example of  enum')
   @description('example of  enum')
   @tag
@@ -104,5 +109,9 @@ export default class SampleRouter {
   static async enum(ctx) {
     const { page } = ctx.request.query;
     ctx.body = { result: page };
+  }
+
+  static async useless(ctx) {
+    console.log(ctx);
   }
 }

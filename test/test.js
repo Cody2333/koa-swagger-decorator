@@ -92,6 +92,35 @@ describe('HTTP API generation test:', async () => {
         });
     });
   });
+  describe('Validation and Swagger Test', async () => {
+    it('GET /api/enum?limit=1 should success', (done) => {
+      request
+        .get('/api/enum?limit=1')
+        .expect(200)
+        .end((err) => {
+          if (err) return done(err);
+          done();
+        });
+    });
+    it('GET /api/enum should fail due to lack of query params: [limit]', (done) => {
+      request
+        .get('/api/enum')
+        .expect(400)
+        .end((err) => {
+          if (err) return done(err);
+          done();
+        });
+    });
+    it('GET /api/enum?limit=fff should fail due to wrong type of query params: [limit] (number required)', (done) => {
+      request
+        .get('/api/enum?limit=fff')
+        .expect(400)
+        .end((err) => {
+          if (err) return done(err);
+          done();
+        });
+    });
+  });
 });
 
 describe('Function Test:', () => {
