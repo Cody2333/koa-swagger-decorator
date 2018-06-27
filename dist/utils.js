@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.loadSwaggerClasses = exports.loadClass = exports.getFilepaths = exports.isSwaggerRouter = exports.getPath = exports.convertPath = undefined;
+exports.reservedMethodNames = exports.loadSwaggerClasses = exports.loadClass = exports.getFilepaths = exports.isSwaggerRouter = exports.getPath = exports.convertPath = undefined;
 
 var _koaRouter = require('koa-router');
 
@@ -34,6 +34,7 @@ const convertPath = path => {
 
 const getPath = (prefix, path) => `${prefix}${path}`.replace('//', '/');
 
+const reservedMethodNames = ['middlewares', 'name', 'constructor', 'length', 'prototype', 'parameters'];
 /**
  * check if an object is an instance of SwaggerRouter
  * @param {Object} o
@@ -81,3 +82,4 @@ exports.isSwaggerRouter = isSwaggerRouter;
 exports.getFilepaths = getFilepaths;
 exports.loadClass = loadClass;
 exports.loadSwaggerClasses = loadSwaggerClasses;
+exports.reservedMethodNames = reservedMethodNames;
