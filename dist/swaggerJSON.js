@@ -28,7 +28,7 @@ const swaggerJSON = (options = {}, apiObjects) => {
   Object.keys(apiObjects).forEach(key => {
     const value = apiObjects[key];
     if (!Object.keys(value).includes('request')) {
-      throw new Error('missing [request] field');
+      return;
     }
 
     const { method } = value.request;

@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.deprecatedAll = exports.middlewaresAll = exports.responsesAll = exports.tagsAll = exports.SwaggerRouter = exports.deprecated = exports.responses = exports.formData = exports.middlewares = exports.wrapper = exports.tags = exports.body = exports.path = exports.query = exports.description = exports.desc = exports.params = exports.summary = exports.request = undefined;
+exports.queryAll = exports.deprecatedAll = exports.middlewaresAll = exports.responsesAll = exports.tagsAll = exports.SwaggerRouter = exports.deprecated = exports.responses = exports.formData = exports.middlewares = exports.wrapper = exports.tags = exports.body = exports.path = exports.query = exports.description = exports.desc = exports.params = exports.summary = exports.request = undefined;
 
 var _ramda = require('ramda');
 
@@ -124,6 +124,16 @@ const deprecatedAll = target => {
   _swaggerObject2.default.addMulti(target, { deprecated: true });
 };
 
+const queryAll = (parameters, filters = ['ALL']) => target => {
+  if (!target.parameters) target.parameters = {};
+  target.parameters.query = parameters; // used in wrapper.js for validation
+  target.parameters.filters = filters; // used in wrapper.js for validation
+  const swaggerParameters = Object.keys(parameters).map(key => Object.assign({ name: key }, parameters[key]));
+  swaggerParameters.forEach(item => {
+    item.in = 'query';
+  });
+  _swaggerObject2.default.addMulti(target, { query: swaggerParameters }, filters);
+};
 const Doc = {
   request,
   summary,
@@ -143,7 +153,8 @@ const Doc = {
   tagsAll,
   responsesAll,
   middlewaresAll,
-  deprecatedAll
+  deprecatedAll,
+  queryAll
 };
 
 exports.default = Doc;
@@ -166,3 +177,4 @@ exports.tagsAll = tagsAll;
 exports.responsesAll = responsesAll;
 exports.middlewaresAll = middlewaresAll;
 exports.deprecatedAll = deprecatedAll;
+exports.queryAll = queryAll;

@@ -74,7 +74,11 @@ const handleSwagger = (router, options) => {
 
 const handleMap = (router, SwaggerClass, { doValidation = true }) => {
   if (!(0, _utils.isSwaggerRouter)(SwaggerClass)) return;
-  const middlewaresAll = SwaggerClass.middlewares || [];
+  const classMiddlewares = SwaggerClass.middlewares || [];
+  const classParameters = SwaggerClass.parameters || {};
+  const classParametersFilters = SwaggerClass.parameters ? SwaggerClass.parameters.filters : ['ALL'];
+  classParameters.query = classParameters.query ? classParameters.query : {};
+
   // remove useless field in class object:  constructor, length, name, prototype
   const methods = Object.getOwnPropertyNames(SwaggerClass).filter(method => !_utils.reservedMethodNames.includes(method));
   // map all method in methods
@@ -91,6 +95,14 @@ const handleMap = (router, SwaggerClass, { doValidation = true }) => {
   .forEach(item => {
     const { path, method } = SwaggerClass[item];
     let { middlewares = [] } = SwaggerClass[item];
+    const localParams = SwaggerClass[item].parameters || {};
+
+    if (classParametersFilters.includes('ALL') || classParametersFilters.map(i => i.toLowerCase().includes(method))) {
+      localParams.query = localParams.query ? localParams.query : {};
+      // merge local query and class query
+      // local query 的优先级更高
+      localParams.query = Object.assign(classParameters.query, localParams.query);
+    }
     if (_isTypeOf2.default.function(middlewares)) {
       middlewares = [middlewares];
     }
@@ -105,9 +117,9 @@ const handleMap = (router, SwaggerClass, { doValidation = true }) => {
     if (!reqMethods.includes(method)) {
       throw new Error(`illegal API: ${method} ${path} at [${item}]`);
     }
-    const chain = [`${(0, _utils.convertPath)(path)}`, doValidation ? validator(SwaggerClass[item].parameters) : async (ctx, next) => {
+    const chain = [`${(0, _utils.convertPath)(path)}`, doValidation ? validator(localParams) : async (ctx, next) => {
       await next();
-    }, ...middlewaresAll, ...middlewares, SwaggerClass[item]];
+    }, ...classMiddlewares, ...middlewares, SwaggerClass[item]];
     router[method](...chain);
   });
 };

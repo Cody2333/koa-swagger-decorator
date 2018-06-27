@@ -34,7 +34,7 @@ const convertPath = path => {
 
 const getPath = (prefix, path) => `${prefix}${path}`.replace('//', '/');
 
-const reservedMethodNames = ['middlewares', 'name', 'constructor', 'length', 'prototype'];
+const reservedMethodNames = ['middlewares', 'name', 'constructor', 'length', 'prototype', 'parameters'];
 /**
  * check if an object is an instance of SwaggerRouter
  * @param {Object} o
