@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.queryAll = exports.deprecatedAll = exports.middlewaresAll = exports.responsesAll = exports.tagsAll = exports.SwaggerRouter = exports.deprecated = exports.responses = exports.formData = exports.middlewares = exports.wrapper = exports.tags = exports.body = exports.path = exports.query = exports.description = exports.desc = exports.params = exports.summary = exports.request = undefined;
+exports.prefix = exports.queryAll = exports.deprecatedAll = exports.middlewaresAll = exports.responsesAll = exports.tagsAll = exports.SwaggerRouter = exports.deprecated = exports.responses = exports.formData = exports.middlewares = exports.wrapper = exports.tags = exports.body = exports.path = exports.query = exports.description = exports.desc = exports.params = exports.summary = exports.request = undefined;
 
 var _ramda = require('ramda');
 
@@ -124,6 +124,11 @@ const deprecatedAll = target => {
   _swaggerObject2.default.addMulti(target, { deprecated: true });
 };
 
+const prefix = prefix => target => {
+  _swaggerObject2.default.addMulti(target, { prefix });
+  target.prefix = prefix;
+};
+
 const queryAll = (parameters, filters = ['ALL']) => target => {
   if (!target.parameters) target.parameters = {};
   target.parameters.query = parameters; // used in wrapper.js for validation
@@ -154,7 +159,8 @@ const Doc = {
   responsesAll,
   middlewaresAll,
   deprecatedAll,
-  queryAll
+  queryAll,
+  prefix
 };
 
 exports.default = Doc;
@@ -178,3 +184,4 @@ exports.responsesAll = responsesAll;
 exports.middlewaresAll = middlewaresAll;
 exports.deprecatedAll = deprecatedAll;
 exports.queryAll = queryAll;
+exports.prefix = prefix;

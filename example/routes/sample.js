@@ -15,8 +15,7 @@ const {
   tagsAll,
   middlewaresAll,
   queryAll,
-  deprecatedAll,
-  prefix,
+  deprecatedAll
 } = Doc;
 
 function getFileUrl(filename) {
@@ -54,7 +53,6 @@ const log3 = async (ctx, next) => {
  * if filters = ['GET'], then only request using GET will have query param:[limit]
  */
 @queryAll({ limit: { type: 'number', default: 444, required: true } }, ['GET'])
-@prefix('/v1')
 export default class SampleRouter {
   @request('post', '/sample')
   @summary('showing upload files example using koa-multer')

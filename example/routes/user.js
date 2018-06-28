@@ -20,7 +20,6 @@ const logTime = () => async (ctx, next) => {
   await next();
   console.log(`end: ${new Date()}`);
 };
-
 export default class UserRouter {
   @request('POST', '/user/register')
   @summary('register user')

@@ -33,7 +33,7 @@ const swaggerJSON = (options = {}, apiObjects) => {
 
     const { method } = value.request;
     let { path } = value.request;
-    path = (0, _utils.getPath)(prefix, path); // 根据前缀补全path
+    path = (0, _utils.getPath)(prefix, value.prefix ? `${value.prefix}${path}` : path); // 根据前缀补全path
     const summary = value.summary || '';
     const description = value.description || summary;
     const responses = value.responses || {
