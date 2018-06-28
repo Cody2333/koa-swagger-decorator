@@ -9,6 +9,10 @@ var _koaRouter = require('koa-router');
 
 var _koaRouter2 = _interopRequireDefault(_koaRouter);
 
+var _ramda = require('ramda');
+
+var _ramda2 = _interopRequireDefault(_ramda);
+
 var _isTypeOf = require('is-type-of');
 
 var _isTypeOf2 = _interopRequireDefault(_isTypeOf);
@@ -97,11 +101,12 @@ const handleMap = (router, SwaggerClass, { doValidation = true }) => {
     let { middlewares = [] } = SwaggerClass[item];
     const localParams = SwaggerClass[item].parameters || {};
 
-    if (classParametersFilters.includes('ALL') || classParametersFilters.map(i => i.toLowerCase().includes(method))) {
+    if (classParametersFilters.includes('ALL') || classParametersFilters.map(i => i.toLowerCase()).includes(method)) {
+      const globalQuery = _ramda2.default.clone(classParameters.query);
       localParams.query = localParams.query ? localParams.query : {};
       // merge local query and class query
       // local query 的优先级更高
-      localParams.query = Object.assign(classParameters.query, localParams.query);
+      localParams.query = Object.assign(globalQuery, localParams.query);
     }
     if (_isTypeOf2.default.function(middlewares)) {
       middlewares = [middlewares];
