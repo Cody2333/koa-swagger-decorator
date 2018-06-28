@@ -79,6 +79,8 @@ const handleSwagger = (router, options) => {
 const handleMap = (router, SwaggerClass, { doValidation = true }) => {
   if (!(0, _utils.isSwaggerRouter)(SwaggerClass)) return;
   const classMiddlewares = SwaggerClass.middlewares || [];
+  const classPrefix = SwaggerClass.prefix || '';
+
   const classParameters = SwaggerClass.parameters || {};
   const classParametersFilters = SwaggerClass.parameters ? SwaggerClass.parameters.filters : ['ALL'];
   classParameters.query = classParameters.query ? classParameters.query : {};
@@ -122,9 +124,11 @@ const handleMap = (router, SwaggerClass, { doValidation = true }) => {
     if (!reqMethods.includes(method)) {
       throw new Error(`illegal API: ${method} ${path} at [${item}]`);
     }
-    const chain = [`${(0, _utils.convertPath)(path)}`, doValidation ? validator(localParams) : async (ctx, next) => {
+
+    const chain = [`${(0, _utils.convertPath)(`${classPrefix}${path}`)}`, doValidation ? validator(localParams) : async (ctx, next) => {
       await next();
     }, ...classMiddlewares, ...middlewares, SwaggerClass[item]];
+
     router[method](...chain);
   });
 };

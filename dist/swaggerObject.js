@@ -29,6 +29,7 @@ let SwaggerObject = class SwaggerObject {
 
     // merge class decorator and method decorator if it is an array
     // eg. query parameters, tag paramemters
+
     Object.keys(content).forEach(k => {
       if (_isTypeOf2.default.array(this.data[key][k])) {
         this.data[key][k] = [...this.data[key][k], ...content[k]];
@@ -49,9 +50,11 @@ let SwaggerObject = class SwaggerObject {
   // only add to methods with a @request decorator
   addMulti(target, content, filters = ['ALL']) {
     const methods = Object.getOwnPropertyNames(target).filter(method => !_utils.reservedMethodNames.includes(method));
+
     methods.forEach(name => {
       const key = `${target.name}-${name}`;
       if (!this.data[key] || !this.data[key].request) return;
+
       filters = filters.map(i => i.toLowerCase());
       if (filters.includes('all') || filters.includes(this.data[key].request.method)) {
         this.add(target, name, content);

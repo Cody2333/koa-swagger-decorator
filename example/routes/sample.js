@@ -107,8 +107,8 @@ export default class SampleRouter {
     500: { description: 'something wrong about server' }
   })
   static async enum(ctx) {
-    const { page } = ctx.request.query;
-    ctx.body = { result: page };
+    const { page, limit } = ctx.request.query;
+    ctx.body = { result: page, limit };
   }
 
   static async useless(ctx) {

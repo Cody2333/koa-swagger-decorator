@@ -81,6 +81,18 @@ describe('HTTP API generation test:', async () => {
           done();
         });
     });
+
+    it('GET /api/v1/prefix with class decorator prefix', (done) => {
+      request
+        .get('/api/v1/prefix?page=a')
+        .expect(200)
+        .expect(res => expect(res.body.result).to.be.an('string'))
+        .end((err) => {
+          if (err) return done(err);
+          done();
+        });
+    });
+
     it('GET /api/other/how should return data if options:{rescursive: true}', (done) => {
       request
         .get('/api/other/how')
