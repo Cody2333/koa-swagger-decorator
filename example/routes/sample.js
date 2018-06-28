@@ -69,7 +69,7 @@ export default class SampleRouter {
     page: {
       type: 'number',
       default: 1,
-      required: false,
+      required: true,
       description: 'page number'
     },
     myLimit: {
