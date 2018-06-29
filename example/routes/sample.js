@@ -98,7 +98,7 @@ export default class SampleRouter {
   @query({
     page: {
       type: 'string',
-      enum: ['1', '2', '3'],
+      enum: ['1', '2'],
       description: 'page number'
     }
   })
