@@ -2,10 +2,13 @@
  * used for building swagger docs object
  */
 import is from 'is-type-of';
-import _ from 'lodash';
+import _ from 'ramda';
 import { reservedMethodNames } from './utils';
 
 class SwaggerObject {
+
+  data: any;
+
   constructor() {
     this.data = {};
   }
@@ -24,7 +27,7 @@ class SwaggerObject {
         if (this.data[key][k].length > 0) {
           if (is.object(this.data[key][k][0])) {
             // 避免重名的query导致的异常
-            this.data[key][k] = _.uniqBy(this.data[key][k], 'name');
+            this.data[key][k] = _.uniqBy((o: {name: string}) => o.name, this.data[key][k]);
           } else {
             this.data[key][k] = _.uniq(this.data[key][k]);
           }

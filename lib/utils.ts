@@ -2,16 +2,14 @@ import Router from 'koa-router';
 import _path from 'path';
 import globby from 'globby';
 import is from 'is-type-of';
-/**
- * eg. /api/{id} -> /api/:id
- * @param {String} path
- */
-const convertPath = (path) => {
+
+// eg. /api/{id} -> /api/:id
+const convertPath = (path: string) => {
   const re = new RegExp('{(.*?)}', 'g');
   return path.replace(re, ':$1');
 };
 
-const getPath = (prefix, path) => `${prefix}${path}`.replace('//', '/');
+const getPath = (prefix: string, path: string) => `${prefix}${path}`.replace('//', '/');
 
 const reservedMethodNames = [
   'middlewares',
@@ -21,31 +19,23 @@ const reservedMethodNames = [
   'prototype',
   'parameters'
 ];
-/**
- * check if an object is an instance of SwaggerRouter
- * @param {Object} o
- */
-const isSwaggerRouter = (o) => {
+
+// check if an object is an instance of SwaggerRouter
+const isSwaggerRouter = (o: any) => {
   if (!o || o instanceof Router) {
     return false;
   }
   return true;
 };
 
-/**
- * read all js files in the dir
- * @param {String} dir
- * @param {Boolean} recursive
- * @returns {Array} an array containing file url
- */
-const getFilepaths = (dir, recursive = true) => {
+const getFilepaths = (dir: string, recursive: boolean = true) => {
   const paths = recursive
     ? globby.sync(['**/*.js'], { cwd: dir })
     : globby.sync(['*.js'], { cwd: dir });
   return paths.map(path => _path.join(dir, path));
 };
 
-const loadModule = (filepath) => {
+const loadModule = (filepath: string) => {
   const obj = require(filepath); // eslint-disable-line global-require
   if (!obj) return obj;
   // it's es module
@@ -53,13 +43,13 @@ const loadModule = (filepath) => {
   return obj;
 };
 
-const loadClass = (filepath) => {
+const loadClass = (filepath: string) => {
   const cls = loadModule(filepath);
   if (is.class(cls)) return cls;
   return false;
 };
 
-const loadSwaggerClasses = (dir = '', options = {}) => {
+const loadSwaggerClasses = (dir: string = '', options: {recursive?: boolean} = {}) => {
   dir = _path.resolve(dir);
   const { recursive = true } = options;
   return getFilepaths(dir, recursive)

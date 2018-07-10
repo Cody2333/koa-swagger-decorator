@@ -1,14 +1,22 @@
 import is from 'is-type-of';
 import _ from 'ramda';
 
-const cRequired = (input, expect = {}) => {
+export interface Expect {
+  required?: boolean;
+  enum?: any[];
+  default?: any;
+  properties?: any;
+  [name: string]: any;
+}
+
+const cRequired = (input: any, expect: Expect = {}) => {
   if (expect.required && input === undefined) {
     return { is: false };
   }
   return { is: true, val: input };
 };
 
-const cEnum = (input, expect = {}) => {
+const cEnum = (input: any, expect: Expect = {}) => {
   if (Array.isArray(expect.enum) && expect.enum.length) {
     return expect.enum.includes(input)
       ? { is: true, val: input }
@@ -17,12 +25,12 @@ const cEnum = (input, expect = {}) => {
   return { is: true, val: input };
 };
 
-const cDefault = (input, expect = {}) =>
+const cDefault = (input: any, expect: Expect = {}) =>
   expect.default !== undefined && input === undefined
     ? { is: true, val: expect.default }
     : { is: true, val: input };
 
-const cString = (val, expect) => {
+const cString = (val: any, expect: Expect) => {
   if (!cRequired(val, expect).is) return { is: false };
   if (expect.enum && !cEnum(val, expect).is) return { is: false };
   return typeof val === 'string'
@@ -30,13 +38,13 @@ const cString = (val, expect) => {
     : { is: false };
 };
 
-const cNum = (val, expect) => {
+const cNum = (val: any, expect: Expect) => {
   if (!cRequired(val, expect).is) return { is: false };
   if (expect.enum && !cEnum(Number(val), expect).is) return { is: false };
   return isNaN(Number(val)) ? { is: false } : { is: true, val: Number(val) };
 };
 
-const cBool = (val, expect) => {
+const cBool = (val: any, expect: Expect) => {
   if (!cRequired(val, expect).is) return { is: false };
   const cond = _.cond([
     [_.equals('true'), _.always({ is: true, val: true })],
@@ -45,25 +53,23 @@ const cBool = (val, expect) => {
   ]);
   return cond(val);
 };
-/**
- * 对 Object 做检验, 支持嵌套数据
- * @param {Object} input
- * @param {Object} expect
-{
-  aaaa: 'hh',
-  bbbb: 'qq',
-}
-{ // expect:
-  type: 'object',
-  properties: {
-    aaaa: { type: 'string', example: 'http://www.baidu.com', required: true },
-    bbbb: { type: 'string', example: 'Bob' }
-    c: { type: 'object', properties: {ii: {type: 'string'}, jj: {type: 'number'}} }
+// /**
+//  * 对 Object 做检验, 支持嵌套数据
+// {
+//   aaaa: 'hh',
+//   bbbb: 'qq',
+// }
+// { // expect:
+//   type: 'object',
+//   properties: {
+//     aaaa: { type: 'string', example: 'http://www.baidu.com', required: true },
+//     bbbb: { type: 'string', example: 'Bob' }
+//     c: { type: 'object', properties: {ii: {type: 'string'}, jj: {type: 'number'}} }
 
-  }
-}
- */
-const cObject = (input, expect = {}) => {
+//   }
+// }
+//  */
+const cObject = (input: any, expect: Expect = {}) => {
   if (!cRequired(input, expect).is) return { is: false };
 
   const res = { is: true, val: input };
@@ -86,15 +92,11 @@ const cObject = (input, expect = {}) => {
   return res;
 };
 
-/**
- * TODO
- * @param {*} input
- * @param {*} expect
-{
-  type: 'array', required: true, items: 'string', example: ['填写内容']
-}
- */
-const cArray = (input, expect) => {
+
+// {
+//   type: 'array', required: true, items: 'string', example: ['填写内容']
+// }
+const cArray = (input: any, expect: Expect) => {
   if (!cRequired(input, expect).is) return { is: false };
   const res = { is: true, val: input };
 
@@ -118,7 +120,7 @@ const cArray = (input, expect) => {
 
   // items 字段为字符串的情况: array 中的内容是基本类型, 或者为object|array类型但不需要校验内部字段
   if (is.string(expect.items)) {
-    const check = func => () =>
+    const check: any = (func: any) => () =>
       input.length === input.filter(item => func(item)).length;
 
     const cond = _.cond([
@@ -136,7 +138,7 @@ const cArray = (input, expect) => {
   return res;
 };
 
-const check = (input, expect) => {
+const check = (input: any, expect: Expect) => {
   const cond = _.cond([
     [_.equals('string'), () => cString(input, expect)],
     [_.equals('boolean'), () => cBool(input, expect)],
@@ -148,7 +150,7 @@ const check = (input, expect) => {
 
   return cond(expect.type);
 };
-const Checker = {
+const Checker: any = {
   required: cRequired,
   object: cObject,
   string: cString,

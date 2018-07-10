@@ -3,7 +3,7 @@ import { getPath } from './utils';
 /**
  * build swagger json from apiObjects
  */
-const swaggerJSON = (options = {}, apiObjects) => {
+const swaggerJSON = (options: {[name: string]: any} = {}, apiObjects) => {
   const {
     title,
     description,

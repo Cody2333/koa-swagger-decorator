@@ -1,7 +1,7 @@
 import _ from 'ramda';
 import is from 'is-type-of';
 import swaggerObject from './swaggerObject';
-import { wrapper, SwaggerRouter } from './wrapper';
+import { wrapper, SwaggerRouter, Context } from './wrapper';
 
 const _desc = (type, text) => (target, name, descriptor) => {
   descriptor.value[type] = text;
@@ -176,5 +176,6 @@ export {
   middlewaresAll,
   deprecatedAll,
   queryAll,
-  prefix
+  prefix,
+  Context,
 };

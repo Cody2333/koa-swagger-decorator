@@ -1,6 +1,6 @@
 import multer from 'koa-multer';
 import _path from 'path';
-import Doc, { description } from '../../lib'; // 2 import style avaliable
+import Doc, { description } from '../../dist'; // 2 import style avaliable
 import config from '../config';
 
 const {
@@ -98,7 +98,7 @@ export default class SampleRouter {
   @query({
     page: {
       type: 'string',
-      enum: ['1', '2', '3'],
+      enum: ['1', '2'],
       description: 'page number'
     }
   })
