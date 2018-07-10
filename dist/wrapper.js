@@ -1,169 +1,144 @@
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.SwaggerRouter = exports.wrapper = undefined;
-
-var _koaRouter = require('koa-router');
-
-var _koaRouter2 = _interopRequireDefault(_koaRouter);
-
-var _ramda = require('ramda');
-
-var _ramda2 = _interopRequireDefault(_ramda);
-
-var _isTypeOf = require('is-type-of');
-
-var _isTypeOf2 = _interopRequireDefault(_isTypeOf);
-
-var _validate = require('./validate');
-
-var _validate2 = _interopRequireDefault(_validate);
-
-var _swaggerHTML = require('./swaggerHTML');
-
-var _swaggerJSON = require('./swaggerJSON');
-
-var _swaggerObject = require('./swaggerObject');
-
-var _swaggerObject2 = _interopRequireDefault(_swaggerObject);
-
-var _utils = require('./utils');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const koa_router_1 = __importDefault(require("koa-router"));
+const ramda_1 = __importDefault(require("ramda"));
+const is_type_of_1 = __importDefault(require("is-type-of"));
+const validate_1 = __importDefault(require("./validate"));
+const swaggerHTML_1 = require("./swaggerHTML");
+const swaggerJSON_1 = require("./swaggerJSON");
+const swaggerObject_1 = __importDefault(require("./swaggerObject"));
+const utils_1 = require("./utils");
 /**
  * allowed http methods
  */
 const reqMethods = ['get', 'post', 'put', 'patch', 'delete'];
-
-/**
- * middlewara for validating [query, path, body] params
- * @param {Object} parameters
- */
-const validator = parameters => async (ctx, next) => {
-  if (!parameters) {
-    await next();
-    return;
-  }
-
-  if (parameters.query) {
-    ctx.validatedQuery = (0, _validate2.default)(ctx.request.query, parameters.query);
-  }
-  if (parameters.path) {
-    ctx.validatedParams = (0, _validate2.default)(ctx.params, parameters.path);
-  }
-  if (parameters.body) {
-    ctx.validatedBody = (0, _validate2.default)(ctx.request.body, parameters.body);
-  }
-  await next();
-};
-
+const validator = (parameters) => (ctx, next) => __awaiter(this, void 0, void 0, function* () {
+    if (!parameters) {
+        yield next();
+        return;
+    }
+    if (parameters.query) {
+        ctx.validatedQuery = validate_1.default(ctx.request.query, parameters.query);
+    }
+    if (parameters.path) {
+        ctx.validatedParams = validate_1.default(ctx.params, parameters.path);
+    }
+    if (parameters.body) {
+        ctx.validatedBody = validate_1.default(ctx.request.body, parameters.body);
+    }
+    yield next();
+});
 const handleSwagger = (router, options) => {
-  const {
-    swaggerJsonEndpoint = '/swagger-json',
-    swaggerHtmlEndpoint = '/swagger-html',
-    prefix = ''
-  } = options;
-
-  // setup swagger router
-  router.get(swaggerJsonEndpoint, async ctx => {
-    ctx.body = (0, _swaggerJSON.swaggerJSON)(options, _swaggerObject2.default.data);
-  });
-  router.get(swaggerHtmlEndpoint, async ctx => {
-    ctx.body = (0, _swaggerHTML.swaggerHTML)((0, _utils.getPath)(prefix, swaggerJsonEndpoint));
-  });
+    const { swaggerJsonEndpoint = '/swagger-json', swaggerHtmlEndpoint = '/swagger-html', prefix = '' } = options;
+    // setup swagger router
+    router.get(swaggerJsonEndpoint, (ctx) => __awaiter(this, void 0, void 0, function* () {
+        ctx.body = swaggerJSON_1.swaggerJSON(options, swaggerObject_1.default.data);
+    }));
+    router.get(swaggerHtmlEndpoint, (ctx) => __awaiter(this, void 0, void 0, function* () {
+        ctx.body = swaggerHTML_1.swaggerHTML(utils_1.getPath(prefix, swaggerJsonEndpoint));
+    }));
 };
-
 const handleMap = (router, SwaggerClass, { doValidation = true }) => {
-  if (!(0, _utils.isSwaggerRouter)(SwaggerClass)) return;
-  const classMiddlewares = SwaggerClass.middlewares || [];
-  const classPrefix = SwaggerClass.prefix || '';
-
-  const classParameters = SwaggerClass.parameters || {};
-  const classParametersFilters = SwaggerClass.parameters ? SwaggerClass.parameters.filters : ['ALL'];
-  classParameters.query = classParameters.query ? classParameters.query : {};
-
-  // remove useless field in class object:  constructor, length, name, prototype
-  const methods = Object.getOwnPropertyNames(SwaggerClass).filter(method => !_utils.reservedMethodNames.includes(method));
-  // map all method in methods
-  methods
-  // filter methods withour @request decorator
-  .filter(item => {
-    const { path, method } = SwaggerClass[item];
-    if (!path && !method) {
-      return false;
-    }
-    return true;
-  })
-  // add router
-  .forEach(item => {
-    const { path, method } = SwaggerClass[item];
-    let { middlewares = [] } = SwaggerClass[item];
-    const localParams = SwaggerClass[item].parameters || {};
-
-    if (classParametersFilters.includes('ALL') || classParametersFilters.map(i => i.toLowerCase()).includes(method)) {
-      const globalQuery = _ramda2.default.clone(classParameters.query);
-      localParams.query = localParams.query ? localParams.query : {};
-      // merge local query and class query
-      // local query 的优先级更高
-      localParams.query = Object.assign(globalQuery, localParams.query);
-    }
-    if (_isTypeOf2.default.function(middlewares)) {
-      middlewares = [middlewares];
-    }
-    if (!_isTypeOf2.default.array(middlewares)) {
-      throw new Error('middlewares params must be an array or function');
-    }
-    middlewares.forEach(item => {
-      if (!_isTypeOf2.default.function(item)) {
-        throw new Error('item in middlewares must be a function');
-      }
+    if (!utils_1.isSwaggerRouter(SwaggerClass))
+        return;
+    const classMiddlewares = SwaggerClass.middlewares || [];
+    const classPrefix = SwaggerClass.prefix || '';
+    const classParameters = SwaggerClass.parameters || {};
+    const classParametersFilters = SwaggerClass.parameters
+        ? SwaggerClass.parameters.filters
+        : ['ALL'];
+    classParameters.query = classParameters.query ? classParameters.query : {};
+    // remove useless field in class object:  constructor, length, name, prototype
+    const methods = Object.getOwnPropertyNames(SwaggerClass).filter(method => !utils_1.reservedMethodNames.includes(method));
+    // map all method in methods
+    methods
+        // filter methods withour @request decorator
+        .filter((item) => {
+        const { path, method } = SwaggerClass[item];
+        if (!path && !method) {
+            return false;
+        }
+        return true;
+    })
+        // add router
+        .forEach((item) => {
+        const { path, method } = SwaggerClass[item];
+        let { middlewares = [] } = SwaggerClass[item];
+        const localParams = SwaggerClass[item].parameters || {};
+        if (classParametersFilters.includes('ALL') ||
+            classParametersFilters.map(i => i.toLowerCase()).includes(method)) {
+            const globalQuery = ramda_1.default.clone(classParameters.query);
+            localParams.query = localParams.query ? localParams.query : {};
+            // merge local query and class query
+            // local query 的优先级更高
+            localParams.query = Object.assign(globalQuery, localParams.query);
+        }
+        if (is_type_of_1.default.function(middlewares)) {
+            middlewares = [middlewares];
+        }
+        if (!is_type_of_1.default.array(middlewares)) {
+            throw new Error('middlewares params must be an array or function');
+        }
+        middlewares.forEach((item) => {
+            if (!is_type_of_1.default.function(item)) {
+                throw new Error('item in middlewares must be a function');
+            }
+        });
+        if (!reqMethods.includes(method)) {
+            throw new Error(`illegal API: ${method} ${path} at [${item}]`);
+        }
+        const chain = [
+            `${utils_1.convertPath(`${classPrefix}${path}`)}`,
+            doValidation
+                ? validator(localParams)
+                : (ctx, next) => __awaiter(this, void 0, void 0, function* () {
+                    yield next();
+                }),
+            ...classMiddlewares,
+            ...middlewares,
+            SwaggerClass[item]
+        ];
+        router[method](...chain);
     });
-    if (!reqMethods.includes(method)) {
-      throw new Error(`illegal API: ${method} ${path} at [${item}]`);
-    }
-
-    const chain = [`${(0, _utils.convertPath)(`${classPrefix}${path}`)}`, doValidation ? validator(localParams) : async (ctx, next) => {
-      await next();
-    }, ...classMiddlewares, ...middlewares, SwaggerClass[item]];
-
-    router[method](...chain);
-  });
 };
-
 const handleMapDir = (router, dir, options) => {
-  (0, _utils.loadSwaggerClasses)(dir, options).forEach(c => {
-    router.map(c, options);
-  });
+    utils_1.loadSwaggerClasses(dir, options).forEach((c) => {
+        router.map(c, options);
+    });
 };
-
-const wrapper = router => {
-  router.swagger = (options = {}) => {
-    handleSwagger(router, options);
-  };
-  router.map = (SwaggerClass, options = {}) => {
-    handleMap(router, SwaggerClass, options);
-  };
-
-  router.mapDir = (dir, options = {}) => {
-    handleMapDir(router, dir, options);
-  };
-};
-
-let SwaggerRouter = class SwaggerRouter extends _koaRouter2.default {
-  swagger(options) {
-    handleSwagger(this, options);
-  }
-
-  map(SwaggerClass, options) {
-    handleMap(this, SwaggerClass, options);
-  }
-
-  mapDir(dir, options = {}) {
-    handleMapDir(this, dir, options);
-  }
+const wrapper = (router) => {
+    router.swagger = (options = {}) => {
+        handleSwagger(router, options);
+    };
+    router.map = (SwaggerClass, options = {}) => {
+        handleMap(router, SwaggerClass, options);
+    };
+    router.mapDir = (dir, options = {}) => {
+        handleMapDir(router, dir, options);
+    };
 };
 exports.wrapper = wrapper;
+class SwaggerRouter extends koa_router_1.default {
+    swagger(options) {
+        handleSwagger(this, options);
+    }
+    map(SwaggerClass, options) {
+        handleMap(this, SwaggerClass, options);
+    }
+    mapDir(dir, options = {}) {
+        handleMapDir(this, dir, options);
+    }
+}
 exports.SwaggerRouter = SwaggerRouter;
+//# sourceMappingURL=wrapper.js.map

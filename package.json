@@ -19,12 +19,19 @@
     ]
   },
   "devDependencies": {
+    "@types/globby": "^8.0.0",
+    "@types/koa": "^2.0.46",
+    "@types/koa-bodyparser": "^5.0.1",
+    "@types/koa-router": "^7.0.30",
+    "@types/node": "^10.5.2",
+    "@types/ramda": "^0.25.34",
     "babel-cli": "^6.24.1",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.2.1",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "babel-preset-env": "^1.6.0",
     "chai": "^4.1.2",
+    "concurrently": "^3.6.0",
     "eslint": "^4.17.0",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.8.0",
@@ -43,12 +50,18 @@
     "prettier-eslint-cli": "^4.7.1",
     "sha1": "^1.1.1",
     "supertest": "^2.0.1",
+    "ts-node": "^7.0.0",
+    "ts-node-dev": "^1.0.0-pre.26",
+    "tslint": "^5.10.0",
+    "typescript": "^2.9.2",
     "url": "^0.11.0"
   },
   "scripts": {
-    "build": "babel lib -d dist",
+    "build": "tsc -p tsconfig.json",
     "start:babel": "babel-node example/main",
-    "start": "nodemon --watch example --exec npm run start:babel -L",
+    "watch:node": "nodemon --watch example --watch dist --exec npm run start:babel -L",
+    "watch:ts": "tsc -w -p tsconfig.json",
+    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch:ts\" \"npm run watch:node\"",
     "test": "npm run lint && ./node_modules/mocha/bin/mocha --require babel-core/register test/**/*.js --bail -t 2000000",
     "prepublish": "npm run build",
     "lint": "eslint .",
@@ -56,7 +69,8 @@
     "debug": "babel-node example/main --inspect --debug-brk --nolazy example/main",
     "cov": "nyc --reporter=lcov npm run test",
     "add": "git add .",
-    "precommit-msg": "echo 'Pre-commit code formating...' && exit 0"
+    "precommit-msg": "echo 'Pre-commit code formating...' && exit 0",
+    "tslint": "tslint -c tslint.json -p tsconfig.json"
   },
   "pre-commit": [
     "precommit-msg",

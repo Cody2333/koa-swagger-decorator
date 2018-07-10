@@ -6,7 +6,7 @@ import {
   middlewares,
   path,
   description
-} from '../../lib';
+} from '../../dist';
 
 const tag = tags(['User']);
 

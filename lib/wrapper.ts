@@ -1,4 +1,5 @@
 import Router from 'koa-router';
+import * as Koa from 'koa';
 import R from 'ramda';
 import is from 'is-type-of';
 import validate from './validate';
@@ -13,16 +14,17 @@ import {
   reservedMethodNames
 } from './utils';
 
+interface Context extends Koa.Context {
+  validatedQuery: any;
+  validatedBody: any;
+  validatedParams: any;
+}
 /**
  * allowed http methods
  */
 const reqMethods = ['get', 'post', 'put', 'patch', 'delete'];
 
-/**
- * middlewara for validating [query, path, body] params
- * @param {Object} parameters
- */
-const validator = parameters => async (ctx, next) => {
+const validator = (parameters: any) => async (ctx: Context, next: any) => {
   if (!parameters) {
     await next();
     return;
@@ -40,7 +42,7 @@ const validator = parameters => async (ctx, next) => {
   await next();
 };
 
-const handleSwagger = (router, options) => {
+const handleSwagger = (router: any, options: any) => {
   const {
     swaggerJsonEndpoint = '/swagger-json',
     swaggerHtmlEndpoint = '/swagger-html',
@@ -48,21 +50,21 @@ const handleSwagger = (router, options) => {
   } = options;
 
   // setup swagger router
-  router.get(swaggerJsonEndpoint, async (ctx) => {
+  router.get(swaggerJsonEndpoint, async (ctx: Context) => {
     ctx.body = swaggerJSON(options, swaggerObject.data);
   });
-  router.get(swaggerHtmlEndpoint, async (ctx) => {
+  router.get(swaggerHtmlEndpoint, async (ctx: Context) => {
     ctx.body = swaggerHTML(getPath(prefix, swaggerJsonEndpoint));
   });
 };
 
-const handleMap = (router, SwaggerClass, { doValidation = true }) => {
+const handleMap = (router: any, SwaggerClass: any, { doValidation = true }) => {
   if (!isSwaggerRouter(SwaggerClass)) return;
-  const classMiddlewares = SwaggerClass.middlewares || [];
-  const classPrefix = SwaggerClass.prefix || '';
+  const classMiddlewares: any[] = SwaggerClass.middlewares || [];
+  const classPrefix: string = SwaggerClass.prefix || '';
 
-  const classParameters = SwaggerClass.parameters || {};
-  const classParametersFilters = SwaggerClass.parameters
+  const classParameters: any = SwaggerClass.parameters || {};
+  const classParametersFilters: any[] = SwaggerClass.parameters
     ? SwaggerClass.parameters.filters
     : ['ALL'];
   classParameters.query = classParameters.query ? classParameters.query : {};
@@ -101,7 +103,7 @@ const handleMap = (router, SwaggerClass, { doValidation = true }) => {
       if (!is.array(middlewares)) {
         throw new Error('middlewares params must be an array or function');
       }
-      middlewares.forEach((item) => {
+      middlewares.forEach((item: any) => {
         if (!is.function(item)) {
           throw new Error('item in middlewares must be a function');
         }
@@ -114,7 +116,7 @@ const handleMap = (router, SwaggerClass, { doValidation = true }) => {
         `${convertPath(`${classPrefix}${path}`)}`,
         doValidation
           ? validator(localParams)
-          : async (ctx, next) => {
+          : async (ctx: Context, next: any) => {
             await next();
           },
         ...classMiddlewares,
@@ -126,35 +128,35 @@ const handleMap = (router, SwaggerClass, { doValidation = true }) => {
     });
 };
 
-const handleMapDir = (router, dir, options) => {
-  loadSwaggerClasses(dir, options).forEach((c) => {
+const handleMapDir = (router: any, dir: any, options: any) => {
+  loadSwaggerClasses(dir, options).forEach((c: any) => {
     router.map(c, options);
   });
 };
 
-const wrapper = (router) => {
-  router.swagger = (options = {}) => {
+const wrapper = (router: any) => {
+  router.swagger = (options: any = {}) => {
     handleSwagger(router, options);
   };
-  router.map = (SwaggerClass, options = {}) => {
+  router.map = (SwaggerClass: any, options = {}) => {
     handleMap(router, SwaggerClass, options);
   };
 
-  router.mapDir = (dir, options = {}) => {
+  router.mapDir = (dir: string, options: any = {}) => {
     handleMapDir(router, dir, options);
   };
 };
 
 class SwaggerRouter extends Router {
-  swagger(options) {
+  swagger(options: any) {
     handleSwagger(this, options);
   }
 
-  map(SwaggerClass, options) {
+  map(SwaggerClass: any, options: any) {
     handleMap(this, SwaggerClass, options);
   }
 
-  mapDir(dir, options = {}) {
+  mapDir(dir: string, options: any = {}) {
     handleMapDir(this, dir, options);
   }
 }

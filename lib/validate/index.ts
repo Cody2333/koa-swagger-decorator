@@ -1,23 +1,16 @@
 import Checker from './check';
-
+import { Expect } from './check';
 class InputError extends Error {
-  /**
-   * Constructor
-   * @param {string} field the error field in request parameters.
-   */
-  constructor(field) {
+  field: string;
+  status: number;
+  constructor(field: string) {
     super(`incorrect field: '${field}', please check again!`);
     this.field = field;
     this.status = 400;
   }
 }
 
-/**
- * validate the input values
- * @param {Object} input the input object, like request.query, request.body and so on.
- * @param {Object} expect the expect value, Ex: { name: { required: true, type: String }}
- */
-export default function (input, expect) {
+export default function (input: any, expect: Expect) {
   Object.keys(expect).forEach((key) => {
     if (expect[key] === undefined) {
       delete input[key];

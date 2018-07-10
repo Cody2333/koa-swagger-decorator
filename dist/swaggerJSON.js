@@ -1,77 +1,50 @@
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.swaggerJSON = undefined;
-
-var _swaggerTemplate = require('./swaggerTemplate');
-
-var _swaggerTemplate2 = _interopRequireDefault(_swaggerTemplate);
-
-var _utils = require('./utils');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const swaggerTemplate_1 = __importDefault(require("./swaggerTemplate"));
+const utils_1 = require("./utils");
 /**
  * build swagger json from apiObjects
  */
 const swaggerJSON = (options = {}, apiObjects) => {
-  const {
-    title,
-    description,
-    version,
-    prefix = '',
-    swaggerOptions = {}
-  } = options;
-  const swaggerJSON = (0, _swaggerTemplate2.default)(title, description, version, swaggerOptions);
-  Object.keys(apiObjects).forEach(key => {
-    const value = apiObjects[key];
-    if (!Object.keys(value).includes('request')) {
-      return;
-    }
-
-    const { method } = value.request;
-    let { path } = value.request;
-    path = (0, _utils.getPath)(prefix, value.prefix ? `${value.prefix}${path}` : path); // 根据前缀补全path
-    const summary = value.summary || '';
-    const description = value.description || summary;
-    const responses = value.responses || {
-      200: { description: 'success' }
-    };
-    const {
-      query = [],
-      path: pathParams = [],
-      body = [],
-      tags,
-      formData = [],
-      security,
-      deprecated
-    } = value;
-
-    const parameters = [...pathParams, ...query, ...formData, ...body];
-
-    // init path object first
-    if (!swaggerJSON.paths[path]) {
-      swaggerJSON.paths[path] = {};
-    }
-
-    // add content type [multipart/form-data] to support file upload
-    const consumes = formData.length > 0 ? ['multipart/form-data'] : undefined;
-
-    swaggerJSON.paths[path][method] = {
-      consumes,
-      summary,
-      description,
-      parameters,
-      responses,
-      tags,
-      security,
-      deprecated
-    };
-  });
-  return swaggerJSON;
+    const { title, description, version, prefix = '', swaggerOptions = {} } = options;
+    const swaggerJSON = swaggerTemplate_1.default(title, description, version, swaggerOptions);
+    Object.keys(apiObjects).forEach((key) => {
+        const value = apiObjects[key];
+        if (!Object.keys(value).includes('request')) {
+            return;
+        }
+        const { method } = value.request;
+        let { path } = value.request;
+        path = utils_1.getPath(prefix, value.prefix ? `${value.prefix}${path}` : path); // 根据前缀补全path
+        const summary = value.summary || '';
+        const description = value.description || summary;
+        const responses = value.responses || {
+            200: { description: 'success' }
+        };
+        const { query = [], path: pathParams = [], body = [], tags, formData = [], security, deprecated } = value;
+        const parameters = [...pathParams, ...query, ...formData, ...body];
+        // init path object first
+        if (!swaggerJSON.paths[path]) {
+            swaggerJSON.paths[path] = {};
+        }
+        // add content type [multipart/form-data] to support file upload
+        const consumes = formData.length > 0 ? ['multipart/form-data'] : undefined;
+        swaggerJSON.paths[path][method] = {
+            consumes,
+            summary,
+            description,
+            parameters,
+            responses,
+            tags,
+            security,
+            deprecated
+        };
+    });
+    return swaggerJSON;
 };
-
-exports.default = swaggerJSON;
 exports.swaggerJSON = swaggerJSON;
+exports.default = swaggerJSON;
+//# sourceMappingURL=swaggerJSON.js.map

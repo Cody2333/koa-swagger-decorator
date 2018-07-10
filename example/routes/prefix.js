@@ -1,4 +1,4 @@
-import Doc, { description } from '../../lib'; // 2 import style avaliable
+import Doc, { description } from '../../dist'; // 2 import style avaliable
 
 const {
   request, summary, query, tags, responses, prefix
