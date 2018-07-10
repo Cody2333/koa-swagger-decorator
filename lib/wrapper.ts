@@ -14,7 +14,7 @@ import {
   reservedMethodNames
 } from './utils';
 
-interface Context extends Koa.Context {
+export interface Context extends Koa.Context {
   validatedQuery: any;
   validatedBody: any;
   validatedParams: any;

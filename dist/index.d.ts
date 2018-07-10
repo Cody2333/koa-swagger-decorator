@@ -1,5 +1,5 @@
 import _ from 'ramda';
-import { wrapper, SwaggerRouter } from './wrapper';
+import { wrapper, SwaggerRouter, Context } from './wrapper';
 declare const request: (method: any, path: any) => (target: any, name: any, descriptor: any) => any;
 declare const middlewares: (middlewares: any) => (target: any, name: any, descriptor: any) => any;
 declare const deprecated: (target: any, name: any, descriptor: any) => any;
@@ -59,4 +59,4 @@ declare const Doc: {
     prefix: (prefix: any) => (target: any) => void;
 };
 export default Doc;
-export { request, summary, params, desc, description, query, path, body, tags, wrapper, middlewares, formData, responses, deprecated, SwaggerRouter, tagsAll, responsesAll, middlewaresAll, deprecatedAll, queryAll, prefix };
+export { request, summary, params, desc, description, query, path, body, tags, wrapper, middlewares, formData, responses, deprecated, SwaggerRouter, tagsAll, responsesAll, middlewaresAll, deprecatedAll, queryAll, prefix, Context, };
