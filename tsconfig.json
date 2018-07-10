@@ -1,15 +1,19 @@
 {
+  "compileOnSave": true,
   "compilerOptions": {
     "module": "commonjs",
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "target": "es6",
     "noImplicitAny": false,
     "moduleResolution": "node",
-    "sourceMap": true,
+    "inlineSourceMap": true,
     "outDir": "dist",
     "baseUrl": ".",
     "lib": ["es2017"],
+    "pretty": true,
+    "declaration": true,
     "paths": {
       "*": [
         "node_modules/*",
@@ -18,6 +22,7 @@
     }
   },
   "include": [
-    "lib/**/*"
+    "lib/**/*",
+    "test/**/*"
   ]
 }

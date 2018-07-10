@@ -1,17 +1,18 @@
 {
   "name": "koa-swagger-decorator",
-  "version": "1.4.6",
+  "version": "1.5.0",
   "description": "using decorator to automatically generate swagger doc for koa-router",
   "main": "dist/index.js",
   "dependencies": {
     "globby": "^8.0.1",
     "is-type-of": "^1.2.0",
     "koa-router": "^7.2.1",
-    "ramda": "^0.25.0"
+    "ramda": "^0.25.0",
+    "koa": "^2.3.0"
   },
   "nyc": {
     "include": [
-      "lib/**/*.js"
+      "dist/**/*.js"
     ],
     "exclude": [
       "example/**/*.js",
@@ -19,10 +20,12 @@
     ]
   },
   "devDependencies": {
+    "@types/chai": "^4.1.4",
     "@types/globby": "^8.0.0",
     "@types/koa": "^2.0.46",
     "@types/koa-bodyparser": "^5.0.1",
     "@types/koa-router": "^7.0.30",
+    "@types/mocha": "^5.2.4",
     "@types/node": "^10.5.2",
     "@types/ramda": "^0.25.34",
     "babel-cli": "^6.24.1",
@@ -36,7 +39,6 @@
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.8.0",
     "intelli-espower-loader": "^1.0.1",
-    "koa": "^2.3.0",
     "koa-bodyparser": "^4.2.0",
     "koa-cors": "^0.0.16",
     "koa-multer": "^1.0.2",
@@ -61,8 +63,8 @@
     "start:babel": "babel-node example/main",
     "watch:node": "nodemon --watch example --watch dist --exec npm run start:babel -L",
     "watch:ts": "tsc -w -p tsconfig.json",
-    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch:ts\" \"npm run watch:node\"",
-    "test": "npm run lint && ./node_modules/mocha/bin/mocha --require babel-core/register test/**/*.js --bail -t 2000000",
+    "start": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch:ts\" \"npm run watch:node\"",
+    "test": "./node_modules/mocha/bin/mocha -r babel-core/register test/**/*.js --bail -t 2000000",
     "prepublish": "npm run build",
     "lint": "eslint .",
     "format": "prettier-eslint --write \"**/*.js\"",
