@@ -1,5 +1,5 @@
 import Router from 'koa-router';
-import { wrapper } from '../../lib';
+import { wrapper } from '../../dist';
 
 const router = new Router();
 wrapper(router);

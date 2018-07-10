@@ -1,8 +1,8 @@
 import _path from 'path';
 import assert from 'assert';
 import server from '../example/main';
-import { getPath, convertPath, getFilepaths } from '../lib/utils';
-import validate from '../lib/validate';
+import { getPath, convertPath, getFilepaths } from '../dist/utils';
+import validate from '../dist/validate';
 
 const request = require('supertest')(server);
 const { expect } = require('chai');
