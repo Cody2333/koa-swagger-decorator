@@ -3,7 +3,7 @@ import { getPath } from './utils';
 /**
  * build swagger json from apiObjects
  */
-const swaggerJSON = (options: {[name: string]: any} = {}, apiObjects) => {
+const swaggerJSON = (options: {[name: string]: any} = {}, apiObjects: any) => {
   const {
     title,
     description,
@@ -11,7 +11,7 @@ const swaggerJSON = (options: {[name: string]: any} = {}, apiObjects) => {
     prefix = '',
     swaggerOptions = {}
   } = options;
-  const swaggerJSON = init(title, description, version, swaggerOptions);
+  const swaggerJSON: any = init(title, description, version, swaggerOptions);
   Object.keys(apiObjects).forEach((key) => {
     const value = apiObjects[key];
     if (!Object.keys(value).includes('request')) {

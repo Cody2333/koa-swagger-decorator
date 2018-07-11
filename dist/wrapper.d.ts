@@ -5,10 +5,25 @@ export interface Context extends Koa.Context {
     validatedBody: any;
     validatedParams: any;
 }
+export interface SwaggerOptions {
+    title?: string;
+    description?: string;
+    version?: string;
+    swaggerJsonEndpoint?: string;
+    swaggerHtmlEndpoint?: string;
+    prefix?: string;
+    swaggerOptions?: any;
+    [name: string]: any;
+}
+export interface MapOptions {
+    doValidation?: boolean;
+    recursive?: boolean;
+    [name: string]: any;
+}
 declare const wrapper: (router: any) => void;
 declare class SwaggerRouter extends Router {
-    swagger(options: any): void;
-    map(SwaggerClass: any, options: any): void;
-    mapDir(dir: string, options?: any): void;
+    swagger(options?: SwaggerOptions): void;
+    map(SwaggerClass: any, options: MapOptions): void;
+    mapDir(dir: string, options?: MapOptions): void;
 }
 export { wrapper, SwaggerRouter };
