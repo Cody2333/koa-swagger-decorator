@@ -11,7 +11,8 @@ import {
   getPath,
   isSwaggerRouter,
   loadSwaggerClasses,
-  reservedMethodNames
+  reservedMethodNames,
+  reqMethods,
 } from './utils';
 
 export interface Context extends Koa.Context {
@@ -19,10 +20,6 @@ export interface Context extends Koa.Context {
   validatedBody: any;
   validatedParams: any;
 }
-/**
- * allowed http methods
- */
-const reqMethods = ['get', 'post', 'put', 'patch', 'delete'];
 
 const validator = (parameters: any) => async (ctx: Context, next: any) => {
   if (!parameters) {
@@ -42,7 +39,18 @@ const validator = (parameters: any) => async (ctx: Context, next: any) => {
   await next();
 };
 
-const handleSwagger = (router: any, options: any) => {
+export interface SwaggerOptions {
+  title?: string;
+  description?: string;
+  version?: string;
+  swaggerJsonEndpoint?: string;
+  swaggerHtmlEndpoint?: string;
+  prefix?: string;
+  swaggerOptions?: any;
+  [name: string]: any;
+}
+
+const handleSwagger = (router: Router, options: SwaggerOptions) => {
   const {
     swaggerJsonEndpoint = '/swagger-json',
     swaggerHtmlEndpoint = '/swagger-html',
@@ -58,7 +66,7 @@ const handleSwagger = (router: any, options: any) => {
   });
 };
 
-const handleMap = (router: any, SwaggerClass: any, { doValidation = true }) => {
+const handleMap = (router: Router, SwaggerClass: any, { doValidation = true }) => {
   if (!isSwaggerRouter(SwaggerClass)) return;
   const classMiddlewares: any[] = SwaggerClass.middlewares || [];
   const classPrefix: string = SwaggerClass.prefix || '';
@@ -103,7 +111,7 @@ const handleMap = (router: any, SwaggerClass: any, { doValidation = true }) => {
       if (!is.array(middlewares)) {
         throw new Error('middlewares params must be an array or function');
       }
-      middlewares.forEach((item: any) => {
+      middlewares.forEach((item: Function) => {
         if (!is.function(item)) {
           throw new Error('item in middlewares must be a function');
         }
@@ -124,39 +132,44 @@ const handleMap = (router: any, SwaggerClass: any, { doValidation = true }) => {
         SwaggerClass[item]
       ];
 
-      router[method](...chain);
+      (router as any)[method](...chain);
     });
 };
 
-const handleMapDir = (router: any, dir: any, options: any) => {
+const handleMapDir = (router: SwaggerRouter, dir: string, options: MapOptions) => {
   loadSwaggerClasses(dir, options).forEach((c: any) => {
     router.map(c, options);
   });
 };
 
+export interface MapOptions {
+  doValidation?: boolean;
+  recursive?: boolean;
+  [name: string]: any;
+}
 const wrapper = (router: any) => {
-  router.swagger = (options: any = {}) => {
+  router.swagger = (options: SwaggerOptions = {}) => {
     handleSwagger(router, options);
   };
-  router.map = (SwaggerClass: any, options = {}) => {
+  router.map = (SwaggerClass: any, options: MapOptions = {}) => {
     handleMap(router, SwaggerClass, options);
   };
 
-  router.mapDir = (dir: string, options: any = {}) => {
+  router.mapDir = (dir: string, options: MapOptions = {}) => {
     handleMapDir(router, dir, options);
   };
 };
 
 class SwaggerRouter extends Router {
-  swagger(options: any) {
+  swagger(options: SwaggerOptions = {}) {
     handleSwagger(this, options);
   }
 
-  map(SwaggerClass: any, options: any) {
+  map(SwaggerClass: any, options: MapOptions) {
     handleMap(this, SwaggerClass, options);
   }
 
-  mapDir(dir: string, options: any = {}) {
+  mapDir(dir: string, options: MapOptions = {}) {
     handleMapDir(this, dir, options);
   }
 }

@@ -1,4 +1,4 @@
-const swaggerHTML = (apiPath, options: {[name: string]: any} = {}) => {
+const swaggerHTML = (apiPath: string, options: {swaggerVersion?: string, [name: string]: any} = {}) => {
   const { swaggerVersion = '3.16.0' } = options;
   const result = `
 
