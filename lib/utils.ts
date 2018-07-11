@@ -20,9 +20,11 @@ const reservedMethodNames = [
   'parameters'
 ];
 
+const reqMethods = ['get', 'post', 'put', 'patch', 'delete'];
+
 // check if an object is an instance of SwaggerRouter
 const isSwaggerRouter = (o: any) => {
-  if (!o || o instanceof Router) {
+  if (!o) {
     return false;
   }
   return true;
@@ -62,6 +64,7 @@ export {
   isSwaggerRouter,
   getFilepaths,
   loadClass,
+  reqMethods,
   loadSwaggerClasses,
   reservedMethodNames
 };

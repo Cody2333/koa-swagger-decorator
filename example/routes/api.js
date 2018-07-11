@@ -1,8 +1,6 @@
-import Router from 'koa-router';
-import { wrapper } from '../../dist';
+import { SwaggerRouter } from '../../dist';
 
-const router = new Router();
-wrapper(router);
+const router = new SwaggerRouter();
 
 // swagger docs avaliable at http://localhost:3000/api/swagger-html
 router.swagger({
