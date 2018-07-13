@@ -103,7 +103,7 @@ const responsesAll = (responses = { 200: { description: 'success' } }) => (targe
   swaggerObject.addMulti(target, { responses });
 };
 
-const middlewaresAll = (items: string[]| string) => (target: any) => {
+const middlewaresAll = (items: Function[]| Function) => (target: any) => {
   const middlewares = is.array(items) ? items : [items];
   target.middlewares = middlewares;
 };
