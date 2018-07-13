@@ -32,7 +32,7 @@ declare const responsesAll: (responses?: {
         description: string;
     };
 }) => (target: any) => void;
-declare const middlewaresAll: (items: string | string[]) => (target: any) => void;
+declare const middlewaresAll: (items: Function | Function[]) => (target: any) => void;
 declare const deprecatedAll: (target: any) => void;
 declare const prefix: (prefix: string) => (target: any) => void;
 declare const queryAll: (parameters: {
@@ -72,7 +72,7 @@ declare const Doc: {
             description: string;
         };
     }) => (target: any) => void;
-    middlewaresAll: (items: string | string[]) => (target: any) => void;
+    middlewaresAll: (items: Function | Function[]) => (target: any) => void;
     deprecatedAll: (target: any) => void;
     queryAll: (parameters: {
         [name: string]: any;
