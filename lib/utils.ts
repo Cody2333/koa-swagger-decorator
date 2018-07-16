@@ -32,8 +32,8 @@ const isSwaggerRouter = (o: any) => {
 
 const getFilepaths = (dir: string, recursive: boolean = true) => {
   const paths = recursive
-    ? globby.sync(['**/*.js'], { cwd: dir })
-    : globby.sync(['*.js'], { cwd: dir });
+    ? globby.sync(['**/*.js', '**/*.ts'], { cwd: dir })
+    : globby.sync(['*.js', '*.ts'], { cwd: dir });
   return paths.map(path => _path.join(dir, path));
 };
 
