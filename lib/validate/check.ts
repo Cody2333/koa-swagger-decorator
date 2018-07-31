@@ -107,7 +107,7 @@ const cArray = (input: any, expect: Expect) => {
     return res;
   }
 
-  // TODO items 字段为一个对象的情况, 验证该对象内的字段
+  // items 字段为一个对象的情况, 验证该对象内的字段
   if (is.object(expect.items)) {
     for (const item of input) {
       const { is } = check(item, expect.items);
@@ -150,7 +150,7 @@ const check = (input: any, expect: Expect) => {
 
   return cond(expect.type);
 };
-const Checker: any = {
+const Checker = {
   required: cRequired,
   object: cObject,
   string: cString,
