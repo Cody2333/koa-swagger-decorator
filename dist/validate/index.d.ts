@@ -1,2 +1,2 @@
 import { Expect } from './check';
-export default function (input: any, expect: Expect): any;
+export default function (rawInput: any, expect: Expect): any;
