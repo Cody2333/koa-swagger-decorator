@@ -1,3 +1,4 @@
+import _ from 'ramda';
 import Checker from './check';
 import { Expect } from './check';
 class InputError extends Error {
@@ -10,7 +11,8 @@ class InputError extends Error {
   }
 }
 
-export default function (input: any, expect: Expect) {
+export default function (rawInput: any, expect: Expect) {
+  const input = _.clone(rawInput); // 不修改原生 query body params 对象
   Object.keys(expect).forEach((key) => {
     if (expect[key] === undefined) {
       delete input[key];

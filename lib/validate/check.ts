@@ -145,7 +145,7 @@ const check = (input: any, expect: Expect) => {
     [_.equals('number'), () => cNum(input, expect)],
     [_.equals('object'), () => cObject(input, expect)],
     [_.equals('array'), () => cArray(input, expect)],
-    [_.T, () => ({ is: true })]
+    [_.T, () => ({ is: true, val: input })] // 其他类型不做校验，直接返回原数据
   ]);
 
   return cond(expect.type);

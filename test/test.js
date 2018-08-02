@@ -387,4 +387,13 @@ describe('Validate:', () => {
     const { foo } = validate(input, expect);
     assert(foo === '1');
   });
+
+  it(' should allow any type when type is not defined in expect', () => {
+    const input = { foo: '1', bar: 2 };
+    const expect = {
+      foo: { required: true }
+    };
+    const { foo } = validate(input, expect);
+    assert(foo === '1');
+  });
 });
