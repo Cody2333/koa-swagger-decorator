@@ -1,6 +1,6 @@
+import * as IRouter from 'koa-router';
 import Router from 'koa-router';
-import * as Koa from 'koa';
-export interface Context extends Koa.Context {
+export interface Context extends IRouter.IRouterContext {
     validatedQuery: any;
     validatedBody: any;
     validatedParams: any;
@@ -20,7 +20,7 @@ export interface MapOptions {
     recursive?: boolean;
     [name: string]: any;
 }
-declare const wrapper: (router: any) => void;
+declare const wrapper: (router: SwaggerRouter) => void;
 declare class SwaggerRouter extends Router {
     swagger(options?: SwaggerOptions): void;
     map(SwaggerClass: any, options: MapOptions): void;
