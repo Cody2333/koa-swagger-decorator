@@ -1,5 +1,5 @@
+import * as IRouter from 'koa-router';
 import Router from 'koa-router';
-import * as Koa from 'koa';
 import R from 'ramda';
 import is from 'is-type-of';
 import validate from './validate';
@@ -14,7 +14,7 @@ import {
   allowedMethods
 } from './utils';
 
-export interface Context extends Koa.Context {
+export interface Context extends IRouter.IRouterContext {
   validatedQuery: any;
   validatedBody: any;
   validatedParams: any;
@@ -146,7 +146,7 @@ export interface MapOptions {
   recursive?: boolean;
   [name: string]: any;
 }
-const wrapper = (router: any) => {
+const wrapper = (router: SwaggerRouter) => {
   router.swagger = (options: SwaggerOptions = {}) => {
     handleSwagger(router, options);
   };
