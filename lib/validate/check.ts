@@ -120,7 +120,7 @@ const cArray = (input: any, expect: Expect) => {
 
   // items 字段为字符串的情况: array 中的内容是基本类型, 或者为object|array类型但不需要校验内部字段
   if (is.string(expect.items)) {
-    const check: any = (func: any) => () =>
+    const check: Function = (func: Function) => () =>
       input.length === input.filter(item => func(item)).length;
 
     const cond = _.cond([

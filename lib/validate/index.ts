@@ -10,14 +10,22 @@ class InputError extends Error {
     this.status = 400;
   }
 }
+export interface ExpectObject {
+  [key: string]: Expect;
+}
+export interface Input {
+  [key: string]: any;
+}
+export default function (rawInput: Input, expect: ExpectObject) {
+  // make it pure
+  const input = _.clone(rawInput);
 
-export default function (rawInput: any, expect: Expect) {
-  const input = _.clone(rawInput); // 不修改原生 query body params 对象
   Object.keys(expect).forEach((key) => {
     if (expect[key] === undefined) {
-      delete input[key];
+      delete input[key]; // remove unexpected key/vals.
       return;
     }
+
     // if this key is required but not in input.
     if (!Checker.required(input[key], expect[key]).is) {
       throw new InputError(key);
