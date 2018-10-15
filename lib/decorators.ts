@@ -59,7 +59,13 @@ const deprecated = (target: any, name: string, descriptor: PropertyDescriptor) =
   return descriptor;
 };
 
-const responses = (responses = { 200: { description: 'success' } }) => (
+export interface IResponses {
+  [name: number]: any;
+}
+const defaultResp: IResponses = {
+  200: {description: 'success'}
+}
+const responses = (responses: IResponses = defaultResp) => (
   target: any,
   name: string,
   descriptor: PropertyDescriptor
@@ -99,7 +105,7 @@ const tagsAll = (items: string[]| string) => (target: any) => {
   swaggerObject.addMulti(target, { tags });
 };
 
-const responsesAll = (responses = { 200: { description: 'success' } }) => (target: any) => {
+const responsesAll = (responses: IResponses = defaultResp) => (target: any) => {
   swaggerObject.addMulti(target, { responses });
 };
 

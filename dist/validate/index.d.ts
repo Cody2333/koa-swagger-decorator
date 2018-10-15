@@ -1,2 +1,8 @@
 import { Expect } from './check';
-export default function (rawInput: any, expect: Expect): any;
+export interface ExpectObject {
+    [key: string]: Expect;
+}
+export interface Input {
+    [key: string]: any;
+}
+export default function (rawInput: Input, expect: ExpectObject): Input;
