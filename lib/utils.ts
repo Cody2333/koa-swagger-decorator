@@ -1,4 +1,3 @@
-import Router from 'koa-router';
 import _path from 'path';
 import globby from 'globby';
 import is from 'is-type-of';
@@ -9,7 +8,8 @@ const convertPath = (path: string) => {
   return path.replace(re, ':$1');
 };
 
-const getPath = (prefix: string, path: string) => `${prefix}${path}`.replace('//', '/');
+const getPath = (prefix: string, path: string) =>
+  `${prefix}${path}`.replace('//', '/');
 
 const reservedMethodNames = [
   'middlewares',
@@ -20,25 +20,23 @@ const reservedMethodNames = [
   'parameters'
 ];
 
-const reqMethods = ['get', 'post', 'put', 'patch', 'delete'];
-
-// check if an object is an instance of SwaggerRouter
-const isSwaggerRouter = (o: any) => {
-  if (!o) {
-    return false;
-  }
-  return true;
-};
+enum allowedMethods {
+  GET= 'get',
+  POST= 'post',
+  PUT= 'put',
+  PATCH= 'patch',
+  DELETE= 'delete'
+}
 
 const getFilepaths = (dir: string, recursive: boolean = true) => {
   const paths = recursive
-    ? globby.sync(['**/*.js'], { cwd: dir })
-    : globby.sync(['*.js'], { cwd: dir });
+    ? globby.sync(['**/*.js', '**/*.ts'], { cwd: dir })
+    : globby.sync(['*.js', '*.ts'], { cwd: dir });
   return paths.map(path => _path.join(dir, path));
 };
 
 const loadModule = (filepath: string) => {
-  const obj = require(filepath); // eslint-disable-line global-require
+  const obj = require(filepath);
   if (!obj) return obj;
   // it's es module
   if (obj.__esModule) return 'default' in obj ? obj.default : obj;
@@ -61,10 +59,9 @@ const loadSwaggerClasses = (dir: string = '', options: {recursive?: boolean} = {
 export {
   convertPath,
   getPath,
-  isSwaggerRouter,
   getFilepaths,
   loadClass,
-  reqMethods,
   loadSwaggerClasses,
-  reservedMethodNames
+  reservedMethodNames,
+  allowedMethods,
 };

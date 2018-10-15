@@ -15,9 +15,11 @@ npm install koa-swagger-decorator
 
 ### Koa Swagger Decorator
 
-using decorator to auto generate swagger json docs
+using decorator to auto generate swagger json docs add support validation for swagger definitions
 
 based on [Swagger OpenAPI Specification 2.0](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md)
+
+support both javascript (babel required) and typescript
 
 ## Example
 
@@ -40,10 +42,10 @@ http://localhost:3000/api/swagger-html
 
 - Koa2
 - koa-router
-- babel support for decorator
+- babel support for decorator (or using typescript)
 
 ```bash
-// add [transform-decorators-legacy] to .babelrc
+// add [transform-decorators-legacy] to .babelrc if using js
 
 npm install --save-dev babel-plugin-transform-decorators-legacy
 
@@ -55,7 +57,7 @@ npm install --save-dev babel-plugin-transform-decorators-legacy
 }
 ```
 
-### Introduction
+### Detail
 
 for more detail please take a look at the [example koa server](https://github.com/Cody2333/koa-swagger-decorator/tree/master/example)
 
@@ -67,11 +69,9 @@ import Router from 'koa-router'
 
 import Test from './test'
 
-import { wrapper } from 'koa-swagger-decorator'
+import { SwaggerRouter } from 'koa-swagger-decorator'
 
-const router = new Router()
-
-wrapper(router)
+const router = new SwaggerRouter() // extends from koa-router
 
 // swagger docs avaliable at http://localhost:3000/api/swagger-html
 router.swagger({
@@ -129,7 +129,7 @@ const userSchema = {
   groups: {
     type: 'array',
     required: true,
-    items: { type: 'string', example: 'group1' },
+    items: { type: 'string', example: 'group1' }, // item's type will also be validated
   },
 }
 
@@ -172,7 +172,7 @@ export default class Test {
 }
 ```
 
-#### avaliable annotations:
+#### avaliable annotations
 
 - tags
 - query
@@ -185,14 +185,13 @@ export default class Test {
 - responses
 - deprecated
 
-#### class annotations:
+#### class annotations
 
 - tagsAll
 - responsesAll
 - middlewaresAll
 - deprecatedAll
 - queryAll
-
 
 ``` javascript
 request // @request('POST', '/users')
@@ -223,7 +222,7 @@ deprecated // @deprecated
 @tagsAll(['A', 'B'])
 @deprecatedAll
 @middlewaresAll([log1, log2]) // add middlewares [log1, log2] to all routers in this class
-@queryAll({ limit: { type: 'number', default: 444, required: true } })
+@queryAll({ limit: { type: 'number', default: 444, required: true } }) // can be merged with @query
 export default class SampleRouter {
   ...
 }
@@ -235,7 +234,7 @@ support validation type: `string, number, boolean, object, array.`
 
 `properties` in `{type: 'object'}` and `items` in `{type: 'array'}` can alse be validated.
 
-other types eg. `integer` will not be validated.
+other types eg. `integer` will not be validated, and will return the raw value.
 
 by default, validation is activated and you can call ctx.validatedQuery[Body|Params] to access the validated value.
 

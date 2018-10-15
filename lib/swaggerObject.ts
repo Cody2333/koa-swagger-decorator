@@ -5,9 +5,15 @@ import is from 'is-type-of';
 import _ from 'ramda';
 import { reservedMethodNames } from './utils';
 
+interface Data {
+  [key: string]: {
+    [name: string]: any;
+  };
+}
+
 class SwaggerObject {
 
-  data: any;
+  data: Data;
 
   constructor() {
     this.data = {};
@@ -24,14 +30,10 @@ class SwaggerObject {
     Object.keys(content).forEach((k) => {
       if (is.array(this.data[key][k])) {
         this.data[key][k] = [...this.data[key][k], ...content[k]];
-        if (this.data[key][k].length > 0) {
-          if (is.object(this.data[key][k][0])) {
-            // 避免重名的query导致的异常
-            this.data[key][k] = _.uniqBy((o: {name: string}) => o.name, this.data[key][k]);
-          } else {
-            this.data[key][k] = _.uniq(this.data[key][k]);
-          }
-        }
+        if (this.data[key][k].length === 0) return;
+        this.data[key][k] = is.object(this.data[key][k][0]) ?
+        _.uniqBy((o: {name: string}) => o.name, this.data[key][k])
+        : _.uniq(this.data[key][k]);
       } else {
         Object.assign(this.data[key], { [k]: content[k] });
       }

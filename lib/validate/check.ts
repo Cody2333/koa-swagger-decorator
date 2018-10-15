@@ -107,7 +107,7 @@ const cArray = (input: any, expect: Expect) => {
     return res;
   }
 
-  // TODO items 字段为一个对象的情况, 验证该对象内的字段
+  // items 字段为一个对象的情况, 验证该对象内的字段
   if (is.object(expect.items)) {
     for (const item of input) {
       const { is } = check(item, expect.items);
@@ -120,7 +120,7 @@ const cArray = (input: any, expect: Expect) => {
 
   // items 字段为字符串的情况: array 中的内容是基本类型, 或者为object|array类型但不需要校验内部字段
   if (is.string(expect.items)) {
-    const check: any = (func: any) => () =>
+    const check: Function = (func: Function) => () =>
       input.length === input.filter(item => func(item)).length;
 
     const cond = _.cond([
@@ -145,12 +145,12 @@ const check = (input: any, expect: Expect) => {
     [_.equals('number'), () => cNum(input, expect)],
     [_.equals('object'), () => cObject(input, expect)],
     [_.equals('array'), () => cArray(input, expect)],
-    [_.T, () => ({ is: true })]
+    [_.T, () => ({ is: true, val: input })] // 其他类型不做校验，直接返回原数据
   ]);
 
   return cond(expect.type);
 };
-const Checker: any = {
+const Checker = {
   required: cRequired,
   object: cObject,
   string: cString,

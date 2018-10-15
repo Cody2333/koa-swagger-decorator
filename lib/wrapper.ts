@@ -1,5 +1,5 @@
+import * as IRouter from 'koa-router';
 import Router from 'koa-router';
-import * as Koa from 'koa';
 import R from 'ramda';
 import is from 'is-type-of';
 import validate from './validate';
@@ -9,19 +9,18 @@ import swaggerObject from './swaggerObject';
 import {
   convertPath,
   getPath,
-  isSwaggerRouter,
   loadSwaggerClasses,
   reservedMethodNames,
-  reqMethods,
+  allowedMethods
 } from './utils';
 
-export interface Context extends Koa.Context {
+export interface Context extends IRouter.IRouterContext {
   validatedQuery: any;
   validatedBody: any;
   validatedParams: any;
 }
 
-const validator = (parameters: any) => async (ctx: Context, next: any) => {
+const validator = (parameters: any) => async (ctx: Context, next: () => Promise<any>) => {
   if (!parameters) {
     await next();
     return;
@@ -67,7 +66,7 @@ const handleSwagger = (router: Router, options: SwaggerOptions) => {
 };
 
 const handleMap = (router: Router, SwaggerClass: any, { doValidation = true }) => {
-  if (!isSwaggerRouter(SwaggerClass)) return;
+  if (!SwaggerClass) return;
   const classMiddlewares: any[] = SwaggerClass.middlewares || [];
   const classPrefix: string = SwaggerClass.prefix || '';
 
@@ -83,7 +82,7 @@ const handleMap = (router: Router, SwaggerClass: any, { doValidation = true }) =
   methods
     // filter methods withour @request decorator
     .filter((item) => {
-      const { path, method } = SwaggerClass[item];
+      const { path, method } = SwaggerClass[item] as {path: string, method: string};
       if (!path && !method) {
         return false;
       }
@@ -91,7 +90,7 @@ const handleMap = (router: Router, SwaggerClass: any, { doValidation = true }) =
     })
     // add router
     .forEach((item) => {
-      const { path, method } = SwaggerClass[item];
+      const { path, method } = SwaggerClass[item] as {path: string, method: string};
       let { middlewares = [] } = SwaggerClass[item];
       const localParams = SwaggerClass[item].parameters || {};
 
@@ -116,7 +115,7 @@ const handleMap = (router: Router, SwaggerClass: any, { doValidation = true }) =
           throw new Error('item in middlewares must be a function');
         }
       });
-      if (!reqMethods.includes(method)) {
+      if (!allowedMethods.hasOwnProperty(method.toUpperCase())) {
         throw new Error(`illegal API: ${method} ${path} at [${item}]`);
       }
 
@@ -147,7 +146,7 @@ export interface MapOptions {
   recursive?: boolean;
   [name: string]: any;
 }
-const wrapper = (router: any) => {
+const wrapper = (router: SwaggerRouter) => {
   router.swagger = (options: SwaggerOptions = {}) => {
     handleSwagger(router, options);
   };

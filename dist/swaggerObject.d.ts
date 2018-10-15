@@ -1,5 +1,10 @@
+interface Data {
+    [key: string]: {
+        [name: string]: any;
+    };
+}
 declare class SwaggerObject {
-    data: any;
+    data: Data;
     constructor();
     add(target: any, name: string, content: any): void;
     addMulti(target: any, content: any, filters?: string[]): void;
