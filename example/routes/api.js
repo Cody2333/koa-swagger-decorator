@@ -27,6 +27,15 @@ router.swagger({
         name: 'Authorization'
       }
     }
+  },
+  swaggerConfiguration: {
+    display: {
+      swaggerVersion: '3.16.0',
+      defaultModelsExpandDepth: 4,
+      defaultModelExpandDepth: 3,
+      docExpansion: 'list',
+      defaultModelRendering: 'model'
+    }
   }
 });
 
