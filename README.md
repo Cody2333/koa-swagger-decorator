@@ -100,6 +100,15 @@ router.swagger({
       },
     },
   },
+  // [optional] additional configuration for config how to show swagger view
+  swaggerConfiguration: {
+    display: {
+      defaultModelsExpandDepth: 4, // The default expansion depth for models (set to -1 completely hide the models).
+      defaultModelExpandDepth: 3, // The default expansion depth for the model on the model-example section.
+      docExpansion: 'list', // Controls the default expansion setting for the operations and tags. 
+      defaultModelRendering: 'model' // Controls how the model is shown when the API is first rendered. 
+    }
+  }
 })
 // map all static methods at Test class for router
 // router.map(Test);
