@@ -41,7 +41,7 @@ const cString = (val: any, expect: Expect) => {
 const cNum = (val: any, expect: Expect) => {
   if (!cRequired(val, expect).is) return { is: false };
   if (expect.enum && !cEnum(Number(val), expect).is) return { is: false };
-  return isNaN(Number(val)) ? { is: false } : { is: true, val: Number(val) };
+  return isNaN(Number(val)) || val === '' ? { is: false } : { is: true, val: Number(val) };
 };
 
 const cBool = (val: any, expect: Expect) => {
