@@ -1,5 +1,20 @@
-const swaggerHTML = (apiPath: string, options: {swaggerVersion?: string, [name: string]: any} = {}) => {
-  const { swaggerVersion = '3.16.0' } = options;
+function parseSimpleConfig(config: {[name: string]: any} = {}) {
+    return Object.keys(config).map(key => {
+        const value: any = config[key];
+        if (typeof value === 'string') {
+            return `${key}: '${value}',`;
+        }
+        if (typeof value === 'number' || typeof value === 'boolean') {
+            return `${key}: ${value},`;
+        }
+    }).join('\n\t  ');
+}
+
+const swaggerHTML = (apiPath: string, options: { swaggerVersion?: string, [name: string]: any } = {}) => {
+    const {
+        swaggerVersion = '3.16.0',
+        display = {},
+    } = options;
   const result = `
 
 <!DOCTYPE html>
@@ -83,7 +98,8 @@ const swaggerHTML = (apiPath: string, options: {swaggerVersion?: string, [name: 
       plugins: [
         SwaggerUIBundle.plugins.DownloadUrl
       ],
-      layout: "StandaloneLayout"
+      layout: "StandaloneLayout",
+      ${parseSimpleConfig(display)}
     })
     window.ui = ui
   }
