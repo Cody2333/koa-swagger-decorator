@@ -76,13 +76,28 @@ const handleMap = (router: Router, SwaggerClass: any, { doValidation = true }) =
     : ['ALL'];
   classParameters.query = classParameters.query ? classParameters.query : {};
 
-  // remove useless field in class object:  constructor, length, name, prototype
-  const methods = Object.getOwnPropertyNames(SwaggerClass).filter(method => !reservedMethodNames.includes(method));
-  // map all method in methods
-  methods
+  const staticMethods = Object.getOwnPropertyNames(SwaggerClass)
+    .filter(method => !reservedMethodNames.includes(method))
+    .map(method => SwaggerClass[method]);
+
+  const SwaggerClassPrototype = SwaggerClass.prototype;
+  const methods = Object.getOwnPropertyNames(SwaggerClassPrototype)
+      .filter(method => !reservedMethodNames.includes(method))
+      .map(method => {
+        const target = async function(ctx: Context) {
+          const c = new SwaggerClass(ctx);
+          await c[method](ctx);
+        };
+
+        Object.assign(target, SwaggerClassPrototype[method]);
+        return target;
+      });
+
+  // map all methods
+  [ ...staticMethods, ...methods ]
     // filter methods withour @request decorator
     .filter((item) => {
-      const { path, method } = SwaggerClass[item] as {path: string, method: string};
+      const { path, method } = item as { path: string, method: string };
       if (!path && !method) {
         return false;
       }
@@ -90,9 +105,9 @@ const handleMap = (router: Router, SwaggerClass: any, { doValidation = true }) =
     })
     // add router
     .forEach((item) => {
-      const { path, method } = SwaggerClass[item] as {path: string, method: string};
-      let { middlewares = [] } = SwaggerClass[item];
-      const localParams = SwaggerClass[item].parameters || {};
+      const { path, method } = item as { path: string, method: string };
+      let { middlewares = [] } = item;
+      const localParams = item.parameters || {};
 
       if (
         classParametersFilters.includes('ALL') ||
@@ -119,17 +134,15 @@ const handleMap = (router: Router, SwaggerClass: any, { doValidation = true }) =
         throw new Error(`illegal API: ${method} ${path} at [${item}]`);
       }
 
-      const chain = [
+      const chain: [any] = [
         `${convertPath(`${classPrefix}${path}`)}`,
-        doValidation
-          ? validator(localParams)
-          : async (ctx: Context, next: any) => {
-            await next();
-          },
-        ...classMiddlewares,
-        ...middlewares,
-        SwaggerClass[item]
       ];
+      if (doValidation) {
+        chain.push(validator(localParams));
+      }
+      chain.push(...classMiddlewares);
+      chain.push(...middlewares);
+      chain.push(item);
 
       (router as any)[method](...chain);
     });
