@@ -23,6 +23,9 @@ class SwaggerObject {
       throw new Error('illegal params [content] for SwaggerObject.add');
     }
 
+    // when using non-static method decorators
+    // target will be class.prototype rather than class
+    // hack and make target always be class itself
     if (!target.prototype && target.constructor) {
       target = target.constructor;
     }
