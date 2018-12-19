@@ -22,6 +22,11 @@ class SwaggerObject {
     if (!is.object(content)) {
       throw new Error('illegal params [content] for SwaggerObject.add');
     }
+
+    if (!target.prototype && target.constructor) {
+      target = target.constructor;
+    }
+
     const key = `${target.name}-${name}`;
     if (!this.data[key]) this.data[key] = {};
 
@@ -42,8 +47,12 @@ class SwaggerObject {
 
   // only add to methods with a @request decorator
   addMulti(target: any, content: any, filters = ['ALL']) {
-    const methods = Object.getOwnPropertyNames(target).filter(method => !reservedMethodNames.includes(method));
-    methods.forEach((name) => {
+    const staticMethods = Object.getOwnPropertyNames(target)
+      .filter(method => !reservedMethodNames.includes(method));
+    const methods = Object.getOwnPropertyNames(target.prototype)
+      .filter(method => !reservedMethodNames.includes(method));
+
+    [ ...staticMethods, ...methods ].forEach((name) => {
       const key = `${target.name}-${name}`;
       if (!this.data[key] || !this.data[key].request) return;
       filters = filters.map(i => i.toLowerCase());

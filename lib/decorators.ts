@@ -8,7 +8,7 @@ const _desc = (type: string, text: string | any[]) => (target: any, name: string
   return descriptor;
 };
 
-const _params = (type: string, parameters: {[name: string]: any}) => (target: any, name: string, descriptor: PropertyDescriptor) => {
+const _params = (type: string, parameters: { [name: string]: any }) => (target: any, name: string, descriptor: PropertyDescriptor) => {
   if (!descriptor.value.parameters) descriptor.value.parameters = {};
   descriptor.value.parameters[type] = parameters;
 
@@ -63,8 +63,8 @@ export interface IResponses {
   [name: number]: any;
 }
 const defaultResp: IResponses = {
-  200: {description: 'success'}
-}
+  200: { description: 'success' }
+};
 const responses = (responses: IResponses = defaultResp) => (
   target: any,
   name: string,
@@ -100,7 +100,7 @@ const body = params('body');
 const formData = params('formData');
 
 // class decorators
-const tagsAll = (items: string[]| string) => (target: any) => {
+const tagsAll = (items: string[] | string) => (target: any) => {
   const tags = is.array(items) ? items : [items];
   swaggerObject.addMulti(target, { tags });
 };
@@ -109,7 +109,7 @@ const responsesAll = (responses: IResponses = defaultResp) => (target: any) => {
   swaggerObject.addMulti(target, { responses });
 };
 
-const middlewaresAll = (items: Function[]| Function) => (target: any) => {
+const middlewaresAll = (items: Function[] | Function) => (target: any) => {
   const middlewares = is.array(items) ? items : [items];
   target.middlewares = middlewares;
 };
@@ -123,7 +123,7 @@ const prefix = (prefix: string) => (target: any) => {
   target.prefix = prefix;
 };
 
-const queryAll = (parameters: {[name: string]: any}, filters = ['ALL']) => (target: any) => {
+const queryAll = (parameters: { [name: string]: any }, filters = ['ALL']) => (target: any) => {
   if (!target.parameters) target.parameters = {};
   target.parameters.query = parameters; // used in wrapper.js for validation
   target.parameters.filters = filters; // used in wrapper.js for validation
