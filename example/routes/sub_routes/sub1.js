@@ -26,6 +26,7 @@ module.exports = class OtherRouter {
   @body({
     str: { type: 'string' },
     boo: { type: 'boolean' },
+    nn: { type: 'number' },
     foo: {
       type: 'array',
       required: true,

@@ -38,6 +38,24 @@ const validator = (parameters: any) => async (ctx: Context, next: () => Promise<
   await next();
 };
 
+export interface SwaggerDisplayConfiguration {
+  deepLinking?: boolean;
+  displayOperationId?: boolean;
+  defaultModelsExpandDepth?: number;
+  defaultModelExpandDepth?: number;
+  defaultModelRendering?: 'example' | 'model';
+  displayRequestDuration?: boolean;
+  docExpansion?: 'list' | 'full' | 'none';
+  filter?: boolean | string;
+  maxDisplayedTags?: number;
+  showExtensions?: boolean;
+  showCommonExtensions?: boolean;
+}
+
+export interface SwaggerConfiguration {
+  display?: SwaggerDisplayConfiguration;
+}
+
 export interface SwaggerOptions {
   title?: string;
   description?: string;
@@ -46,6 +64,7 @@ export interface SwaggerOptions {
   swaggerHtmlEndpoint?: string;
   prefix?: string;
   swaggerOptions?: any;
+  swaggerConfiguration?: SwaggerConfiguration;
   [name: string]: any;
 }
 
@@ -53,7 +72,8 @@ const handleSwagger = (router: Router, options: SwaggerOptions) => {
   const {
     swaggerJsonEndpoint = '/swagger-json',
     swaggerHtmlEndpoint = '/swagger-html',
-    prefix = ''
+    prefix = '',
+    swaggerConfiguration = {},
   } = options;
 
   // setup swagger router
@@ -61,7 +81,7 @@ const handleSwagger = (router: Router, options: SwaggerOptions) => {
     ctx.body = swaggerJSON(options, swaggerObject.data);
   });
   router.get(swaggerHtmlEndpoint, async (ctx: Context) => {
-    ctx.body = swaggerHTML(getPath(prefix, swaggerJsonEndpoint));
+    ctx.body = swaggerHTML(getPath(prefix, swaggerJsonEndpoint), swaggerConfiguration);
   });
 };
 
