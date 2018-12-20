@@ -103,6 +103,31 @@ describe('HTTP API generation test:', async () => {
           done();
         });
     });
+
+    it('GET /api/egg/method1 should return data if success', (done) => {
+      request
+        .get('/api/egg/method1?no=nonono')
+        .expect(200)
+        .expect(res => expect(res.body.no).to.be.an('string'))
+        .end((err) => {
+          if (err) return done(err);
+          done();
+        });
+    });
+
+    it('POST /api/egg/method2 should return data if success', (done) => {
+      request
+        .post('/api/egg/method2')
+        .send({
+          yes: 'yesyesyes'
+        })
+        .expect(200)
+        .expect(res => expect(res.body.yes).to.be.an('string'))
+        .end((err) => {
+          if (err) return done(err);
+          done();
+        });
+    });
   });
   describe('Validation and Swagger Test', async () => {
     it('GET /api/enum?limit=1 should success', (done) => {
@@ -155,14 +180,14 @@ describe('Function Test:', () => {
       const r = getFilepaths(dir, false);
       expect(r)
         .to.be.an('array')
-        .to.have.lengthOf(2);
+        .to.have.lengthOf(3);
     });
     it('should return an array,length = 3 when recursive=true', () => {
       const dir = _path.resolve(__dirname, '../example/routes/sub_routes');
       const r = getFilepaths(dir, true);
       expect(r)
         .to.be.an('array')
-        .to.have.lengthOf(3);
+        .to.have.lengthOf(4);
     });
   });
 });

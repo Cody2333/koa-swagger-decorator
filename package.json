@@ -68,7 +68,7 @@
     "prepublish": "npm run build",
     "lint": "eslint .",
     "format": "prettier-eslint --write \"**/*.js\"",
-    "debug": "babel-node example/main --inspect --debug-brk --nolazy example/main",
+    "debug": "babel-node example/main --inspect-brk --nolazy example/main",
     "cov": "nyc --reporter=lcov npm run test",
     "add": "git add .",
     "precommit-msg": "echo 'Pre-commit code formating...' && exit 0",
