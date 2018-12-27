@@ -181,6 +181,39 @@ export default class Test {
 }
 ```
 
+
+#### using decorator to make api body
+```typescript
+import Router from 'koa-router';
+import { request, summary, query, path, body, tags, swaggerClass, swaggerProperty } from 'koa-swagger-decorator'
+
+@swaggerClass()
+export class subObject {
+  @swaggerProperty({ type: "string", required: true }) Email: string = "";
+  @swaggerProperty({ type: "string", required: true }) NickName: string = "";
+  @swaggerProperty({ type: "string", required: true }) Password: string = "";
+};
+
+@swaggerClass()
+export class userInfo {
+  @swaggerProperty({ type: "string", required: true }) Email: string = "";
+  @swaggerProperty({ type: "string", required: true }) NickName: string = "";
+  @swaggerProperty({ type: "string", required: true }) Password: string = "";
+  @swaggerProperty({type:"object",properties:(subObject.prototype as any).swaggerDocument}) UserInfo:subObject;
+};
+
+export default class Test {
+  @request('POST', '/user/Register')
+  @summary('register user')
+  @description('example of api')
+  @body((userInfo.prototype as any).swaggerDocument)
+  static async Register(ctx: Router.IRouterContext) {
+    var params = (ctx as any).validatedBody as userInfo;
+    console.log(params);
+  }
+}
+```
+
 #### avaliable annotations
 
 - tags
