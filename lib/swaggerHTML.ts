@@ -23,7 +23,7 @@ const swaggerHTML = (apiPath: string, options: { swaggerVersion?: string, [name:
   <meta charset="UTF-8">
   <title>Swagger UI</title>
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Source+Code+Pro:300,600|Titillium+Web:400,600,700" rel="stylesheet">
-  <link href="http://cdn.bootcss.com/swagger-ui/${swaggerVersion}/swagger-ui.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/swagger-ui/${swaggerVersion}/swagger-ui.css" rel="stylesheet">
 
   <style>
     html
@@ -83,8 +83,8 @@ const swaggerHTML = (apiPath: string, options: { swaggerVersion?: string, [name:
 
   <div id="swagger-ui"></div>
 
-  <script src="http://cdn.bootcss.com/swagger-ui/${swaggerVersion}/swagger-ui-bundle.js"></script>
-  <script src="http://cdn.bootcss.com/swagger-ui/${swaggerVersion}/swagger-ui-standalone-preset.js"></script>
+  <script src="//cdn.bootcss.com/swagger-ui/${swaggerVersion}/swagger-ui-bundle.js"></script>
+  <script src="//cdn.bootcss.com/swagger-ui/${swaggerVersion}/swagger-ui-standalone-preset.js"></script>
   <script>
   window.onload = function() {
     // Build a system
