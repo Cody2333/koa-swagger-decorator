@@ -32,7 +32,13 @@ export default function (rawInput: Input, expect: ExpectObject) {
     }
 
     // if this key has default value
-    input[key] = Checker.default(input[key], expect[key]).val;
+    const defaultVal = Checker.default(input[key], expect[key]).val;
+
+    // only set default value when it is not undefined
+    // avoid side effect of undefined default value
+    if (defaultVal !== undefined) {
+      input[key] = defaultVal;
+    }
 
     if (input[key] === undefined) return;
 
