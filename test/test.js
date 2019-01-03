@@ -379,6 +379,18 @@ describe('Validate:', () => {
     input.arr = [{ url: 'a', other: 'b', num: '33' }, { url: 'a', name: 'b' }];
     validate(input, expect);
   });
+  it('should not set undefined default value on the top layer', () => {
+    const schema = {
+      key1: { type: 'string' },
+      key2: { type: 'number' }
+    };
+
+    const input = {
+      key1: 'abc'
+    };
+    const output = validate(input, schema);
+    expect(Object.keys(output)).to.eql(['key1']);
+  });
 
   it('throw error when enum is an empty array', () => {
     const input = { foo: '1' };
