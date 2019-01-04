@@ -1,8 +1,4 @@
-interface Data {
-    [key: string]: {
-        [name: string]: any;
-    };
-}
+import { Data } from './types';
 declare class SwaggerObject {
     data: Data;
     constructor();

@@ -13,4 +13,5 @@ declare const loadClass: (filepath: string) => any;
 declare const loadSwaggerClasses: (dir?: string, options?: {
     recursive?: boolean;
 }) => any[];
-export { convertPath, getPath, getFilepaths, loadClass, loadSwaggerClasses, reservedMethodNames, allowedMethods, };
+declare const swaggerKeys: (className: String, methods: [String]) => string[];
+export { convertPath, getPath, getFilepaths, loadClass, loadSwaggerClasses, reservedMethodNames, allowedMethods, swaggerKeys, };

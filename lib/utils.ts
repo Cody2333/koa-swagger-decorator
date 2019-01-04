@@ -17,7 +17,8 @@ const reservedMethodNames = [
   'constructor',
   'length',
   'prototype',
-  'parameters'
+  'parameters',
+  'prefix',
 ];
 
 enum allowedMethods {
@@ -56,6 +57,9 @@ const loadSwaggerClasses = (dir: string = '', options: {recursive?: boolean} = {
     .map(filepath => loadClass(filepath))
     .filter(cls => cls);
 };
+
+const swaggerKeys = (className: String, methods: [String]) => methods.map(m => `${className}- ${m}`);
+
 export {
   convertPath,
   getPath,
@@ -64,4 +68,5 @@ export {
   loadSwaggerClasses,
   reservedMethodNames,
   allowedMethods,
+  swaggerKeys,
 };

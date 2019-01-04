@@ -39,6 +39,9 @@ export interface MapOptions {
 }
 declare const wrapper: (router: SwaggerRouter) => void;
 declare class SwaggerRouter extends Router {
+    swaggerKeys: Set<String>;
+    constructor(opts: IRouter.IRouterOptions);
+    _addKey(str: String): void;
     swagger(options?: SwaggerOptions): void;
     map(SwaggerClass: any, options: MapOptions): void;
     mapDir(dir: string, options?: MapOptions): void;

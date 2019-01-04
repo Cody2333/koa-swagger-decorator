@@ -13,6 +13,7 @@ import {
   reservedMethodNames,
   allowedMethods
 } from './utils';
+import { Data } from './types';
 
 export interface Context extends IRouter.IRouterContext {
   validatedQuery: any;
@@ -68,7 +69,7 @@ export interface SwaggerOptions {
   [name: string]: any;
 }
 
-const handleSwagger = (router: Router, options: SwaggerOptions) => {
+const handleSwagger = (router: SwaggerRouter, options: SwaggerOptions) => {
   const {
     swaggerJsonEndpoint = '/swagger-json',
     swaggerHtmlEndpoint = '/swagger-html',
@@ -78,14 +79,25 @@ const handleSwagger = (router: Router, options: SwaggerOptions) => {
 
   // setup swagger router
   router.get(swaggerJsonEndpoint, async (ctx: Context) => {
-    ctx.body = swaggerJSON(options, swaggerObject.data);
+    let data: Data = {};
+    if (router instanceof SwaggerRouter) {
+      Object.keys(swaggerObject.data).forEach(k => {
+        if (router.swaggerKeys.has(k)) {
+          data[k] = swaggerObject.data[k];
+        }
+      });
+    } else {
+      // 兼容使用 wrapper 的情况
+      data = swaggerObject.data;
+    }
+    ctx.body = swaggerJSON(options, data);
   });
   router.get(swaggerHtmlEndpoint, async (ctx: Context) => {
     ctx.body = swaggerHTML(getPath(prefix, swaggerJsonEndpoint), swaggerConfiguration);
   });
 };
 
-const handleMap = (router: Router, SwaggerClass: any, { doValidation = true }) => {
+const handleMap = (router: SwaggerRouter, SwaggerClass: any, { doValidation = true }) => {
   if (!SwaggerClass) return;
   const classMiddlewares: any[] = SwaggerClass.middlewares || [];
   const classPrefix: string = SwaggerClass.prefix || '';
@@ -104,13 +116,13 @@ const handleMap = (router: Router, SwaggerClass: any, { doValidation = true }) =
   const methods = Object.getOwnPropertyNames(SwaggerClassPrototype)
       .filter(method => !reservedMethodNames.includes(method))
       .map(method => {
-        const target = async function(ctx: Context) {
+        const wrapperMethod = async (ctx: Context) => {
           const c = new SwaggerClass(ctx);
           await c[method](ctx);
         };
-
-        Object.assign(target, SwaggerClassPrototype[method]);
-        return target;
+        // 添加了一层 wrapper 之后，需要把原函数的名称暴露出来 fnName
+        Object.assign(wrapperMethod, SwaggerClassPrototype[method], {fnName: method});
+        return wrapperMethod;
       });
 
   // map all methods
@@ -125,6 +137,13 @@ const handleMap = (router: Router, SwaggerClass: any, { doValidation = true }) =
     })
     // add router
     .forEach((item) => {
+      if (item.name === 'wrapperMethod') {
+        // 添加 swaggerKeys
+        router._addKey(`${SwaggerClass.name}-${item.fnName}`);
+      } else {
+        router._addKey(`${SwaggerClass.name}-${item.name}`);
+
+      }
       const { path, method } = item as { path: string, method: string };
       let { middlewares = [] } = item;
       const localParams = item.parameters || {};
@@ -193,6 +212,17 @@ const wrapper = (router: SwaggerRouter) => {
 };
 
 class SwaggerRouter extends Router {
+  public swaggerKeys: Set<String>;
+
+  constructor(opts: IRouter.IRouterOptions) {
+    super(opts);
+    this.swaggerKeys = new Set();
+  }
+
+  _addKey(str: String) {
+    this.swaggerKeys.add(str);
+  }
+
   swagger(options: SwaggerOptions = {}) {
     handleSwagger(this, options);
   }

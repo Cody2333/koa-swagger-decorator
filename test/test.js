@@ -175,19 +175,19 @@ describe('Function Test:', () => {
     });
   });
   describe('getFilepaths:', () => {
-    it('should return an array,length = 2 when recursive=false', () => {
+    it('should return an array,length = 4 when recursive=false', () => {
       const dir = _path.resolve(__dirname, '../example/routes/sub_routes');
       const r = getFilepaths(dir, false);
       expect(r)
         .to.be.an('array')
-        .to.have.lengthOf(3);
+        .to.have.lengthOf(4);
     });
-    it('should return an array,length = 3 when recursive=true', () => {
+    it('should return an array,length = 5 when recursive=true', () => {
       const dir = _path.resolve(__dirname, '../example/routes/sub_routes');
       const r = getFilepaths(dir, true);
       expect(r)
         .to.be.an('array')
-        .to.have.lengthOf(4);
+        .to.have.lengthOf(5);
     });
   });
 });

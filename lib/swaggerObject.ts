@@ -4,15 +4,9 @@
 import is from 'is-type-of';
 import _ from 'ramda';
 import { reservedMethodNames } from './utils';
-
-interface Data {
-  [key: string]: {
-    [name: string]: any;
-  };
-}
+import { Data } from './types';
 
 class SwaggerObject {
-
   data: Data;
 
   constructor() {
