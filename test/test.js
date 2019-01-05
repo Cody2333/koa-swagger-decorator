@@ -13,18 +13,18 @@ describe('HTTP API generation test:', async () => {
   });
 
   describe('Init Swagger Doc:', async () => {
-    it('GET /api/swagger-html should return success for swagger ui page', (done) => {
+    it('GET /api/v1/swagger-html should return success for swagger ui page', (done) => {
       request
-        .get('/api/swagger-html')
+        .get('/api/v1/swagger-html')
         .expect(200)
         .end((err) => {
           if (err) return done(err);
           done();
         });
     });
-    it('GET /api/swagger-json should return swagger json data', (done) => {
+    it('GET /api/v1/swagger-json should return swagger json data', (done) => {
       request
-        .get('/api/swagger-json')
+        .get('/api/v1/swagger-json')
         .expect(200)
         .expect(res => expect(res.body.info).to.be.an('object'))
         .end((err) => {
@@ -34,9 +34,9 @@ describe('HTTP API generation test:', async () => {
     });
   });
   describe('Construct api from router.map:', async () => {
-    it('POST /api/user/login should return user data if success', (done) => {
+    it('POST /api/v1/user/login should return user data if success', (done) => {
       request
-        .post('/api/user/login')
+        .post('/api/v1/user/login')
         .send({
           name: 'string',
           password: '123456'
@@ -48,12 +48,12 @@ describe('HTTP API generation test:', async () => {
           done();
         });
     });
-    it('POST /api/user/login should have corresponding swagger doc data', (done) => {
+    it('POST /api/v1/user/login should have corresponding swagger doc data', (done) => {
       request
-        .get('/api/swagger-json')
+        .get('/api/v1/swagger-json')
         .expect(200)
         .expect(res =>
-          expect(res.body.paths['/api/user/login']).to.be.an('object'))
+          expect(res.body.paths['/api/v1/user/login']).to.be.an('object'))
         .end((err) => {
           if (err) return done(err);
           done();
@@ -61,9 +61,9 @@ describe('HTTP API generation test:', async () => {
     });
   });
   describe('Construct api from router.mapDir:', async () => {
-    it('GET /api/other should return data if success', (done) => {
+    it('GET /api/v2/other should return data if success', (done) => {
       request
-        .get('/api/other')
+        .get('/api/v2/other')
         .expect(200)
         .expect(res => expect(res.body.other).to.be.an('array'))
         .end((err) => {
@@ -71,9 +71,9 @@ describe('HTTP API generation test:', async () => {
           done();
         });
     });
-    it('GET /api/other/what should return data if success', (done) => {
+    it('GET /api/v2/other/what should return data if success', (done) => {
       request
-        .get('/api/other/what')
+        .get('/api/v2/other/what')
         .expect(200)
         .expect(res => expect(res.body.other).to.be.an('array'))
         .end((err) => {
@@ -82,9 +82,9 @@ describe('HTTP API generation test:', async () => {
         });
     });
 
-    it('GET /api/v1/prefix with class decorator prefix', (done) => {
+    it('GET /api/v1/v1/prefix with class decorator prefix', (done) => {
       request
-        .get('/api/v1/prefix?page=a')
+        .get('/api/v1/v1/prefix?page=a')
         .expect(200)
         .expect(res => expect(res.body.result).to.be.an('string'))
         .end((err) => {
@@ -93,9 +93,9 @@ describe('HTTP API generation test:', async () => {
         });
     });
 
-    it('GET /api/other/how should return data if options:{rescursive: true}', (done) => {
+    it('GET /api/v2/other/how should return data if options:{rescursive: true}', (done) => {
       request
-        .get('/api/other/how')
+        .get('/api/v2/other/how')
         .expect(200)
         .expect(res => expect(res.body.other).to.be.an('array'))
         .end((err) => {
@@ -104,9 +104,9 @@ describe('HTTP API generation test:', async () => {
         });
     });
 
-    it('GET /api/egg/method1 should return data if success', (done) => {
+    it('GET /api/v2/egg/method1 should return data if success', (done) => {
       request
-        .get('/api/egg/method1?no=nonono')
+        .get('/api/v2/egg/method1?no=nonono')
         .expect(200)
         .expect(res => expect(res.body.no).to.be.an('string'))
         .end((err) => {
@@ -115,9 +115,9 @@ describe('HTTP API generation test:', async () => {
         });
     });
 
-    it('POST /api/egg/method2 should return data if success', (done) => {
+    it('POST /api/v2/egg/method2 should return data if success', (done) => {
       request
-        .post('/api/egg/method2')
+        .post('/api/v2/egg/method2')
         .send({
           yes: 'yesyesyes'
         })
@@ -130,27 +130,27 @@ describe('HTTP API generation test:', async () => {
     });
   });
   describe('Validation and Swagger Test', async () => {
-    it('GET /api/enum?limit=1 should success', (done) => {
+    it('GET /api/v1/enum?limit=1 should success', (done) => {
       request
-        .get('/api/enum?limit=1')
+        .get('/api/v1/enum?limit=1')
         .expect(200)
         .end((err) => {
           if (err) return done(err);
           done();
         });
     });
-    it('GET /api/enum should fail due to lack of query params: [limit]', (done) => {
+    it('GET /api/v1/enum should fail due to lack of query params: [limit]', (done) => {
       request
-        .get('/api/enum')
+        .get('/api/v1/enum')
         .expect(400)
         .end((err) => {
           if (err) return done(err);
           done();
         });
     });
-    it('GET /api/enum?limit=fff should fail due to wrong type of query params: [limit] (number required)', (done) => {
+    it('GET /api/v1/enum?limit=fff should fail due to wrong type of query params: [limit] (number required)', (done) => {
       request
-        .get('/api/enum?limit=fff')
+        .get('/api/v1/enum?limit=fff')
         .expect(400)
         .end((err) => {
           if (err) return done(err);
@@ -175,15 +175,15 @@ describe('Function Test:', () => {
     });
   });
   describe('getFilepaths:', () => {
-    it('should return an array,length = 4 when recursive=false', () => {
-      const dir = _path.resolve(__dirname, '../example/routes/sub_routes');
+    it('should return an array,length = 2 when recursive=false', () => {
+      const dir = _path.resolve(__dirname, '../example/routes/v2');
       const r = getFilepaths(dir, false);
       expect(r)
         .to.be.an('array')
-        .to.have.lengthOf(4);
+        .to.have.lengthOf(2);
     });
     it('should return an array,length = 5 when recursive=true', () => {
-      const dir = _path.resolve(__dirname, '../example/routes/sub_routes');
+      const dir = _path.resolve(__dirname, '../example/routes/v2');
       const r = getFilepaths(dir, true);
       expect(r)
         .to.be.an('array')

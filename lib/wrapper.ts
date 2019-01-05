@@ -213,10 +213,18 @@ const wrapper = (router: SwaggerRouter) => {
 
 class SwaggerRouter extends Router {
   public swaggerKeys: Set<String>;
+  public opts: IRouter.IRouterOptions;
+  public swaggerOpts: SwaggerOptions;
 
-  constructor(opts: IRouter.IRouterOptions) {
+  constructor(opts: IRouter.IRouterOptions, swaggerOpts: SwaggerOptions) {
     super(opts);
+    this.opts = opts || {}; // koa-router opts
     this.swaggerKeys = new Set();
+    this.swaggerOpts = swaggerOpts || {}; // swagger-router opts
+
+    if (this.opts.prefix && !this.swaggerOpts.prefix) {
+      this.swaggerOpts.prefix = this.opts.prefix;
+    }
   }
 
   _addKey(str: String) {
@@ -224,7 +232,8 @@ class SwaggerRouter extends Router {
   }
 
   swagger(options: SwaggerOptions = {}) {
-    handleSwagger(this, options);
+    const opts = Object.assign(options, this.swaggerOpts);
+    handleSwagger(this, opts);
   }
 
   map(SwaggerClass: any, options: MapOptions) {

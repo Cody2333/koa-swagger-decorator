@@ -1,11 +1,20 @@
-import Router from 'koa-router';
+import { SwaggerRouter } from '../../dist';
 
-import ApiRouter from './api';
-import Api2Router from './sub_routes/api2';
+import ApiRouter from './v1';
+import Api2Router from './v2';
 
-const router = new Router();
+const router = new SwaggerRouter();
 
-router.use('/api', ApiRouter.routes());
-router.use('/api2', Api2Router.routes());
+router.use('/api/v1', ApiRouter.routes());
+
+router.use(Api2Router.routes());
+
+// swagger docs avaliable at http://localhost:3000/swagger-html
+router.swagger({
+  title: 'API V2 Server',
+  description: 'API DOC',
+  version: '1.0.0'
+});
+router.mapDir(__dirname);
 
 export default router;
