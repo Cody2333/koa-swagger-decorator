@@ -71,7 +71,7 @@ import Test from './test'
 
 import { SwaggerRouter } from 'koa-swagger-decorator'
 
-const router = new SwaggerRouter() // extends from koa-router
+const router = new SwaggerRouter([KoaRouterOpts],[SwaggerOpts]) // extends from koa-router
 
 // swagger docs avaliable at http://localhost:3000/api/swagger-html
 router.swagger({

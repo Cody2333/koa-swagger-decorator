@@ -1,7 +1,7 @@
 import multer from 'koa-multer';
 import _path from 'path';
-import Doc, { description } from '../../dist'; // 2 import style avaliable
-import config from '../config';
+import Doc, { description } from '../../../dist'; // 2 import style avaliable
+import config from '../../config';
 
 const {
   request,

@@ -1,4 +1,4 @@
-import { request, summary, tags, body } from '../../../dist';
+import { request, summary, tags, body } from '../../../../dist';
 
 const tag = tags(['Other']);
 
