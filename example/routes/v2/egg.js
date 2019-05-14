@@ -19,7 +19,12 @@ export default class EggRouter {
   @summary('egg-like controller method2')
   @tag
   @body({
-    yes: { type: 'string', require: true, description: 'yesyesyes' }
+    yes: {
+      type: 'string',
+      require: true,
+      description: 'yesyesyes',
+      nullable: true
+    }
   })
   async method2(ctx) {
     const { yes } = ctx.validatedBody;

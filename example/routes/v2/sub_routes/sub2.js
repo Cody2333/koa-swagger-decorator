@@ -20,10 +20,11 @@ export default class Other2Router {
   @tag
   @body({
     num: { type: 'number', example: 4 },
-    ss: { example: '' }
+    ss: { example: '' },
+    xx: { type: 'object' }
   })
   static async post(ctx) {
-    const { num, ss } = ctx.validatedBody;
-    ctx.body = { num, ss };
+    const { num, ss, xx } = ctx.validatedBody;
+    ctx.body = { num, ss, xx };
   }
 }
