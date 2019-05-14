@@ -1,4 +1,4 @@
-import Doc, { description } from '../../dist'; // 2 import style avaliable
+import Doc, { description } from '../../../dist'; // 2 import style avaliable
 
 const {
   request, summary, query, tags, responses, prefix
@@ -7,7 +7,7 @@ const {
 const tag = tags(['prefix']);
 
 @prefix('/v1')
-export default class SampleRouter {
+export default class PrefixRouter {
   @request('GET', '/prefix')
   @summary('class decorator for url prefix')
   @description('class decorator for url prefix')

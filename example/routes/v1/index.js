@@ -1,15 +1,15 @@
-import { SwaggerRouter } from '../../dist';
+import { SwaggerRouter } from '../../../dist';
 
 const router = new SwaggerRouter();
 
-// swagger docs avaliable at http://localhost:3000/api/swagger-html
+// swagger docs avaliable at http://localhost:3000/api/v1/swagger-html
 router.swagger({
-  title: 'Example Server',
+  title: 'API V1 Server',
   description: 'API DOC',
   version: '1.0.0',
 
   // [optional] default is root path.
-  prefix: '/api',
+  prefix: '/api/v1',
 
   // [optional] default is /swagger-html
   swaggerHtmlEndpoint: '/swagger-html',

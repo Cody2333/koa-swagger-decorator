@@ -12,7 +12,7 @@ function parseSimpleConfig(config: {[name: string]: any} = {}) {
 
 const swaggerHTML = (apiPath: string, options: { swaggerVersion?: string, [name: string]: any } = {}) => {
     const {
-        swaggerVersion = '3.16.0',
+        swaggerVersion = '3.21.0',
         display = {},
     } = options;
   const result = `
@@ -22,8 +22,8 @@ const swaggerHTML = (apiPath: string, options: { swaggerVersion?: string, [name:
 <head>
   <meta charset="UTF-8">
   <title>Swagger UI</title>
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Source+Code+Pro:300,600|Titillium+Web:400,600,700" rel="stylesheet">
-  <link href="//cdn.bootcss.com/swagger-ui/${swaggerVersion}/swagger-ui.css" rel="stylesheet">
+  <link href="//fonts.googleapis.com/css?family=Open+Sans:400,700|Source+Code+Pro:300,600|Titillium+Web:400,600,700" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/swagger-ui/${swaggerVersion}/swagger-ui.css" rel="stylesheet">
 
   <style>
     html
@@ -82,9 +82,8 @@ const swaggerHTML = (apiPath: string, options: { swaggerVersion?: string, [name:
   </svg>
 
   <div id="swagger-ui"></div>
-
-  <script src="//cdn.bootcss.com/swagger-ui/${swaggerVersion}/swagger-ui-bundle.js"></script>
-  <script src="//cdn.bootcss.com/swagger-ui/${swaggerVersion}/swagger-ui-standalone-preset.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/swagger-ui/${swaggerVersion}/swagger-ui-bundle.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/swagger-ui/${swaggerVersion}/swagger-ui-standalone-preset.js"></script>
   <script>
   window.onload = function() {
     // Build a system

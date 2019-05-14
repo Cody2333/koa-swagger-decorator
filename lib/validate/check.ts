@@ -16,6 +16,13 @@ const cRequired = (input: any, expect: Expect = {}) => {
   return { is: true, val: input };
 };
 
+const cNullable = (input: any, expect: Expect = {}) => {
+  if (expect.nullable && is.null(input)) {
+    return { is: true , val: input};
+  }
+  return { is: false, val: input };
+};
+
 const cEnum = (input: any, expect: Expect = {}) => {
   if (Array.isArray(expect.enum) && expect.enum.length) {
     return expect.enum.includes(input)
@@ -139,6 +146,9 @@ const cArray = (input: any, expect: Expect) => {
 };
 
 const check = (input: any, expect: Expect) => {
+  // 添加对body参数 nullable 情况的支持
+  const r = cNullable(input, expect);
+  if (r.is === true) return r;
   const cond = _.cond([
     [_.equals('string'), () => cString(input, expect)],
     [_.equals('boolean'), () => cBool(input, expect)],

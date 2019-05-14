@@ -4,11 +4,6 @@
 export declare type PropertyType = "string" | "number" | "boolean" | "array" | "object";
 /**
  *
- * @param constructor
- */
-export declare function swaggerClass(constructor?: Function): Function;
-/**
- *
  */
 export declare class PropertyOptions {
     /**
@@ -26,7 +21,7 @@ export declare class PropertyOptions {
     /**
      *
      */
-    descriptor?: PropertyDescriptor;
+    description?: string;
     /**
      *
      */
@@ -36,6 +31,11 @@ export declare class PropertyOptions {
      */
     properties?: any;
 }
+/**
+ * Made for empty class
+ * @param constructor
+ */
+export declare function swaggerClass(constructor?: Function): Function;
 /**
  *
  * @param type
