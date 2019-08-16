@@ -19,10 +19,7 @@ const _params = (type: string, parameters: { [name: string]: any }) => (target: 
       {
         name: 'data',
         description: 'request body',
-        schema: {
-          type: 'object',
-          properties: parameters
-        }
+        schema: parameters
       }
     ];
   } else {
