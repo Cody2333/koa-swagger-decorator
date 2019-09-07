@@ -36,6 +36,7 @@ export interface MapOptions {
     doValidation?: boolean;
     recursive?: boolean;
     [name: string]: any;
+    ignore?: string[];
 }
 declare const wrapper: (router: SwaggerRouter) => void;
 declare class SwaggerRouter extends Router {
