@@ -119,6 +119,8 @@ router.mapDir(_path.resolve(__dirname), {
   // recursive: true,
   // default: true, if true, you can call ctx.validatedBody[Query|Params] to get validated data.
   // doValidation: true,
+  // default: [], paths to ignore while looking for decorators 
+  // ignore: ["**.spec.ts"],
 })
 ```
 
