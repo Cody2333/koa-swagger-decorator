@@ -1,6 +1,7 @@
 import _ from 'ramda';
 declare const request: (method: string, path: string) => (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
 declare const middlewares: (middlewares: Function[]) => (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
+declare const security: (security: any[]) => (target: any, name: string, descriptor: PropertyDescriptor) => void;
 declare const deprecated: (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
 export interface IResponses {
     [name: number]: any;
@@ -28,6 +29,7 @@ declare const formData: (t2: {
 declare const tagsAll: (items: string | string[]) => (target: any) => void;
 declare const responsesAll: (responses?: IResponses) => (target: any) => void;
 declare const middlewaresAll: (items: Function | Function[]) => (target: any) => void;
+declare const securityAll: (security: any) => (target: any) => void;
 declare const deprecatedAll: (target: any) => void;
 declare const prefix: (prefix: string) => (target: any) => void;
 declare const queryAll: (parameters: {
@@ -52,6 +54,7 @@ declare const Doc: {
     }) => (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
     tags: (t2: string | any[]) => (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
     middlewares: (middlewares: Function[]) => (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
+    security: (security: any[]) => (target: any, name: string, descriptor: PropertyDescriptor) => void;
     formData: (t2: {
         [name: string]: any;
     }) => (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
@@ -61,10 +64,11 @@ declare const Doc: {
     responsesAll: (responses?: IResponses) => (target: any) => void;
     middlewaresAll: (items: Function | Function[]) => (target: any) => void;
     deprecatedAll: (target: any) => void;
+    securityAll: (security: any) => (target: any) => void;
     queryAll: (parameters: {
         [name: string]: any;
     }, filters?: string[]) => (target: any) => void;
     prefix: (prefix: string) => (target: any) => void;
 };
 export default Doc;
-export { request, summary, params, desc, description, query, path, body, tags, middlewares, formData, responses, deprecated, tagsAll, responsesAll, middlewaresAll, deprecatedAll, queryAll, prefix, };
+export { request, summary, params, desc, description, query, path, body, tags, middlewares, security, formData, responses, deprecated, tagsAll, responsesAll, middlewaresAll, securityAll, deprecatedAll, queryAll, prefix, };
