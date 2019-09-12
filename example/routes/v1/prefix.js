@@ -1,7 +1,7 @@
 import Doc, { description } from '../../../dist'; // 2 import style avaliable
 
 const {
-  request, summary, query, tags, responses, prefix
+  request, summary, query, tags, responses, prefix, header
 } = Doc;
 
 const tag = tags(['prefix']);
@@ -12,6 +12,12 @@ export default class PrefixRouter {
   @summary('class decorator for url prefix')
   @description('class decorator for url prefix')
   @tag
+  @header({
+    appKey: {
+      type: 'string',
+      description: 'app key'
+    }
+  })  
   @query({
     page: {
       type: 'string',
