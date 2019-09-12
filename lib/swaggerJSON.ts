@@ -28,6 +28,7 @@ const swaggerJSON = (options: {[name: string]: any} = {}, apiObjects: any) => {
     };
     const {
       query = [],
+      header = [],
       path: pathParams = [],
       body = [],
       tags,
@@ -36,7 +37,7 @@ const swaggerJSON = (options: {[name: string]: any} = {}, apiObjects: any) => {
       deprecated
     } = value;
 
-    const parameters = [...pathParams, ...query, ...formData, ...body];
+    const parameters = [...pathParams, ...query, ...header, ...formData, ...body];
 
     // init path object first
     if (!swaggerJSON.paths[path]) {
