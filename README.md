@@ -11,6 +11,10 @@
 npm install koa-swagger-decorator
 ```
 
+## Contributing Guide
+
+Please refer to [contribution.md](https://github.com/Cody2333/koa-swagger-decorator/blob/master/CONTRIBUTING.md) before creating your PR or issue.
+
 ## Introduction
 
 ### Koa Swagger Decorator
