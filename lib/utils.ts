@@ -29,10 +29,11 @@ enum allowedMethods {
   DELETE= 'delete'
 }
 
-const getFilepaths = (dir: string, recursive: boolean = true) => {
+const getFilepaths = (dir: string, recursive: boolean = true, ignore: string[] = []) => {
+  const ignoreDirs = ignore.map((path => `!${path}`));
   const paths = recursive
-    ? globby.sync(['**/*.js', '**/*.ts'], { cwd: dir })
-    : globby.sync(['*.js', '*.ts'], { cwd: dir });
+    ? globby.sync(['**/*.js', '**/*.ts', ...ignoreDirs], { cwd: dir })
+    : globby.sync(['*.js', '*.ts', ...ignoreDirs], { cwd: dir });
   return paths.map(path => _path.join(dir, path));
 };
 
@@ -50,10 +51,10 @@ const loadClass = (filepath: string) => {
   return false;
 };
 
-const loadSwaggerClasses = (dir: string = '', options: {recursive?: boolean} = {}) => {
+const loadSwaggerClasses = (dir: string = '', options: {recursive?: boolean; ignore?: string[]} = {}) => {
   dir = _path.resolve(dir);
   const { recursive = true } = options;
-  return getFilepaths(dir, recursive)
+  return getFilepaths(dir, recursive, options.ignore)
     .map(filepath => loadClass(filepath))
     .filter(cls => cls);
 };

@@ -119,6 +119,8 @@ router.mapDir(_path.resolve(__dirname), {
   // recursive: true,
   // default: true, if true, you can call ctx.validatedBody[Query|Params] to get validated data.
   // doValidation: true,
+  // default: [], paths to ignore while looking for decorators 
+  // ignore: ["**.spec.ts"],
 })
 ```
 
@@ -145,6 +147,7 @@ const userSchema = {
 export default class Test {
   @request('get', '/users')
   @summary('get user list')
+  @security([{ api_key: [] }])
   @testTag
   @query({
     type: { type: 'number', required: true, default: 1, description: 'type' },
@@ -156,6 +159,7 @@ export default class Test {
 
   @request('get', '/users/{id}')
   @summary('get user info by id')
+  @security([{ api_key: [] }])
   @testTag
   @path({
     id: { type: 'number', required: true, default: 1, description: 'id' },
@@ -222,6 +226,7 @@ export default class Test {
 - body
 - formData
 - middlewares
+- security
 - summary
 - description
 - responses
@@ -232,6 +237,7 @@ export default class Test {
 - tagsAll
 - responsesAll
 - middlewaresAll
+- securityAll
 - deprecatedAll
 - queryAll
 
@@ -251,6 +257,10 @@ middlewares
 // support koa middlewares.
 // eg. @middlewares([func1,func2])
 
+security 
+// define authentication method, key must be same as one of methods defined in swaggerOptions.securityDefinitions
+// @security([{ api_key: [] }]) 
+
 summary // @summary('api summary')
 
 description // @description('api description')
@@ -263,6 +273,7 @@ deprecated // @deprecated
 
 @tagsAll(['A', 'B'])
 @deprecatedAll
+@securityAll([{ api_key: [] }])
 @middlewaresAll([log1, log2]) // add middlewares [log1, log2] to all routers in this class
 @queryAll({ limit: { type: 'number', default: 444, required: true } }) // can be merged with @query
 export default class SampleRouter {

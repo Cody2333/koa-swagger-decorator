@@ -43,7 +43,6 @@ const request = (method: string, path: string) => (target: any, name: string, de
   descriptor.value.path = path;
   swaggerObject.add(target, name, {
     request: { method, path },
-    security: [{ ApiKeyAuth: [] }]
   });
   return descriptor;
 };
@@ -51,6 +50,12 @@ const request = (method: string, path: string) => (target: any, name: string, de
 const middlewares = (middlewares: Function[]) => (target: any, name: string, descriptor: PropertyDescriptor) => {
   descriptor.value.middlewares = middlewares;
   return descriptor;
+};
+
+const security = (security: any[]) => (target: any, name: string, descriptor: PropertyDescriptor) => {
+  swaggerObject.add(target, name, {
+    security
+  });
 };
 
 const deprecated = (target: any, name: string, descriptor: PropertyDescriptor) => {
@@ -114,6 +119,13 @@ const middlewaresAll = (items: Function[] | Function) => (target: any) => {
   target.middlewares = middlewares;
 };
 
+const securityAll = (security: any[] | any) => (target: any) => {
+  const authentitactions = is.array(security) ? security : [security];
+  swaggerObject.addMulti(target, {
+    security: authentitactions
+  });
+};
+
 const deprecatedAll = (target: any) => {
   swaggerObject.addMulti(target, { deprecated: true });
 };
@@ -145,6 +157,7 @@ const Doc = {
   body,
   tags,
   middlewares,
+  security,
   formData,
   responses,
   deprecated,
@@ -152,6 +165,7 @@ const Doc = {
   responsesAll,
   middlewaresAll,
   deprecatedAll,
+  securityAll,
   queryAll,
   prefix
 };
@@ -169,12 +183,14 @@ export {
   body,
   tags,
   middlewares,
+  security,
   formData,
   responses,
   deprecated,
   tagsAll,
   responsesAll,
   middlewaresAll,
+  securityAll,
   deprecatedAll,
   queryAll,
   prefix,
