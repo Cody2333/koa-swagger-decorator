@@ -197,11 +197,13 @@ export interface MapOptions {
   doValidation?: boolean;
   recursive?: boolean;
   [name: string]: any;
+  ignore?: string[];
 }
 const wrapper = (router: SwaggerRouter) => {
   router.swagger = (options: SwaggerOptions = {}) => {
     handleSwagger(router, options);
   };
+
   router.map = (SwaggerClass: any, options: MapOptions = {}) => {
     handleMap(router, SwaggerClass, options);
   };

@@ -8,10 +8,11 @@ declare enum allowedMethods {
     PATCH = "patch",
     DELETE = "delete"
 }
-declare const getFilepaths: (dir: string, recursive?: boolean) => string[];
+declare const getFilepaths: (dir: string, recursive?: boolean, ignore?: string[]) => string[];
 declare const loadClass: (filepath: string) => any;
 declare const loadSwaggerClasses: (dir?: string, options?: {
     recursive?: boolean;
+    ignore?: string[];
 }) => any[];
 declare const swaggerKeys: (className: String, methods: [String]) => string[];
 export { convertPath, getPath, getFilepaths, loadClass, loadSwaggerClasses, reservedMethodNames, allowedMethods, swaggerKeys, };

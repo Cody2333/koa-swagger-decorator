@@ -18,7 +18,7 @@ const cRequired = (input: any, expect: Expect = {}) => {
 
 const cNullable = (input: any, expect: Expect = {}) => {
   if (expect.nullable && is.null(input)) {
-    return { is: true , val: input};
+    return { is: true, val: input};
   }
   return { is: false, val: input };
 };

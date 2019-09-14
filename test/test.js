@@ -189,6 +189,13 @@ describe('Function Test:', () => {
         .to.be.an('array')
         .to.have.lengthOf(5);
     });
+    it('should return an array,length = 4 when ignore=["**/egg.js"]', () => {
+      const dir = _path.resolve(__dirname, '../example/routes/v2');
+      const r = getFilepaths(dir, true, ['egg.js']);
+      expect(r)
+        .to.be.an('array')
+        .to.have.lengthOf(4);
+    });
   });
 });
 
