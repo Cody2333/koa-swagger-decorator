@@ -95,6 +95,9 @@ const params = _.curry(_params);
 // query params
 const query = params('query');
 
+// header params
+const header = params('header');
+
 // path params
 const path = params('path');
 
@@ -153,6 +156,7 @@ const Doc = {
   desc,
   description,
   query,
+  header,
   path,
   body,
   tags,
@@ -179,6 +183,7 @@ export {
   desc,
   description,
   query,
+  header,
   path,
   body,
   tags,
