@@ -1,4 +1,4 @@
-import _ from 'ramda';
+import _ from "ramda";
 declare const request: (method: string, path: string) => (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
 declare const middlewares: (middlewares: Function[]) => (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
 declare const security: (security: any[]) => (target: any, name: string, descriptor: PropertyDescriptor) => void;
@@ -71,4 +71,4 @@ declare const Doc: {
     prefix: (prefix: string) => (target: any) => void;
 };
 export default Doc;
-export { request, summary, params, desc, description, query, path, body, tags, middlewares, security, formData, responses, deprecated, tagsAll, responsesAll, middlewaresAll, securityAll, deprecatedAll, queryAll, prefix, };
+export { request, summary, params, desc, description, query, path, body, tags, middlewares, security, formData, responses, deprecated, tagsAll, responsesAll, middlewaresAll, securityAll, deprecatedAll, queryAll, prefix };
