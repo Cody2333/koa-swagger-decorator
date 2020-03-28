@@ -238,6 +238,7 @@ export default class Test {
 
 #### class annotations
 
+- orderAll
 - tagsAll
 - responsesAll
 - middlewaresAll
@@ -275,6 +276,7 @@ responses
 
 deprecated // @deprecated
 
+@orderAll(1)  // weight 1 means the router class will be ordered at position 1 in generated doc
 @tagsAll(['A', 'B'])
 @deprecatedAll
 @securityAll([{ api_key: [] }])
