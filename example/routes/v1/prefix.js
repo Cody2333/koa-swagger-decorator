@@ -17,7 +17,7 @@ export default class PrefixRouter {
       type: 'string',
       description: 'app key'
     }
-  })  
+  })
   @query({
     page: {
       type: 'string',
