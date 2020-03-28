@@ -17,6 +17,9 @@ declare const params: _.CurriedFunction2<string, {
 declare const query: (t2: {
     [name: string]: any;
 }) => (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
+declare const header: (t2: {
+    [name: string]: any;
+}) => (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
 declare const path: (t2: {
     [name: string]: any;
 }) => (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
@@ -26,6 +29,7 @@ declare const body: (t2: {
 declare const formData: (t2: {
     [name: string]: any;
 }) => (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
+declare const orderAll: (weight: number) => (target: any) => void;
 declare const tagsAll: (items: string | string[]) => (target: any) => void;
 declare const responsesAll: (responses?: IResponses) => (target: any) => void;
 declare const middlewaresAll: (items: Function | Function[]) => (target: any) => void;
@@ -46,6 +50,9 @@ declare const Doc: {
     query: (t2: {
         [name: string]: any;
     }) => (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
+    header: (t2: {
+        [name: string]: any;
+    }) => (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
     path: (t2: {
         [name: string]: any;
     }) => (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
@@ -60,6 +67,7 @@ declare const Doc: {
     }) => (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
     responses: (responses?: IResponses) => (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
     deprecated: (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
+    orderAll: (weight: number) => (target: any) => void;
     tagsAll: (items: string | string[]) => (target: any) => void;
     responsesAll: (responses?: IResponses) => (target: any) => void;
     middlewaresAll: (items: Function | Function[]) => (target: any) => void;
@@ -71,4 +79,8 @@ declare const Doc: {
     prefix: (prefix: string) => (target: any) => void;
 };
 export default Doc;
+<<<<<<< HEAD
 export { request, summary, params, desc, description, query, path, body, tags, middlewares, security, formData, responses, deprecated, tagsAll, responsesAll, middlewaresAll, securityAll, deprecatedAll, queryAll, prefix };
+=======
+export { request, summary, params, desc, description, query, header, path, body, tags, middlewares, security, formData, responses, deprecated, orderAll, tagsAll, responsesAll, middlewaresAll, securityAll, deprecatedAll, queryAll, prefix, };
+>>>>>>> feat: add orderAll decorator to allow paths sorting

@@ -1,3 +1,4 @@
+import { Dictionary } from 'ramda';
 declare const convertPath: (path: string) => string;
 declare const getPath: (prefix: string, path: string) => string;
 declare const reservedMethodNames: string[];
@@ -15,4 +16,9 @@ declare const loadSwaggerClasses: (dir?: string, options?: {
     ignore?: string[];
 }) => any[];
 declare const swaggerKeys: (className: String, methods: [String]) => string[];
-export { convertPath, getPath, getFilepaths, loadClass, loadSwaggerClasses, reservedMethodNames, allowedMethods, swaggerKeys, };
+/**
+ * Sorts an object (dictionary) by value returned by the valSelector function.
+ * Note that order is only guaranteed for string keys.
+ */
+declare const sortObject: <TValue>(obj: Dictionary<TValue>, comparisonSelector: (val: TValue, length: number) => string | number, callbackFn?: (val: TValue) => TValue) => {};
+export { convertPath, getPath, getFilepaths, loadClass, loadSwaggerClasses, reservedMethodNames, allowedMethods, swaggerKeys, sortObject, };

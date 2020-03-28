@@ -134,6 +134,10 @@ const body = params("body");
 const formData = params("formData");
 
 // class decorators
+const orderAll = (weight: number) => (target: any) => {
+  swaggerObject.addMulti(target, { order: weight });
+};
+
 const tagsAll = (items: string[] | string) => (target: any) => {
   const tags = is.array(items) ? items : [items];
   swaggerObject.addMulti(target, { tags });
@@ -194,6 +198,7 @@ const Doc = {
   formData,
   responses,
   deprecated,
+  orderAll,
   tagsAll,
   responsesAll,
   middlewaresAll,
@@ -221,6 +226,7 @@ export {
   formData,
   responses,
   deprecated,
+  orderAll,
   tagsAll,
   responsesAll,
   middlewaresAll,

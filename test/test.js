@@ -1,7 +1,7 @@
 import _path from 'path';
 import assert from 'assert';
 import server from '../example/main';
-import { getPath, convertPath, getFilepaths } from '../dist/utils';
+import { getPath, convertPath, getFilepaths, sortObject } from '../dist/utils';
 import validate from '../dist/validate';
 
 const request = require('supertest')(server);
@@ -195,6 +195,19 @@ describe('Function Test:', () => {
       expect(r)
         .to.be.an('array')
         .to.have.lengthOf(4);
+    });
+  });
+  describe('sortObject:', () => {
+    it('should return an object with keys ordered in the specified weight', () => {
+      const input = {
+        foo: { weight: 4 },
+        baz: { weight: 1 },
+        cat: { weight: 3 }
+      };
+      const expectedOrder = ['baz', 'cat', 'foo'];
+      const output = sortObject(input, item => item.weight);
+      const outputKeys = Object.keys(output);
+      expect(outputKeys).to.be.eql(expectedOrder);
     });
   });
 });
