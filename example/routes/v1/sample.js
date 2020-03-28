@@ -1,6 +1,6 @@
 import multer from 'koa-multer';
 import _path from 'path';
-import Doc, { description } from '../../../dist'; // 2 import style avaliable
+import Doc, { description, orderAll } from '../../../dist'; // 2 import style avaliable
 import config from '../../config';
 
 const {
@@ -45,6 +45,7 @@ const log3 = async (ctx, next) => {
   await next();
 };
 
+@orderAll(2)
 @tagsAll(['A'])
 @deprecatedAll
 @middlewaresAll([log1, log2]) // add middlewares [log1, log2] to all routers in this class

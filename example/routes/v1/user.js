@@ -5,7 +5,8 @@ import {
   tags,
   middlewares,
   path,
-  description
+  description,
+  orderAll
 } from '../../../dist';
 
 const tag = tags(['User']);
@@ -20,6 +21,7 @@ const logTime = () => async (ctx, next) => {
   await next();
   console.log(`end: ${new Date()}`);
 };
+@orderAll(1)
 export default class UserRouter {
   @request('POST', '/user/register')
   @summary('register user')
