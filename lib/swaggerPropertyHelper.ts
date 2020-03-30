@@ -1,48 +1,74 @@
 /**
  * All other regular column types.
  */
-export type PropertyType = "string" | "number" | "boolean" | "array" | "object"
+export type PropertyType = "string" | "number" | "boolean" | "array" | "object";
 
-/**
- * 
- */
-export class PropertyOptions {
-    /**
-     * 
-     */
-    type: PropertyType = null;
-    /**
-     * 
-     */
-    required?: boolean = null;
-    /**
-     * 
-     */
-    example?: any = null;
-    /**
-     * 
-     */
-    description?: string = null;
-    /**
-     * 
-     */
-    items?: PropertyOptions = null;
-    /**
-     * 
-     */
-    properties?: any;
+type CustromStringFormatT = string;
+export type StringFormatT = "date" | "date-time" | "password" | "byte" | "binary" | CustromStringFormatT;
+
+class BasePropertyOptions {
+    required?: boolean;
+    example?: any;
+    description?: string;
+    readOnly?: boolean;
+    writeOnly?: boolean;
+    nullable?: boolean;
 }
 
+type StringPropertyOptionsT = BasePropertyOptions & {
+    type: "string";
+    minLength?: number;
+    maxLength?: number;
+    format?: StringFormatT;
+    pattern?: string;
+};
+
+type NumberPropertyOptionsT = BasePropertyOptions & {
+    type: "number";
+    minimum?: number;
+    exclusiveMinimum?: boolean;
+    maximum?: number;
+    exclusiveMaximum?: boolean;
+    multipleOf?: number;
+};
+
+type BooleanPropertyOptionsT = BasePropertyOptions & {
+    type: "boolean";
+};
+
+type ArrayPropertyOptionsT = BasePropertyOptions & {
+    type: "array",
+    minItems?: number;
+    maxItems?: number;
+    uniqueItems?: boolean;
+    items?: PropertyOptions;
+};
+
+type ObjectPropertyOptionsT = BasePropertyOptions & {
+    type: "object",
+    properties?: any;
+    minProperties?: number;
+    maxProperties?: number;
+};
+
+export type PropertyOptions =
+    | StringPropertyOptionsT
+    | NumberPropertyOptionsT
+    | BooleanPropertyOptionsT
+    | ArrayPropertyOptionsT
+    | ObjectPropertyOptionsT
+;
+
 /**
- * 
- * @param source 
+ *
+ * @param source
  */
-function deepClone(source:any) {
+function deepClone(source: any) {
     if (!source || typeof source !== 'object') {
         return null;
     }
-    var targetObj:any = source.constructor === Array ? [] : {};
-    for (var keys in source) {
+    const targetObj: any = source.constructor === Array ? [] : {};
+    for (const keys in source) {
         if (source.hasOwnProperty(keys)) {
             if (source[keys] && typeof source[keys] === 'object') {
                 targetObj[keys] = source[keys].constructor === Array ? [] : {};
@@ -57,9 +83,8 @@ function deepClone(source:any) {
 
 /**
  * Made for empty class
- * @param constructor 
  */
-export function swaggerClass(constructor?: Function): Function {
+export function swaggerClass(): Function {
     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
         if (target.swaggerDocument == undefined) target.swaggerDocument = {};
         if (target.swaggerClass == undefined) target.swaggerClass = target;
@@ -67,13 +92,11 @@ export function swaggerClass(constructor?: Function): Function {
             target.swaggerClass = target;
             target.swaggerDocument = deepClone(target.swaggerDocument);
         }
-    }
-};
+    };
+}
 
 /**
- * 
- * @param type 
- * @param options 
+ * @param options
  */
 export function swaggerProperty(options?: PropertyOptions): Function {
     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
@@ -84,5 +107,5 @@ export function swaggerProperty(options?: PropertyOptions): Function {
             target.constructor.swaggerDocument = deepClone(target.constructor.swaggerDocument);
         }
         target.constructor.swaggerDocument[propertyKey] = options;
-    }
-};
+    };
+}
