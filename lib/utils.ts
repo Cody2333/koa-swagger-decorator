@@ -5,7 +5,7 @@ import is from 'is-type-of';
 // eg. /api/{id} -> /api/:id
 const convertPath = (path: string) => {
   const re = new RegExp('{(.*?)}', 'g');
-  return path.replace(re, ':$1');
+  return path.replace(re, (m, k) => k.startsWith('(') ? k : `:${k}`);
 };
 
 const getPath = (prefix: string, path: string) =>
