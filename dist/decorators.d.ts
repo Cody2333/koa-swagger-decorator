@@ -79,8 +79,4 @@ declare const Doc: {
     prefix: (prefix: string) => (target: any) => void;
 };
 export default Doc;
-<<<<<<< HEAD
-export { request, summary, params, desc, description, query, path, body, tags, middlewares, security, formData, responses, deprecated, tagsAll, responsesAll, middlewaresAll, securityAll, deprecatedAll, queryAll, prefix };
-=======
-export { request, summary, params, desc, description, query, header, path, body, tags, middlewares, security, formData, responses, deprecated, orderAll, tagsAll, responsesAll, middlewaresAll, securityAll, deprecatedAll, queryAll, prefix, };
->>>>>>> feat: add orderAll decorator to allow paths sorting
+export { request, summary, params, desc, description, query, header, path, body, tags, middlewares, security, formData, responses, deprecated, orderAll, tagsAll, responsesAll, middlewaresAll, securityAll, deprecatedAll, queryAll, prefix };
