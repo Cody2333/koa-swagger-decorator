@@ -1,6 +1,7 @@
 import _ from "ramda";
 import is from "is-type-of";
 import swaggerObject from "./swaggerObject";
+import { RequestMethod, QueryParams } from "./types";
 
 const _desc = (type: string, text: string | any[]) => (
   target: any,
@@ -46,12 +47,12 @@ const _params = (type: string, parameters: { [name: string]: any }) => (
   return descriptor;
 };
 
-const request = (method: string, path: string) => (
+const request = (method: RequestMethod, path: string) => (
   target: any,
   name: string,
   descriptor: PropertyDescriptor
 ) => {
-  method = _.toLower(method);
+  method = _.toLower(method) as RequestMethod;
   descriptor.value.method = method;
   descriptor.value.path = path;
   swaggerObject.add(target, name, {
@@ -91,7 +92,10 @@ const deprecated = (
 };
 
 export interface IResponses {
-  [name: number]: any;
+  [name: number]: {
+    description?: string;
+    example?: any;
+  };
 }
 const defaultResp: IResponses = {
   200: { description: "success" }
@@ -119,7 +123,7 @@ const params = _.curry(_params);
 // below are [parameters]
 
 // query params
-const query = params("query");
+const query = (queryParams: QueryParams) => params("query")(queryParams);
 
 // header params
 const header = params('header');
@@ -168,13 +172,13 @@ const prefix = (prefix: string) => (target: any) => {
   target.prefix = prefix;
 };
 
-const queryAll = (parameters: { [name: string]: any }, filters = ["ALL"]) => (
+const queryAll = (parameters: QueryParams, filters = ["ALL"]) => (
   target: any
 ) => {
   if (!target.parameters) target.parameters = {};
   target.parameters.query = parameters; // used in wrapper.js for validation
   target.parameters.filters = filters; // used in wrapper.js for validation
-  const swaggerParameters = Object.keys(parameters).map(key =>
+  const swaggerParameters: any[] = Object.keys(parameters).map(key =>
     Object.assign({ name: key }, parameters[key])
   );
   swaggerParameters.forEach(item => {

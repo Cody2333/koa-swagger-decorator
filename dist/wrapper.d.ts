@@ -1,10 +1,10 @@
 import * as IRouter from 'koa-router';
 import Router from 'koa-router';
-export interface Context extends IRouter.IRouterContext {
+export declare type Context<StateT = any, CustomT = {}> = IRouter.RouterContext<StateT, CustomT> & {
     validatedQuery: any;
     validatedBody: any;
     validatedParams: any;
-}
+};
 export interface SwaggerDisplayConfiguration {
     deepLinking?: boolean;
     displayOperationId?: boolean;
@@ -21,6 +21,28 @@ export interface SwaggerDisplayConfiguration {
 export interface SwaggerConfiguration {
     display?: SwaggerDisplayConfiguration;
 }
+export interface SecurityDefinitions {
+    [key: string]: {
+        /** The type of the security scheme. Valid values are 'basic', 'apiKey' or 'oauth2' */
+        type: 'basic' | 'apiKey' | 'oauth2';
+        /** The name of the header or query parameter to be used */
+        name?: string;
+        /** The location of the API key. Valid values are "query" or "header" */
+        in?: 'header' | 'query';
+        /** Optional short description for security scheme */
+        description?: string;
+        /** The flow used by the OAuth2 security scheme */
+        flow: 'implicit' | 'password' | 'application' | 'accessCode';
+        /** The authorization URL to be used for this flow. This SHOULD be in the form of a URL */
+        authorizationUrl: string;
+        /** The token URL to be used for this flow. This SHOULD be in the form of a URL */
+        tokenUrl: string;
+        /** The available scopes for the OAuth2 security scheme */
+        scopes: {
+            [key: string]: string;
+        };
+    };
+}
 export interface SwaggerOptions {
     title?: string;
     description?: string;
@@ -30,6 +52,7 @@ export interface SwaggerOptions {
     prefix?: string;
     swaggerOptions?: any;
     swaggerConfiguration?: SwaggerConfiguration;
+    securityDefinitions?: SecurityDefinitions;
     [name: string]: any;
 }
 export interface MapOptions {
@@ -38,8 +61,8 @@ export interface MapOptions {
     [name: string]: any;
     ignore?: string[];
 }
-declare const wrapper: (router: SwaggerRouter) => void;
-declare class SwaggerRouter extends Router {
+declare const wrapper: (router: SwaggerRouter<any, {}>) => void;
+declare class SwaggerRouter<StateT = any, CustomT = {}> extends Router<StateT, CustomT> {
     swaggerKeys: Set<String>;
     opts: IRouter.IRouterOptions;
     swaggerOpts: SwaggerOptions;

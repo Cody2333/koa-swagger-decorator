@@ -15,11 +15,11 @@ import {
 } from './utils';
 import { Data } from './types';
 
-export interface Context extends IRouter.IRouterContext {
+export type Context<StateT = any, CustomT = {}> = IRouter.RouterContext<StateT, CustomT> & {
   validatedQuery: any;
   validatedBody: any;
   validatedParams: any;
-}
+};
 
 const validator = (parameters: any) => async (ctx: Context, next: () => Promise<any>) => {
   if (!parameters) {
@@ -57,6 +57,29 @@ export interface SwaggerConfiguration {
   display?: SwaggerDisplayConfiguration;
 }
 
+export interface SecurityDefinitions {
+  [key: string]: {
+    /** The type of the security scheme. Valid values are 'basic', 'apiKey' or 'oauth2' */
+    type: 'basic' | 'apiKey' | 'oauth2';
+    /** The name of the header or query parameter to be used */
+    name?: string;
+    /** The location of the API key. Valid values are "query" or "header" */
+    in?: 'header' | 'query';
+    /** Optional short description for security scheme */
+    description?: string;
+    /** The flow used by the OAuth2 security scheme */
+    flow: 'implicit' | 'password' | 'application' | 'accessCode';
+    /** The authorization URL to be used for this flow. This SHOULD be in the form of a URL */
+    authorizationUrl: string;
+    /** The token URL to be used for this flow. This SHOULD be in the form of a URL */
+    tokenUrl: string;
+    /** The available scopes for the OAuth2 security scheme */
+    scopes: {
+      [key: string]: string;
+    };
+  };
+}
+
 export interface SwaggerOptions {
   title?: string;
   description?: string;
@@ -66,10 +89,11 @@ export interface SwaggerOptions {
   prefix?: string;
   swaggerOptions?: any;
   swaggerConfiguration?: SwaggerConfiguration;
+  securityDefinitions?: SecurityDefinitions;
   [name: string]: any;
 }
 
-const handleSwagger = (router: SwaggerRouter, options: SwaggerOptions) => {
+const handleSwagger = <StateT = any, CustomT = {}>(router: SwaggerRouter<StateT, CustomT>, options: SwaggerOptions) => {
   const {
     swaggerJsonEndpoint = '/swagger-json',
     swaggerHtmlEndpoint = '/swagger-html',
@@ -78,7 +102,7 @@ const handleSwagger = (router: SwaggerRouter, options: SwaggerOptions) => {
   } = options;
 
   // setup swagger router
-  router.get(swaggerJsonEndpoint, async (ctx: Context) => {
+  router.get(swaggerJsonEndpoint, async (ctx: Context<StateT, CustomT>) => {
     let data: Data = {};
     if (router instanceof SwaggerRouter) {
       Object.keys(swaggerObject.data).forEach(k => {
@@ -92,7 +116,7 @@ const handleSwagger = (router: SwaggerRouter, options: SwaggerOptions) => {
     }
     ctx.body = swaggerJSON(options, data);
   });
-  router.get(swaggerHtmlEndpoint, async (ctx: Context) => {
+  router.get(swaggerHtmlEndpoint, async (ctx: Context<StateT, CustomT>) => {
     ctx.body = swaggerHTML(getPath(prefix, swaggerJsonEndpoint), swaggerConfiguration);
   });
 };
@@ -213,7 +237,7 @@ const wrapper = (router: SwaggerRouter) => {
   };
 };
 
-class SwaggerRouter extends Router {
+class SwaggerRouter<StateT = any, CustomT = {}> extends Router<StateT, CustomT> {
   public swaggerKeys: Set<String>;
   public opts: IRouter.IRouterOptions;
   public swaggerOpts: SwaggerOptions;
