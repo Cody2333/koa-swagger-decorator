@@ -43,8 +43,7 @@ const request = (method, path) => (target, name, descriptor) => {
     descriptor.value.method = method;
     descriptor.value.path = path;
     swaggerObject_1.default.add(target, name, {
-        request: { method, path },
-        security: [{ ApiKeyAuth: [] }]
+        request: { method, path }
     });
     return descriptor;
 };
