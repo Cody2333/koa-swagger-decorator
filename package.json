@@ -1,5 +1,5 @@
 {
-  "name": "koa-swagger-decorator",
+  "name": "koa-swagger-decorator-fork",
   "version": "1.6.1",
   "description": "using decorator to automatically generate swagger doc for koa-router",
   "main": "dist/index.js",
@@ -32,6 +32,7 @@
     "babel-eslint": "^8.2.6",
     "babel-plugin-transform-decorators-legacy": "^1.3.5",
     "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0",
     "chai": "^4.1.2",
     "concurrently": "^3.6.1",
     "eslint": "^4.19.1",

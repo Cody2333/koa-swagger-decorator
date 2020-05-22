@@ -1,5 +1,7 @@
 import init from './swaggerTemplate';
 import { getPath } from './utils';
+import {fixBodySchema} from "./utils";
+
 /**
  * build swagger json from apiObjects
  */
@@ -36,7 +38,12 @@ const swaggerJSON = (options: {[name: string]: any} = {}, apiObjects: any) => {
       deprecated
     } = value;
 
-    const parameters = [...pathParams, ...query, ...formData, ...body];
+    let fixedBody = []
+    if(body&&body.length){
+      fixedBody = fixBodySchema(JSON.parse(JSON.stringify(body)))||body
+    }
+
+    const parameters = [...pathParams, ...query, ...formData, ...fixedBody];
 
     // init path object first
     if (!swaggerJSON.paths[path]) {

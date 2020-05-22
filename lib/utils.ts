@@ -61,6 +61,19 @@ const loadSwaggerClasses = (dir: string = '', options: {recursive?: boolean; ign
 
 const swaggerKeys = (className: String, methods: [String]) => methods.map(m => `${className}- ${m}`);
 
+const fixBodySchema = (bodies:any[])=>{
+  let properties
+  for(let body of bodies){
+    properties = body&&body.schema&&body.schema.properties
+    if(properties){
+      for(let key in properties){
+        delete properties[key]['required']
+      }
+    }
+  }
+  return bodies
+}
+
 export {
   convertPath,
   getPath,
@@ -70,4 +83,5 @@ export {
   reservedMethodNames,
   allowedMethods,
   swaggerKeys,
+  fixBodySchema
 };
