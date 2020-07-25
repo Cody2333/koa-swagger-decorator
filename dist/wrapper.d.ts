@@ -4,6 +4,7 @@ export interface Context extends IRouter.IRouterContext {
     validatedQuery: any;
     validatedBody: any;
     validatedParams: any;
+    meta: any;
 }
 export interface SwaggerDisplayConfiguration {
     deepLinking?: boolean;

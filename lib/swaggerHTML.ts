@@ -14,6 +14,8 @@ const swaggerHTML = (apiPath: string, options: { swaggerVersion?: string, [name:
     const {
         swaggerVersion = '3.21.0',
         display = {},
+        swaggerStylePath = '/styles',
+        swaggerJsPath = '/js'
     } = options;
   const result = `
 
@@ -22,8 +24,8 @@ const swaggerHTML = (apiPath: string, options: { swaggerVersion?: string, [name:
 <head>
   <meta charset="UTF-8">
   <title>Swagger UI</title>
-  <link href="//fonts.googleapis.com/css?family=Open+Sans:400,700|Source+Code+Pro:300,600|Titillium+Web:400,600,700" rel="stylesheet">
-  <link href="//cdnjs.cloudflare.com/ajax/libs/swagger-ui/${swaggerVersion}/swagger-ui.css" rel="stylesheet">
+  <link href="${swaggerStylePath}/opensans.css" rel="stylesheet">
+  <link href="${swaggerStylePath}/swagger-ui.css" rel="stylesheet">
 
   <style>
     html
@@ -82,8 +84,8 @@ const swaggerHTML = (apiPath: string, options: { swaggerVersion?: string, [name:
   </svg>
 
   <div id="swagger-ui"></div>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/swagger-ui/${swaggerVersion}/swagger-ui-bundle.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/swagger-ui/${swaggerVersion}/swagger-ui-standalone-preset.js"></script>
+  <script src="${swaggerJsPath}/swagger-ui-bundle.js"></script>
+  <script src="${swaggerJsPath}/swagger-ui-standalone-preset.js"></script>
   <script>
   window.onload = function() {
     // Build a system

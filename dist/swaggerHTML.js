@@ -12,7 +12,7 @@ function parseSimpleConfig(config = {}) {
     }).join('\n\t  ');
 }
 const swaggerHTML = (apiPath, options = {}) => {
-    const { swaggerVersion = '3.21.0', display = {}, } = options;
+    const { swaggerVersion = '3.21.0', display = {}, swaggerStylePath = '/styles', swaggerJsPath = '/js' } = options;
     const result = `
 
 <!DOCTYPE html>
@@ -20,8 +20,8 @@ const swaggerHTML = (apiPath, options = {}) => {
 <head>
   <meta charset="UTF-8">
   <title>Swagger UI</title>
-  <link href="//fonts.googleapis.com/css?family=Open+Sans:400,700|Source+Code+Pro:300,600|Titillium+Web:400,600,700" rel="stylesheet">
-  <link href="//cdnjs.cloudflare.com/ajax/libs/swagger-ui/${swaggerVersion}/swagger-ui.css" rel="stylesheet">
+  <link href="${swaggerStylePath}/opensans.css" rel="stylesheet">
+  <link href="${swaggerStylePath}/swagger-ui.css" rel="stylesheet">
 
   <style>
     html
@@ -80,8 +80,8 @@ const swaggerHTML = (apiPath, options = {}) => {
   </svg>
 
   <div id="swagger-ui"></div>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/swagger-ui/${swaggerVersion}/swagger-ui-bundle.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/swagger-ui/${swaggerVersion}/swagger-ui-standalone-preset.js"></script>
+  <script src="${swaggerJsPath}/swagger-ui-bundle.js"></script>
+  <script src="${swaggerJsPath}/swagger-ui-standalone-preset.js"></script>
   <script>
   window.onload = function() {
     // Build a system
@@ -110,4 +110,4 @@ const swaggerHTML = (apiPath, options = {}) => {
 };
 exports.swaggerHTML = swaggerHTML;
 exports.default = swaggerHTML;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic3dhZ2dlckhUTUwuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi9saWIvc3dhZ2dlckhUTUwudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7QUFBQSwyQkFBMkIsU0FBZ0MsRUFBRTtJQUN6RCxPQUFPLE1BQU0sQ0FBQyxJQUFJLENBQUMsTUFBTSxDQUFDLENBQUMsR0FBRyxDQUFDLEdBQUcsQ0FBQyxFQUFFO1FBQ2pDLE1BQU0sS0FBSyxHQUFRLE1BQU0sQ0FBQyxHQUFHLENBQUMsQ0FBQztRQUMvQixJQUFJLE9BQU8sS0FBSyxLQUFLLFFBQVEsRUFBRTtZQUMzQixPQUFPLEdBQUcsR0FBRyxNQUFNLEtBQUssSUFBSSxDQUFDO1NBQ2hDO1FBQ0QsSUFBSSxPQUFPLEtBQUssS0FBSyxRQUFRLElBQUksT0FBTyxLQUFLLEtBQUssU0FBUyxFQUFFO1lBQ3pELE9BQU8sR0FBRyxHQUFHLEtBQUssS0FBSyxHQUFHLENBQUM7U0FDOUI7SUFDTCxDQUFDLENBQUMsQ0FBQyxJQUFJLENBQUMsUUFBUSxDQUFDLENBQUM7QUFDdEIsQ0FBQztBQUVELE1BQU0sV0FBVyxHQUFHLENBQUMsT0FBZSxFQUFFLFVBQTRELEVBQUUsRUFBRSxFQUFFO0lBQ3BHLE1BQU0sRUFDRixjQUFjLEdBQUcsUUFBUSxFQUN6QixPQUFPLEdBQUcsRUFBRSxHQUNmLEdBQUcsT0FBTyxDQUFDO0lBQ2QsTUFBTSxNQUFNLEdBQUc7Ozs7Ozs7OzREQVEyQyxjQUFjOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs2REEyRGIsY0FBYzs2REFDZCxjQUFjOzs7OztjQUs3RCxPQUFPOzs7Ozs7Ozs7O1FBVWIsaUJBQWlCLENBQUMsT0FBTyxDQUFDOzs7Ozs7Ozs7Q0FTakMsQ0FBQztJQUNBLE9BQU8sTUFBTSxDQUFDO0FBQ2hCLENBQUMsQ0FBQztBQUVPLGtDQUFXO0FBRHBCLGtCQUFlLFdBQVcsQ0FBQyJ9
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic3dhZ2dlckhUTUwuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi9saWIvc3dhZ2dlckhUTUwudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7QUFBQSwyQkFBMkIsU0FBZ0MsRUFBRTtJQUN6RCxPQUFPLE1BQU0sQ0FBQyxJQUFJLENBQUMsTUFBTSxDQUFDLENBQUMsR0FBRyxDQUFDLEdBQUcsQ0FBQyxFQUFFO1FBQ2pDLE1BQU0sS0FBSyxHQUFRLE1BQU0sQ0FBQyxHQUFHLENBQUMsQ0FBQztRQUMvQixJQUFJLE9BQU8sS0FBSyxLQUFLLFFBQVEsRUFBRTtZQUMzQixPQUFPLEdBQUcsR0FBRyxNQUFNLEtBQUssSUFBSSxDQUFDO1NBQ2hDO1FBQ0QsSUFBSSxPQUFPLEtBQUssS0FBSyxRQUFRLElBQUksT0FBTyxLQUFLLEtBQUssU0FBUyxFQUFFO1lBQ3pELE9BQU8sR0FBRyxHQUFHLEtBQUssS0FBSyxHQUFHLENBQUM7U0FDOUI7SUFDTCxDQUFDLENBQUMsQ0FBQyxJQUFJLENBQUMsUUFBUSxDQUFDLENBQUM7QUFDdEIsQ0FBQztBQUVELE1BQU0sV0FBVyxHQUFHLENBQUMsT0FBZSxFQUFFLFVBQTRELEVBQUUsRUFBRSxFQUFFO0lBQ3BHLE1BQU0sRUFDRixjQUFjLEdBQUcsUUFBUSxFQUN6QixPQUFPLEdBQUcsRUFBRSxFQUNaLGdCQUFnQixHQUFHLFNBQVMsRUFDNUIsYUFBYSxHQUFHLEtBQUssRUFDeEIsR0FBRyxPQUFPLENBQUM7SUFDZCxNQUFNLE1BQU0sR0FBRzs7Ozs7OztnQkFPRCxnQkFBZ0I7Z0JBQ2hCLGdCQUFnQjs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7aUJBMkRmLGFBQWE7aUJBQ2IsYUFBYTs7Ozs7Y0FLaEIsT0FBTzs7Ozs7Ozs7OztRQVViLGlCQUFpQixDQUFDLE9BQU8sQ0FBQzs7Ozs7Ozs7O0NBU2pDLENBQUM7SUFDQSxPQUFPLE1BQU0sQ0FBQztBQUNoQixDQUFDLENBQUM7QUFFTyxrQ0FBVztBQURwQixrQkFBZSxXQUFXLENBQUMifQ==

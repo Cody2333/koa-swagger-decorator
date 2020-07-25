@@ -15,4 +15,5 @@ declare const loadSwaggerClasses: (dir?: string, options?: {
     ignore?: string[];
 }) => any[];
 declare const swaggerKeys: (className: String, methods: [String]) => string[];
-export { convertPath, getPath, getFilepaths, loadClass, loadSwaggerClasses, reservedMethodNames, allowedMethods, swaggerKeys, };
+declare const fixBodySchema: (bodies: any[]) => any[];
+export { convertPath, getPath, getFilepaths, loadClass, loadSwaggerClasses, reservedMethodNames, allowedMethods, swaggerKeys, fixBodySchema };

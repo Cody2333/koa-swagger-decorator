@@ -19,7 +19,13 @@ export interface Context extends IRouter.IRouterContext {
   validatedQuery: any;
   validatedBody: any;
   validatedParams: any;
+  meta: any;
 }
+
+const getMeta = (item: any) => async (ctx: Context, next: () => Promise<any>) => {
+  ctx.meta = item;
+  await next();
+};
 
 const validator = (parameters: any) => async (ctx: Context, next: () => Promise<any>) => {
   if (!parameters) {
@@ -179,6 +185,7 @@ const handleMap = (router: SwaggerRouter, SwaggerClass: any, { doValidation = tr
       if (doValidation) {
         chain.push(validator(localParams));
       }
+      chain.push(getMeta(item));
       chain.push(...classMiddlewares);
       chain.push(...middlewares);
       chain.push(item);
