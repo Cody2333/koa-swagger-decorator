@@ -1,6 +1,6 @@
 {
   "name": "koa-swagger-decorator",
-  "version": "1.6.8",
+  "version": "1.7.0",
   "description": "using decorator to automatically generate swagger doc for koa-router",
   "main": "dist/index.js",
   "dependencies": {
@@ -65,6 +65,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start:babel": "babel-node example/main",
+    "aa": "babel-node example/scripts/dumpJson",
     "watch:node": "nodemon --watch example --watch dist --exec npm run start:babel -L",
     "watch:ts": "tsc -w -p tsconfig.json",
     "start": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch:ts\" \"npm run watch:node\"",

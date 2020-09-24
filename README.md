@@ -310,6 +310,25 @@ router.mapDir(_path.resolve(__dirname), {
 
 ![image.png](http://upload-images.jianshu.io/upload_images/2563527-4b6ed895183a0055.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
+##### generate swagger.json without starting the server
+
+```javascript
+import path from 'path';
+import { SwaggerRouter } from '../../dist';
+
+// init router
+const router = new SwaggerRouter();
+
+// load controllers
+router.mapDir(path.resolve(__dirname, '../routes'));
+
+// dump swagger json
+router.dumpSwaggerJson({
+  filename: 'swagger.json', // default is swagger.json
+  dir: process.cwd(), // default is process.cwd()
+});
+```
+
 ## License
 
 © MIT

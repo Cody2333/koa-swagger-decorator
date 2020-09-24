@@ -14,6 +14,8 @@ import {
   allowedMethods
 } from './utils';
 import { Data } from './types';
+import { writeFileSync } from 'fs';
+import path from 'path';
 
 export interface Context extends IRouter.IRouterContext {
   validatedQuery: any;
@@ -21,7 +23,10 @@ export interface Context extends IRouter.IRouterContext {
   validatedParams: any;
 }
 
-const validator = (parameters: any) => async (ctx: Context, next: () => Promise<any>) => {
+const validator = (parameters: any) => async (
+  ctx: Context,
+  next: () => Promise<any>
+) => {
   if (!parameters) {
     await next();
     return;
@@ -69,6 +74,27 @@ export interface SwaggerOptions {
   [name: string]: any;
 }
 
+export interface DumpOptions {
+  dir: string,
+  filename: string,
+}
+
+const handleDumpSwaggerJSON = (
+  router: SwaggerRouter,
+  dumpOptions: DumpOptions,
+  options: SwaggerOptions = {}
+) => {
+  let data: Data = {};
+  const { dir = process.cwd(), filename = 'swagger.json' } = dumpOptions;
+  Object.keys(swaggerObject.data).forEach((k) => {
+    if (router.swaggerKeys.has(k)) {
+      data[k] = swaggerObject.data[k];
+    }
+  });
+  console.log(path.resolve(dir, filename));
+  const jsonData = swaggerJSON(options, data);
+  writeFileSync(path.resolve(dir, filename), JSON.stringify(jsonData, null, 2));
+};
 const handleSwagger = (router: SwaggerRouter, options: SwaggerOptions) => {
   const {
     swaggerJsonEndpoint = '/swagger-json',
@@ -93,11 +119,18 @@ const handleSwagger = (router: SwaggerRouter, options: SwaggerOptions) => {
     ctx.body = swaggerJSON(options, data);
   });
   router.get(swaggerHtmlEndpoint, async (ctx: Context) => {
-    ctx.body = swaggerHTML(getPath(prefix, swaggerJsonEndpoint), swaggerConfiguration);
+    ctx.body = swaggerHTML(
+      getPath(prefix, swaggerJsonEndpoint),
+      swaggerConfiguration
+    );
   });
 };
 
-const handleMap = (router: SwaggerRouter, SwaggerClass: any, { doValidation = true }) => {
+const handleMap = (
+  router: SwaggerRouter,
+  SwaggerClass: any,
+  { doValidation = true }
+) => {
   if (!SwaggerClass) return;
   const classMiddlewares: any[] = SwaggerClass.middlewares || [];
   const classPrefix: string = SwaggerClass.prefix || '';
@@ -114,19 +147,21 @@ const handleMap = (router: SwaggerRouter, SwaggerClass: any, { doValidation = tr
 
   const SwaggerClassPrototype = SwaggerClass.prototype;
   const methods = Object.getOwnPropertyNames(SwaggerClassPrototype)
-      .filter(method => !reservedMethodNames.includes(method))
-      .map(method => {
-        const wrapperMethod = async (ctx: Context) => {
-          const c = new SwaggerClass(ctx);
-          await c[method](ctx);
-        };
-        // 添加了一层 wrapper 之后，需要把原函数的名称暴露出来 fnName
-        Object.assign(wrapperMethod, SwaggerClassPrototype[method], {fnName: method});
-        return wrapperMethod;
+    .filter((method) => !reservedMethodNames.includes(method))
+    .map((method) => {
+      const wrapperMethod = async (ctx: Context) => {
+        const c = new SwaggerClass(ctx);
+        await c[method](ctx);
+      };
+      // 添加了一层 wrapper 之后，需要把原函数的名称暴露出来 fnName
+      Object.assign(wrapperMethod, SwaggerClassPrototype[method], {
+        fnName: method,
       });
+      return wrapperMethod;
+    });
 
   // map all methods
-  [ ...staticMethods, ...methods ]
+  [...staticMethods, ...methods]
     // filter methods withour @request decorator
     .filter((item) => {
       const { path, method } = item as { path: string, method: string };
@@ -142,7 +177,6 @@ const handleMap = (router: SwaggerRouter, SwaggerClass: any, { doValidation = tr
         router._addKey(`${SwaggerClass.name}-${item.fnName}`);
       } else {
         router._addKey(`${SwaggerClass.name}-${item.name}`);
-
       }
       const { path, method } = item as { path: string, method: string };
       let { middlewares = [] } = item;
@@ -173,9 +207,7 @@ const handleMap = (router: SwaggerRouter, SwaggerClass: any, { doValidation = tr
         throw new Error(`illegal API: ${method} ${path} at [${item}]`);
       }
 
-      const chain: [any] = [
-        `${convertPath(`${classPrefix}${path}`)}`,
-      ];
+      const chain: [any] = [`${convertPath(`${classPrefix}${path}`)}`];
       if (doValidation) {
         chain.push(validator(localParams));
       }
@@ -236,6 +268,11 @@ class SwaggerRouter extends Router {
   swagger(options: SwaggerOptions = {}) {
     const opts = Object.assign(options, this.swaggerOpts);
     handleSwagger(this, opts);
+  }
+
+  dumpSwaggerJson(dumpOptions: DumpOptions, options: SwaggerOptions = {}) {
+    const opts = Object.assign(options, this.swaggerOpts);
+    handleDumpSwaggerJSON(this, dumpOptions, opts);
   }
 
   map(SwaggerClass: any, options: MapOptions) {
