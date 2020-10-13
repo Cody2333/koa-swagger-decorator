@@ -143,7 +143,11 @@ const handleMap = (
 
   const staticMethods = Object.getOwnPropertyNames(SwaggerClass)
     .filter(method => !reservedMethodNames.includes(method))
-    .map(method => SwaggerClass[method]);
+    .map((method) => {
+      const func = SwaggerClass[method];
+      func['fnName'] = method;
+      return func;
+    });
 
   const SwaggerClassPrototype = SwaggerClass.prototype;
   const methods = Object.getOwnPropertyNames(SwaggerClassPrototype)
@@ -172,12 +176,7 @@ const handleMap = (
     })
     // add router
     .forEach((item) => {
-      if (item.name === 'wrapperMethod') {
-        // 添加 swaggerKeys
-        router._addKey(`${SwaggerClass.name}-${item.fnName}`);
-      } else {
-        router._addKey(`${SwaggerClass.name}-${item.name}`);
-      }
+      router._addKey(`${SwaggerClass.name}-${item.fnName}`);
       const { path, method } = item as { path: string, method: string };
       let { middlewares = [] } = item;
       const localParams = item.parameters || {};
