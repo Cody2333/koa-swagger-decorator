@@ -158,6 +158,12 @@ const handleMap = (
         await c[method](ctx);
       };
       // 添加了一层 wrapper 之后，需要把原函数的名称暴露出来 fnName
+      // hack: 将 function.name 改为可写，防止意外报错
+      Object.defineProperty(wrapperMethod, 'name', {
+        writable: true,
+        configurable: true,
+        enumerable: true
+      })
       Object.assign(wrapperMethod, SwaggerClassPrototype[method], {
         fnName: method,
       });
