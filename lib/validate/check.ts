@@ -1,4 +1,5 @@
 import is from 'is-type-of';
+import validator from 'validator';
 import _ from 'ramda';
 
 export interface Expect {
@@ -40,10 +41,22 @@ const cDefault = (input: any, expect: Expect = {}) =>
 const cString = (val: any, expect: Expect) => {
   if (!cRequired(val, expect).is) return { is: false };
   if (expect.enum && !cEnum(val, expect).is) return { is: false };
+  if (expect.format && !cFormat(val, expect).is) return { is: false };
   return typeof val === 'string'
     ? { is: true, val: String(val) }
     : { is: false };
 };
+
+const cFormat = (val: any, expect: Expect) => {
+  if (expect.format === 'email' && !validator.isEmail(val)) return { is: false };
+  if (expect.format === 'uuid' && !validator.isUUID(val)) return { is: false };
+  if ((expect.format === 'date' || expect.format === 'date-time') && !validator.isRFC3339(val)) return { is: false };
+  if (expect.format === 'byte' && !validator.isBase64(val)) return { is: false };
+  if (expect.format === 'ipv4' && !validator.isIP(val, 4)) return { is: false };
+  if (expect.format === 'ipv6' && !validator.isIP(val, 6)) return { is: false };
+  
+  return { is: true, val: String(val) };
+}
 
 const cNum = (val: any, expect: Expect) => {
   if (!cRequired(val, expect).is) return { is: false };
