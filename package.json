@@ -1,6 +1,6 @@
 {
   "name": "koa-swagger-decorator",
-  "version": "1.7.3",
+  "version": "1.7.4",
   "description": "using decorator to automatically generate swagger doc for koa-router",
   "main": "dist/index.js",
   "dependencies": {
@@ -15,13 +15,8 @@
     "validator": "^13.1.17"
   },
   "nyc": {
-    "include": [
-      "dist/**/*.js"
-    ],
-    "exclude": [
-      "example/**/*.js",
-      "test/**/*.js"
-    ]
+    "include": ["dist/**/*.js"],
+    "exclude": ["example/**/*.js", "test/**/*.js"]
   },
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
@@ -81,12 +76,7 @@
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },
-  "keywords": [
-    "decorator",
-    "swagger",
-    "koa",
-    "koa-router"
-  ],
+  "keywords": ["decorator", "swagger", "koa", "koa-router"],
   "author": "cody",
   "license": "MIT",
   "repository": "https://github.com/Cody2333/koa-swagger-decorator"
