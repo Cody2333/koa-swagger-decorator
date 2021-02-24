@@ -7,10 +7,12 @@
     "@types/globby": "^8.0.0",
     "@types/koa-router": "^7.0.31",
     "@types/ramda": "^0.25.36",
+    "@types/validator": "^13.1.0",
     "globby": "^8.0.1",
     "is-type-of": "^1.2.0",
     "koa-router": "^7.2.1",
-    "ramda": "^0.25.0"
+    "ramda": "^0.25.0",
+    "validator": "^13.1.17"
   },
   "nyc": {
     "include": [

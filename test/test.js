@@ -226,7 +226,14 @@ describe('Validate:', () => {
       addon: 'ttt',
       boo: 'true',
       coo: 'false',
-      sst: '666'
+      sst: '666',
+      uuid: '208d0175-23e8-46ca-9013-5164d74bc3c7',
+      email: 'test@test.com',
+      date: '2020-11-14T10:00:00Z',
+      "date-time": '2020-11-14T12:00:00Z',
+      byte: 'U3dhZ2dlciByb2Nrcw==',
+      ipv4: '127.0.0.1',
+      ipv6: '::1'
     };
     const expect = {
       nax: { type: 'number' },
@@ -264,6 +271,13 @@ describe('Validate:', () => {
       sst: {
         type: 'string'
       },
+      uuid: { type: 'string', format: 'uuid' },
+      email: { type: 'string', format: 'email' },
+      date: { type: 'string', format: 'date' },
+      "date-time": { type: 'string', format: 'date-time' },
+      byte: { type: 'string', format: 'byte' },
+      ipv4: { type: 'string', format: 'ipv4' },
+      ipv6: { type: 'string', format: 'ipv6' },
       addon: undefined
     };
     const validatedInput = validate(input, expect);
@@ -273,6 +287,13 @@ describe('Validate:', () => {
     assert(validatedInput.boo === true);
     assert(validatedInput.coo === false);
     assert(typeof validatedInput.sst === 'string');
+    assert(validatedInput.uuid === '208d0175-23e8-46ca-9013-5164d74bc3c7');
+    assert(validatedInput.email === 'test@test.com');
+    assert(validatedInput.date === '2020-11-14T10:00:00Z');
+    assert(validatedInput["date-time"] === '2020-11-14T12:00:00Z');
+    assert(validatedInput.byte === 'U3dhZ2dlciByb2Nrcw==');
+    assert(validatedInput.ipv4 === '127.0.0.1');
+    assert(validatedInput.ipv6 === '::1');
   });
   it('should throw error when no required input', () => {
     const input = {};
@@ -329,7 +350,76 @@ describe('Validate:', () => {
       assert(err.message === "incorrect field: 'foo', please check again!");
     }
   });
-
+  it('should throw error when using wrong format while type=string format=uuid', () => {
+    const input = { foo: 'bad-uuid' };
+    const expect = { foo: { type: 'string', format: 'uuid' } };
+    try {
+      validate(input, expect);
+      throw new Error();
+    } catch (err) {
+      assert(err.message === "incorrect field: 'foo', please check again!");
+    }
+  });
+  it('should throw error when using wrong format while type=string format=email', () => {
+    const input = { foo: 'bad-email' };
+    const expect = { foo: { type: 'string', format: 'email' } };
+    try {
+      validate(input, expect);
+      throw new Error();
+    } catch (err) {
+      assert(err.message === "incorrect field: 'foo', please check again!");
+    }
+  });
+  it('should throw error when using wrong format while type=string format=date', () => {
+    const input = { foo: '11-14-2017' };
+    const expect = { foo: { type: 'string', format: 'date' } };
+    try {
+      validate(input, expect);
+      throw new Error();
+    } catch (err) {
+      assert(err.message === "incorrect field: 'foo', please check again!");
+    }
+  });
+  it('should throw error when using wrong format while type=string format=date-time', () => {
+    const input = { foo: '2017-07-21 17:32:28' };
+    const expect = { foo: { type: 'string', format: 'date' } };
+    try {
+      validate(input, expect);
+      throw new Error();
+    } catch (err) {
+      assert(err.message === "incorrect field: 'foo', please check again!");
+    }
+  });
+  it('should throw error when using wrong format while type=string format=byte', () => {
+    const input = { foo: 'not a base 64 string' };
+    const expect = { foo: { type: 'string', format: 'byte' } };
+    try {
+      validate(input, expect);
+      throw new Error();
+    } catch (err) {
+      assert(err.message === "incorrect field: 'foo', please check again!");
+    }
+  });
+  it('should throw error when using wrong format while type=string format=ipv4', () => {
+    const input = { foo: '::1' };
+    const expect = { foo: { type: 'string', format: 'ipv4' } };
+    try {
+      validate(input, expect);
+      throw new Error();
+    } catch (err) {
+      assert(err.message === "incorrect field: 'foo', please check again!");
+    }
+  });
+  it('should throw error when using wrong format while type=string format=ipv6', () => {
+    const input = { foo: '127.0.0.1' };
+    const expect = { foo: { type: 'string', format: 'ipv6' } };
+    try {
+      validate(input, expect);
+      throw new Error();
+    } catch (err) {
+      assert(err.message === "incorrect field: 'foo', please check again!");
+    }
+  });
   it('shoud support complex object data', () => {
     const expect = {
       o1: {
