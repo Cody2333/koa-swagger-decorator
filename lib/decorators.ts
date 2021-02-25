@@ -1,6 +1,6 @@
-import _ from "ramda";
-import is from "is-type-of";
-import swaggerObject from "./swaggerObject";
+import _ from 'ramda';
+import is from 'is-type-of';
+import swaggerObject from './swaggerObject';
 
 const _desc = (type: string, text: string | any[]) => (
   target: any,
@@ -22,21 +22,20 @@ const _params = (type: string, parameters: { [name: string]: any }) => (
 
   // additional wrapper for body
   let swaggerParameters = parameters;
-  if (type === "body") {
+  if (type === 'body') {
     swaggerParameters = [
       {
-        name: "data",
-        description: "request body",
+        name: 'data',
+        description: 'request body',
         schema: {
-          type: "object",
+          type: 'object',
           properties: parameters
         }
       }
     ];
   } else {
     swaggerParameters = Object.keys(swaggerParameters).map(key =>
-      Object.assign({ name: key }, swaggerParameters[key])
-    );
+      Object.assign({ name: key }, swaggerParameters[key]));
   }
   swaggerParameters.forEach((item: any) => {
     item.in = type;
@@ -94,7 +93,7 @@ export interface IResponses {
   [name: number]: any;
 }
 const defaultResp: IResponses = {
-  200: { description: "success" }
+  200: { description: 'success' }
 };
 const responses = (responses: IResponses = defaultResp) => (
   target: any,
@@ -108,30 +107,30 @@ const responses = (responses: IResponses = defaultResp) => (
 const desc = _.curry(_desc);
 
 // description and summary
-const description = desc("description");
+const description = desc('description');
 
-const summary = desc("summary");
+const summary = desc('summary');
 
-const tags = desc("tags");
+const tags = desc('tags');
 
 const params = _.curry(_params);
 
 // below are [parameters]
 
 // query params
-const query = params("query");
+const query = params('query');
 
 // header params
 const header = params('header');
 
 // path params
-const path = params("path");
+const path = params('path');
 
 // body params
-const body = params("body");
+const body = params('body');
 
 // formData params
-const formData = params("formData");
+const formData = params('formData');
 
 // class decorators
 const orderAll = (weight: number) => (target: any) => {
@@ -168,17 +167,14 @@ const prefix = (prefix: string) => (target: any) => {
   target.prefix = prefix;
 };
 
-const queryAll = (parameters: { [name: string]: any }, filters = ["ALL"]) => (
-  target: any
-) => {
+const queryAll = (parameters: { [name: string]: any }, filters = ['ALL']) => (target: any) => {
   if (!target.parameters) target.parameters = {};
   target.parameters.query = parameters; // used in wrapper.js for validation
   target.parameters.filters = filters; // used in wrapper.js for validation
   const swaggerParameters = Object.keys(parameters).map(key =>
-    Object.assign({ name: key }, parameters[key])
-  );
-  swaggerParameters.forEach(item => {
-    item.in = "query";
+    Object.assign({ name: key }, parameters[key]));
+  swaggerParameters.forEach((item) => {
+    item.in = 'query';
   });
   swaggerObject.addMulti(target, { query: swaggerParameters }, filters);
 };
