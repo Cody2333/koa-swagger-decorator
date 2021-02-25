@@ -3,6 +3,7 @@
   "version": "1.7.4",
   "description": "using decorator to automatically generate swagger doc for koa-router",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "dependencies": {
     "@types/globby": "^8.0.0",
     "@types/koa-router": "^7.0.31",
@@ -15,8 +16,13 @@
     "validator": "^13.1.17"
   },
   "nyc": {
-    "include": ["dist/**/*.js"],
-    "exclude": ["example/**/*.js", "test/**/*.js"]
+    "include": [
+      "dist/**/*.js"
+    ],
+    "exclude": [
+      "example/**/*.js",
+      "test/**/*.js"
+    ]
   },
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
@@ -69,14 +75,20 @@
     "test": "./node_modules/mocha/bin/mocha -r babel-core/register test/**/*.js --bail -t 2000000",
     "debug": "babel-node example/main --inspect-brk --nolazy example/main",
     "cov": "nyc --reporter=lcov npm run test",
-    "tslint": "tslint -c tslint.json -p tsconfig.json"
+    "tslint": "tslint -c tslint.json -p tsconfig.json",
+    "prepublish": "npm run build"
   },
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },
-  "keywords": ["decorator", "swagger", "koa", "koa-router"],
+  "keywords": [
+    "decorator",
+    "swagger",
+    "koa",
+    "koa-router"
+  ],
   "author": "cody",
   "license": "MIT",
   "repository": "https://github.com/Cody2333/koa-swagger-decorator"
