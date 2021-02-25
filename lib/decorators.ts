@@ -42,6 +42,9 @@ const _params = (type: string, parameters: { [name: string]: any }) => (
         }
       }
     ];
+    if (swaggerParameters[0].schema.required.length === 0) {
+      delete swaggerParameters[0].schema.required;
+    }
   } else {
     swaggerParameters = Object.keys(swaggerParameters).map(key =>
       Object.assign({ name: key }, swaggerParameters[key]));
