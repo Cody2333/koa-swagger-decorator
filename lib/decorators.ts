@@ -29,8 +29,8 @@ const _params = (type: string, parameters: { [name: string]: any }) => (
         description: 'request body',
         schema: {
           type: 'object',
-          required: Object.keys(parameters).filter(parameterName => parameters[parameterName].required),
-          properties: parameters.map((parameter: any) => {
+          required: Object.keys(parameters || {}).filter(parameterName => parameters[parameterName].required),
+          properties: (parameters || []).map((parameter: any) => {
             delete parameter.required;
             return parameter;
           })
