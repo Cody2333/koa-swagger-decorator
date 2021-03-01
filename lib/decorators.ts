@@ -12,7 +12,7 @@ const _desc = (type: string, text: string | any[]) => (
   return descriptor;
 };
 
-const _stripInvalidStructureFieldsFromParams = (parameters: { [name: string]: any }) => {
+const _stripInvalidStructureFieldsFromBodyParams = (parameters: { [name: string]: any }) => {
   const keys = Object.keys(parameters);
   for (const key of keys) {
     delete parameters[key].required;
@@ -38,7 +38,7 @@ const _params = (type: string, parameters: { [name: string]: any }) => (
         schema: {
           type: 'object',
           required: Object.keys(parameters).filter(parameterName => parameters[parameterName].required),
-          properties: _stripInvalidStructureFieldsFromParams(parameters)
+          properties: _stripInvalidStructureFieldsFromBodyParams(parameters)
         }
       }
     ];
