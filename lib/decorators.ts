@@ -67,7 +67,7 @@ const request = (method: string, path: string) => (
   descriptor.value.path = path;
   swaggerObject.add(target, name, {
     request: { method, path },
-    security: [{ ApiKeyAuth: [] }]
+    security: []
   });
   return descriptor;
 };
