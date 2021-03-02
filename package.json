@@ -1,5 +1,5 @@
 {
-  "name": "koa-swagger-decorator",
+  "name": "@callteddy/koa-swagger-decorator",
   "version": "1.7.5",
   "description": "using decorator to automatically generate swagger doc for koa-router",
   "main": "dist/index.js",
@@ -91,5 +91,17 @@
   ],
   "author": "cody",
   "license": "MIT",
-  "repository": "https://github.com/Cody2333/koa-swagger-decorator"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cody2333/koa-swagger-decorator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Cody2333/koa-swagger-decorator/issues"
+  },
+  "homepage": "https://github.com/Cody2333/koa-swagger-decorator#readme",
+  "directories": {
+    "example": "example",
+    "lib": "lib",
+    "test": "test"
+  }
 }
