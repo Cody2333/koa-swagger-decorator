@@ -125,6 +125,8 @@ const summary = desc('summary');
 
 const tags = desc('tags');
 
+const operation = desc('operationId');
+
 const params = _.curry(_params);
 
 // below are [parameters]
@@ -201,6 +203,7 @@ const Doc = {
   path,
   body,
   tags,
+  operation,
   middlewares,
   security,
   formData,
@@ -229,6 +232,7 @@ export {
   path,
   body,
   tags,
+  operation,
   middlewares,
   security,
   formData,
