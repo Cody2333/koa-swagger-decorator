@@ -35,6 +35,7 @@ const swaggerJSON = (options: {[name: string]: any} = {}, apiObjects: any) => {
       body = [],
       order,
       tags,
+      operationId,
       formData = [],
       security,
       deprecated
@@ -57,6 +58,7 @@ const swaggerJSON = (options: {[name: string]: any} = {}, apiObjects: any) => {
       parameters,
       responses,
       tags,
+      operationId,
       security,
       deprecated
     };
@@ -65,7 +67,7 @@ const swaggerJSON = (options: {[name: string]: any} = {}, apiObjects: any) => {
     }
   });
   swaggerJSON.paths = sortObject(paths, (path, length) => path._order || length, (path) => {
-    const { _order, ...restOfPathData} = path;
+    const { _order, ...restOfPathData } = path;
     return restOfPathData;
   });
   return swaggerJSON;
