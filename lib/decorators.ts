@@ -12,6 +12,14 @@ const _desc = (type: string, text: string | any[]) => (
   return descriptor;
 };
 
+const _stripInvalidStructureFieldsFromBodyParams = (parameters: { [name: string]: any }) => {
+  const keys = Object.keys(parameters);
+  for (const key of keys) {
+    delete parameters[key].required;
+  }
+  return parameters;
+};
+
 const _params = (type: string, parameters: { [name: string]: any }) => (
   target: any,
   name: string,
@@ -29,10 +37,14 @@ const _params = (type: string, parameters: { [name: string]: any }) => (
         description: 'request body',
         schema: {
           type: 'object',
-          properties: parameters
+          required: Object.keys(parameters).filter(parameterName => parameters[parameterName].required),
+          properties: _stripInvalidStructureFieldsFromBodyParams(parameters)
         }
       }
     ];
+    if (swaggerParameters[0].schema.required.length === 0) {
+      delete swaggerParameters[0].schema.required;
+    }
   } else {
     swaggerParameters = Object.keys(swaggerParameters).map(key =>
       Object.assign({ name: key }, swaggerParameters[key]));
