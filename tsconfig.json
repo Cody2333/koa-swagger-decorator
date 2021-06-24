@@ -19,10 +19,15 @@
         "node_modules/*",
         "lib/types/*"
       ]
-    }
+    },
+    "types": [
+    ]
   },
   "include": [
     "lib/**/*",
     "test/**/*"
-  ]
+  ],
+  "exclude": [
+    "node_modules",
+]
 }

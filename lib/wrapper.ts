@@ -16,6 +16,7 @@ import {
 import { Data } from './types';
 import { writeFileSync } from 'fs';
 import path from 'path';
+import compose from 'koa-compose';
 
 export interface Context extends IRouter.IRouterContext {
   validatedQuery: any;
@@ -39,7 +40,7 @@ const validator = (parameters: any) => async (
     ctx.validatedParams = validate(ctx.params, parameters.path);
   }
   if (parameters.body) {
-    ctx.validatedBody = validate(ctx.request.body, parameters.body);
+    ctx.validatedBody = validate((ctx.request as any).body, parameters.body);
   }
   await next();
 };
@@ -129,7 +130,7 @@ const handleSwagger = (router: SwaggerRouter, options: SwaggerOptions) => {
 const handleMap = (
   router: SwaggerRouter,
   SwaggerClass: any,
-  { doValidation = true }
+  { doValidation = true },
 ) => {
   if (!SwaggerClass) return;
   const classMiddlewares: any[] = SwaggerClass.middlewares || [];
@@ -176,7 +177,7 @@ const handleMap = (
   [...staticMethods, ...methods]
     // filter methods withour @request decorator
     .filter((item) => {
-      const { path, method } = item as { path: string, method: string };
+      const { path, method } = item;
       if (!path && !method) {
         return false;
       }
@@ -185,7 +186,7 @@ const handleMap = (
     // add router
     .forEach((item) => {
       router._addKey(`${SwaggerClass.name}-${item.fnName}`);
-      const { path, method } = item as { path: string, method: string };
+      const { path, method } = item;
       let { middlewares = [] } = item;
       const localParams = item.parameters || {};
 
@@ -221,8 +222,6 @@ const handleMap = (
       chain.push(...classMiddlewares);
       chain.push(...middlewares);
       chain.push(item);
-
-      (router as any)[method](...chain);
     });
 };
 
@@ -232,6 +231,110 @@ const handleMapDir = (router: SwaggerRouter, dir: string, options: MapOptions) =
   });
 };
 
+
+const handleBuildMiddleware = (
+  router: SwaggerRouter,
+  SwaggerClass: any,
+  { doValidation = true },
+) => {
+  const meta: { path: string, method: string, middlewares: any[] }[] = [];
+  if (!SwaggerClass) return meta;
+  const classMiddlewares: any[] = SwaggerClass.middlewares || [];
+  const classPrefix: string = SwaggerClass.prefix || '';
+
+  const classParameters: any = SwaggerClass.parameters || {};
+  const classParametersFilters: any[] = SwaggerClass.parameters
+    ? SwaggerClass.parameters.filters
+    : ['ALL'];
+  classParameters.query = classParameters.query ? classParameters.query : {};
+
+  const staticMethods = Object.getOwnPropertyNames(SwaggerClass)
+    .filter(method => !reservedMethodNames.includes(method))
+    .map((method) => {
+      const func = SwaggerClass[method];
+      func['fnName'] = method;
+      return func;
+    });
+
+  const SwaggerClassPrototype = SwaggerClass.prototype;
+  const methods = Object.getOwnPropertyNames(SwaggerClassPrototype)
+    .filter((method) => !reservedMethodNames.includes(method))
+    .map((method) => {
+      const wrapperMethod = async (ctx: Context) => {
+        const c = new SwaggerClass(ctx);
+        await c[method](ctx);
+      };
+      // 添加了一层 wrapper 之后，需要把原函数的名称暴露出来 fnName
+      // wrapperMethod 继承原函数的 descriptors
+      const descriptors = Object.getOwnPropertyDescriptors(SwaggerClassPrototype[method]);
+      Object.defineProperties(wrapperMethod, {
+        fnName: {
+          value: method,
+          enumerable: true,
+          writable: true,
+          configurable: true,
+        },
+        ...descriptors
+      })
+      return wrapperMethod;
+    });
+
+  // map all methods
+  [...staticMethods, ...methods]
+    // filter methods withour @request decorator
+    .filter((item) => {
+      const { path, method } = item;
+      if (!path && !method) {
+        return false;
+      }
+      return true;
+    })
+    // add router
+    .forEach((item) => {
+      router._addKey(`${SwaggerClass.name}-${item.fnName}`);
+      const { path, method } = item;
+      let { middlewares = [] } = item;
+      const localParams = item.parameters || {};
+
+      if (
+        classParametersFilters.includes('ALL') ||
+        classParametersFilters.map(i => i.toLowerCase()).includes(method)
+      ) {
+        const globalQuery = R.clone(classParameters.query);
+        localParams.query = localParams.query ? localParams.query : {};
+        // merge local query and class query
+        // local query 的优先级更高
+        localParams.query = Object.assign(globalQuery, localParams.query);
+      }
+      if (is.function(middlewares)) {
+        middlewares = [middlewares];
+      }
+      if (!is.array(middlewares)) {
+        throw new Error('middlewares params must be an array or function');
+      }
+      middlewares.forEach((item: Function) => {
+        if (!is.function(item)) {
+          throw new Error('item in middlewares must be a function');
+        }
+      });
+      if (!allowedMethods.hasOwnProperty(method.toUpperCase())) {
+        throw new Error(`illegal API: ${method} ${path} at [${item}]`);
+      }
+
+
+      const endpoint = `${convertPath(`${classPrefix}${path}`)}`;
+      const chain: any[] = [];
+      if (doValidation) {
+        chain.push(validator(localParams));
+      }
+      chain.push(...classMiddlewares);
+      chain.push(...middlewares);
+      meta.push({ path: endpoint, method: method.toLowerCase(), middlewares });
+    });
+  return meta.map(m => ({
+    path: m.path, method: m.method, middleware: compose(m.middlewares)
+  }));
+};
 export interface MapOptions {
   doValidation?: boolean;
   recursive?: boolean;
@@ -288,6 +391,11 @@ class SwaggerRouter<StateT = any, CustomT = {}> extends Router {
 
   mapDir(dir: string, options: MapOptions = {}) {
     handleMapDir(this, dir, options);
+  }
+
+  // compose & create a middleware for validator & @middlewares decorators
+  buildMiddleware(SwaggerClass: any, options: MapOptions) {
+    return handleBuildMiddleware(this, SwaggerClass, options)
   }
 }
 
