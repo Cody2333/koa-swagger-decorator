@@ -222,6 +222,7 @@ const handleMap = (
       chain.push(...classMiddlewares);
       chain.push(...middlewares);
       chain.push(item);
+      (router as any)[method](...chain);
     });
 };
 
@@ -237,7 +238,7 @@ const handleBuildMiddleware = (
   SwaggerClass: any,
   { doValidation = true },
 ) => {
-  const meta: { path: string, method: string, middlewares: any[] }[] = [];
+  const meta: { path: string, method: string, middlewares: any[], name: string }[] = [];
   if (!SwaggerClass) return meta;
   const classMiddlewares: any[] = SwaggerClass.middlewares || [];
   const classPrefix: string = SwaggerClass.prefix || '';
@@ -329,11 +330,11 @@ const handleBuildMiddleware = (
       }
       chain.push(...classMiddlewares);
       chain.push(...middlewares);
-      meta.push({ path: endpoint, method: method.toLowerCase(), middlewares });
+      meta.push({ path: endpoint, method: method.toLowerCase(), middlewares: chain, name: item.name });
     });
   return meta.map(m => ({
-    path: m.path, method: m.method, middleware: compose(m.middlewares)
-  }));
+    path: m.path, method: m.method, middleware: compose(m.middlewares), name: m.name
+  })) as { path: string, method: string, middleware: any, name: string }[];
 };
 export interface MapOptions {
   doValidation?: boolean;
