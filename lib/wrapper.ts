@@ -146,6 +146,9 @@ const handleMap = (
     .filter(method => !reservedMethodNames.includes(method))
     .map((method) => {
       const func = SwaggerClass[method];
+      if (typeof func !== 'object') {
+        return {};
+      }
       func['fnName'] = method;
       return func;
     });
