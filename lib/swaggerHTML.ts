@@ -7,13 +7,15 @@ function parseSimpleConfig(config: {[name: string]: any} = {}) {
         if (typeof value === 'number' || typeof value === 'boolean') {
             return `${key}: ${value},`;
         }
+        if (typeof value === 'object') {
+          return `${key}: ${JSON.stringify(value)},`
+        }
     }).join('\n\t  ');
 }
 
 const swaggerHTML = (apiPath: string, options: { swaggerVersion?: string, [name: string]: any } = {}) => {
     const {
-        swaggerVersion = '3.21.0',
-        display = {},
+        swaggerVersion = '3.21.0'
     } = options;
   const result = `
 
@@ -98,7 +100,7 @@ const swaggerHTML = (apiPath: string, options: { swaggerVersion?: string, [name:
         SwaggerUIBundle.plugins.DownloadUrl
       ],
       layout: "StandaloneLayout",
-      ${parseSimpleConfig(display)}
+      ${parseSimpleConfig(options)}
     })
     window.ui = ui
   }
