@@ -36,6 +36,8 @@ class SwaggerObject {
         this.data[key][k] = is.object(this.data[key][k][0]) ?
         _.uniqBy((o: {name: string}) => o.name, this.data[key][k])
         : _.uniq(this.data[key][k]);
+      } else if (is.object(this.data[key][k])) {
+        Object.assign(this.data[key][k], content[k]);
       } else {
         Object.assign(this.data[key], { [k]: content[k] });
       }
