@@ -359,7 +359,7 @@ const wrapper = (router: SwaggerRouter) => {
   };
 };
 
-class SwaggerRouter<StateT = any, CustomT = {}> extends Router {
+class SwaggerRouter<StateT = any, CustomT = {}> extends Router<StateT, CustomT> {
   public swaggerKeys: Set<String>;
   public opts: IRouter.IRouterOptions;
   public swaggerOpts: SwaggerOptions;
