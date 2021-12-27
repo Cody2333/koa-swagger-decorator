@@ -1,11 +1,17 @@
 function parseSimpleConfig(config: {[name: string]: any} = {}) {
     return Object.keys(config).map(key => {
         const value: any = config[key];
+        if(value === null) {
+            return `${key}: null,`;
+        }
         if (typeof value === 'string') {
             return `${key}: '${value}',`;
         }
         if (typeof value === 'number' || typeof value === 'boolean') {
             return `${key}: ${value},`;
+        }
+        if (typeof value === 'object') {
+          return `${key}: ${JSON.stringify(value)},`
         }
     }).join('\n\t  ');
 }

@@ -1,23 +1,21 @@
 import _path from 'path';
 import assert from 'assert';
 import server from '../example/main';
-import { getPath, convertPath, getFilepaths, sortObject } from '../dist/utils';
-import validate from '../dist/validate';
-
+import { getPath, convertPath, getFilepaths, sortObject } from '../lib/utils';
+import validate from '../lib/validate';
+import { expect } from 'chai';
 const request = require('supertest')(server);
-const { expect } = require('chai');
 
-describe('HTTP API generation test:', async () => {
-  after(() => {
-    server.close();
-  });
-
-  describe('Init Swagger Doc:', async () => {
+afterAll(() => {
+  server.close();
+})
+describe('HTTP API generation test:', () => {
+  describe('Init Swagger Doc:', () => {
     it('GET /api/v1/swagger-html should return success for swagger ui page', (done) => {
       request
         .get('/api/v1/swagger-html')
         .expect(200)
-        .end((err) => {
+        .end((err: any) => {
           if (err) return done(err);
           done();
         });
@@ -26,14 +24,14 @@ describe('HTTP API generation test:', async () => {
       request
         .get('/api/v1/swagger-json')
         .expect(200)
-        .expect(res => expect(res.body.info).to.be.an('object'))
-        .end((err) => {
+        .expect((res: { body: { info: any; }; }) => expect(res.body.info).to.be.an('object'))
+        .end((err: any) => {
           if (err) return done(err);
           done();
         });
     });
   });
-  describe('Construct api from router.map:', async () => {
+  describe('Construct api from router.map:', () => {
     it('POST /api/v1/user/login should return user data if success', (done) => {
       request
         .post('/api/v1/user/login')
@@ -42,8 +40,8 @@ describe('HTTP API generation test:', async () => {
           password: '123456'
         })
         .expect(200)
-        .expect(res => expect(res.body.user).to.be.an('object'))
-        .end((err) => {
+        .expect((res: { body: { user: any; }; }) => expect(res.body.user).to.be.an('object'))
+        .end((err: any) => {
           if (err) return done(err);
           done();
         });
@@ -52,21 +50,21 @@ describe('HTTP API generation test:', async () => {
       request
         .get('/api/v1/swagger-json')
         .expect(200)
-        .expect(res =>
+        .expect((res: { body: { paths: { [x: string]: any; }; }; }) =>
           expect(res.body.paths['/api/v1/user/login']).to.be.an('object'))
-        .end((err) => {
+        .end((err: any) => {
           if (err) return done(err);
           done();
         });
     });
   });
-  describe('Construct api from router.mapDir:', async () => {
+  describe('Construct api from router.mapDir:', () => {
     it('GET /api/v2/other should return data if success', (done) => {
       request
         .get('/api/v2/other')
         .expect(200)
-        .expect(res => expect(res.body.other).to.be.an('array'))
-        .end((err) => {
+        .expect((res: { body: { other: any; }; }) => expect(res.body.other).to.be.an('array'))
+        .end((err: any) => {
           if (err) return done(err);
           done();
         });
@@ -75,8 +73,8 @@ describe('HTTP API generation test:', async () => {
       request
         .get('/api/v2/other/what')
         .expect(200)
-        .expect(res => expect(res.body.other).to.be.an('array'))
-        .end((err) => {
+        .expect((res: { body: { other: any; }; }) => expect(res.body.other).to.be.an('array'))
+        .end((err: any) => {
           if (err) return done(err);
           done();
         });
@@ -86,8 +84,8 @@ describe('HTTP API generation test:', async () => {
       request
         .get('/api/v1/v1/prefix?page=a')
         .expect(200)
-        .expect(res => expect(res.body.result).to.be.an('string'))
-        .end((err) => {
+        .expect((res: { body: { result: any; }; }) => expect(res.body.result).to.be.an('string'))
+        .end((err: any) => {
           if (err) return done(err);
           done();
         });
@@ -97,8 +95,8 @@ describe('HTTP API generation test:', async () => {
       request
         .get('/api/v2/other/how')
         .expect(200)
-        .expect(res => expect(res.body.other).to.be.an('array'))
-        .end((err) => {
+        .expect((res: { body: { other: any; }; }) => expect(res.body.other).to.be.an('array'))
+        .end((err: any) => {
           if (err) return done(err);
           done();
         });
@@ -108,8 +106,8 @@ describe('HTTP API generation test:', async () => {
       request
         .get('/api/v2/egg/method1?no=nonono')
         .expect(200)
-        .expect(res => expect(res.body.no).to.be.an('string'))
-        .end((err) => {
+        .expect((res: { body: { no: any; }; }) => expect(res.body.no).to.be.an('string'))
+        .end((err: any) => {
           if (err) return done(err);
           done();
         });
@@ -122,19 +120,19 @@ describe('HTTP API generation test:', async () => {
           yes: 'yesyesyes'
         })
         .expect(200)
-        .expect(res => expect(res.body.yes).to.be.an('string'))
-        .end((err) => {
+        .expect((res: { body: { yes: any; }; }) => expect(res.body.yes).to.be.an('string'))
+        .end((err: any) => {
           if (err) return done(err);
           done();
         });
     });
   });
-  describe('Validation and Swagger Test', async () => {
+  describe('Validation and Swagger Test', () => {
     it('GET /api/v1/enum?limit=1 should success', (done) => {
       request
         .get('/api/v1/enum?limit=1')
         .expect(200)
-        .end((err) => {
+        .end((err: any) => {
           if (err) return done(err);
           done();
         });
@@ -143,7 +141,7 @@ describe('HTTP API generation test:', async () => {
       request
         .get('/api/v1/enum')
         .expect(400)
-        .end((err) => {
+        .end((err: any) => {
           if (err) return done(err);
           done();
         });
@@ -152,7 +150,7 @@ describe('HTTP API generation test:', async () => {
       request
         .get('/api/v1/enum?limit=fff')
         .expect(400)
-        .end((err) => {
+        .end((err: any) => {
           if (err) return done(err);
           done();
         });
@@ -189,9 +187,9 @@ describe('Function Test:', () => {
         .to.be.an('array')
         .to.have.lengthOf(5);
     });
-    it('should return an array,length = 4 when ignore=["**/egg.js"]', () => {
+    it('should return an array,length = 4 when ignore=["**/egg.ts"]', () => {
       const dir = _path.resolve(__dirname, '../example/routes/v2');
-      const r = getFilepaths(dir, true, ['egg.js']);
+      const r = getFilepaths(dir, true, ['egg.ts']);
       expect(r)
         .to.be.an('array')
         .to.have.lengthOf(4);
@@ -235,7 +233,7 @@ describe('Validate:', () => {
       ipv4: '127.0.0.1',
       ipv6: '::1'
     };
-    const expect = {
+    const expect: any = {
       nax: { type: 'number' },
       foo: {
         type: 'number',
@@ -459,7 +457,7 @@ describe('Validate:', () => {
     validate(input, expect);
   });
   it('shoud support complex array data', () => {
-    const expect = {
+    const expect: any = {
       arr: {
         type: 'array',
         items: 'string',
@@ -467,7 +465,7 @@ describe('Validate:', () => {
       }
     };
 
-    const input = { arr: ['eee', 'tt'] };
+    const input: any = { arr: ['eee', 'tt'] };
     validate(input, expect);
     expect.arr.items = 'number';
     input.arr = [3, 4];
@@ -504,7 +502,7 @@ describe('Validate:', () => {
 
   it('throw error when enum is an empty array', () => {
     const input = { foo: '1' };
-    const expect = {
+    const expect: any = {
       foo: { type: 'string', enum: [] }
     };
     try {

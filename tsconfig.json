@@ -6,7 +6,8 @@
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "target": "es6",
-    "noImplicitAny": true,
+    "skipLibCheck": true,
+    "noImplicitAny": false,
     "moduleResolution": "node",
     "inlineSourceMap": true,
     "outDir": "dist",
@@ -21,13 +22,15 @@
       ]
     },
     "types": [
+      "jest"
     ]
   },
   "include": [
     "lib/**/*",
-    "test/**/*"
+    "__tests__/**/*",
+    "example/**/*"
   ],
   "exclude": [
-    "node_modules",
+    "node_modules"
 ]
 }

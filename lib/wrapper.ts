@@ -1,5 +1,5 @@
-import * as IRouter from 'koa-router';
-import Router from 'koa-router';
+import { RouterContext, RouterOptions } from '@koa/router';
+import Router from '@koa/router';
 import R from 'ramda';
 import is from 'is-type-of';
 import validate from './validate';
@@ -18,7 +18,7 @@ import { writeFileSync } from 'fs';
 import path from 'path';
 import compose from 'koa-compose';
 
-export interface Context extends IRouter.IRouterContext {
+export interface Context extends RouterContext {
   validatedQuery: any;
   validatedBody: any;
   validatedParams: any;
@@ -359,12 +359,12 @@ const wrapper = (router: SwaggerRouter) => {
   };
 };
 
-class SwaggerRouter<StateT = any, CustomT = {}> extends Router {
+class SwaggerRouter<StateT = any, CustomT = {}> extends Router<StateT, CustomT> {
   public swaggerKeys: Set<String>;
-  public opts: IRouter.IRouterOptions;
+  public opts: RouterOptions;
   public swaggerOpts: SwaggerOptions;
 
-  constructor(opts: IRouter.IRouterOptions = {}, swaggerOpts: SwaggerOptions = {}) {
+  constructor(opts: RouterOptions = {}, swaggerOpts: SwaggerOptions = {}) {
     super(opts);
     this.opts = opts || {}; // koa-router opts
     this.swaggerKeys = new Set();

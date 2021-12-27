@@ -1,6 +1,6 @@
 import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
-import cors from 'koa-cors';
+import cors from '@koa/cors';
 
 import config from './config';
 import errorHandle from './middleware/errorHandle';
