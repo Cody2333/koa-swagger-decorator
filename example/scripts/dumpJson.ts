@@ -1,5 +1,5 @@
 import path from 'path';
-import { SwaggerRouter } from '../../dist';
+import { SwaggerRouter } from '../../lib';
 
 // init router
 const router = new SwaggerRouter();

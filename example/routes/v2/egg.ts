@@ -1,4 +1,4 @@
-import { request, summary, tags, query, body, prefix } from '../../../dist';
+import { request, summary, tags, query, body, prefix } from '../../../lib';
 
 const tag = tags(['Egg']);
 

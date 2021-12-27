@@ -1,4 +1,4 @@
-import { SwaggerRouter } from '../../dist';
+import { SwaggerRouter } from '../../lib';
 
 import ApiRouter from './v1';
 import Api2Router from './v2';

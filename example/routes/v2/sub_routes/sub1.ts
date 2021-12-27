@@ -1,4 +1,4 @@
-import { request, summary, tags, body } from '../../../../dist';
+import { request, summary, tags, body } from '../../../../lib';
 
 const tag = tags(['Other']);
 
@@ -11,7 +11,7 @@ const exampleItem = {
   }
 };
 
-module.exports = class OtherRouter {
+export default class OtherRouter {
   @request('get', '/other')
   @summary('something in sub routes')
   @tag

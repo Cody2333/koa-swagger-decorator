@@ -1,4 +1,4 @@
-import { SwaggerRouter } from '../../../dist';
+import { SwaggerRouter } from '../../../lib';
 
 const koaRouterOpts = { prefix: '/api/v2' };
 const swaggerRouterOpts = {

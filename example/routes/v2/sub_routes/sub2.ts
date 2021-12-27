@@ -1,4 +1,4 @@
-import { request, summary, tags, query, body } from '../../../../dist';
+import { request, summary, tags, query, body } from '../../../../lib';
 
 const tag = tags(['Other']);
 
