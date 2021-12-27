@@ -1,6 +1,6 @@
-import multer from 'koa-multer';
+import multer from '@koa/multer';
 import _path from 'path';
-import Doc, { description, orderAll } from '../../../dist'; // 2 import style avaliable
+import Doc, { description, orderAll } from '../../../lib'; // 2 import style avaliable
 import config from '../../config';
 
 const {

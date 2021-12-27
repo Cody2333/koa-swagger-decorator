@@ -46,7 +46,7 @@ http://localhost:3000/api/swagger-html
 
 - Koa2
 - koa-router
-- babel support for decorator (or using typescript)
+- typescript (or babel required)
 
 ```bash
 // add [transform-decorators-legacy] to .babelrc if using js

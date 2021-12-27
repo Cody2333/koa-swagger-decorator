@@ -1,4 +1,4 @@
-import { request, summary, tags } from '../../../../dist';
+import { request, summary, tags } from '../../../../lib';
 
 const tag = tags(['PP']);
 

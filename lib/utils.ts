@@ -3,6 +3,7 @@ import globby from 'globby';
 import is from 'is-type-of';
 import { Dictionary } from 'ramda';
 
+
 // eg. /api/{id} -> /api/:id
 const convertPath = (path: string) => {
   const re = new RegExp('{(.*?)}', 'g');
@@ -23,11 +24,11 @@ const reservedMethodNames = [
 ];
 
 enum allowedMethods {
-  GET= 'get',
-  POST= 'post',
-  PUT= 'put',
-  PATCH= 'patch',
-  DELETE= 'delete'
+  GET = 'get',
+  POST = 'post',
+  PUT = 'put',
+  PATCH = 'patch',
+  DELETE = 'delete'
 }
 
 const getFilepaths = (dir: string, recursive: boolean = true, ignore: string[] = []) => {
@@ -52,7 +53,7 @@ const loadClass = (filepath: string) => {
   return false;
 };
 
-const loadSwaggerClasses = (dir: string = '', options: {recursive?: boolean; ignore?: string[]} = {}) => {
+const loadSwaggerClasses = (dir: string = '', options: { recursive?: boolean; ignore?: string[] } = {}) => {
   dir = _path.resolve(dir);
   const { recursive = true } = options;
   return getFilepaths(dir, recursive, options.ignore)

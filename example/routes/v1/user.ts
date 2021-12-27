@@ -7,7 +7,7 @@ import {
   path,
   description,
   orderAll
-} from '../../../dist';
+} from '../../../lib';
 
 const tag = tags(['User']);
 
