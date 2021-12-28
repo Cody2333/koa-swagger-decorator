@@ -44,4 +44,4 @@ jspm_packages
 /.idea
 /temp
 /.nyc_output
-dist/
+dist

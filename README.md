@@ -45,7 +45,7 @@ http://localhost:3000/api/swagger-html
 ### Requirements
 
 - Koa2
-- koa-router
+- @koa/router
 - typescript (or babel required)
 
 ```bash
@@ -65,11 +65,11 @@ npm install --save-dev babel-plugin-transform-decorators-legacy
 
 for more detail please take a look at the [example koa server](https://github.com/Cody2333/koa-swagger-decorator/tree/master/example)
 
-#### first wrapper the koa-router object
+#### first wrapper the @koa/router object
 
 ```javascript
 // router.js
-import Router from 'koa-router'
+import Router from '@koa/router'
 
 import Test from './test'
 
@@ -192,7 +192,7 @@ export default class Test {
 
 #### using decorator to make api body
 ```typescript
-import Router from 'koa-router';
+import Router from '@koa/router';
 import { request, summary, query, path, body, tags, swaggerClass, swaggerProperty } from 'koa-swagger-decorator'
 
 @swaggerClass()
