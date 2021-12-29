@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.2](https://github.com/Cody2333/koa-swagger-decorator/compare/v1.8.1...v1.8.2) (2021-12-29)
+
+
+### Bug Fixes
+
+* tsconfig error ([b51d9cb](https://github.com/Cody2333/koa-swagger-decorator/commit/b51d9cb820805ec8f9167a66d5a30605f4825a5f))
+
 ### [1.8.1](https://github.com/Cody2333/koa-swagger-decorator/compare/v1.6.4...v1.8.1) (2021-12-28)
 
 
