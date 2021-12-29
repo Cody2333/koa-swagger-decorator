@@ -45,7 +45,7 @@
     "typescript": "^4.5.4"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf dist && tsc",
     "start": "ts-node example/main",
     "test": "jest",
     "cov": "jest --coverage",
