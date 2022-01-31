@@ -2,9 +2,10 @@
  * used for building swagger docs object
  */
 import is from 'is-type-of';
-import _ from 'ramda';
+
 import { reservedMethodNames } from './utils';
 import { Data } from './types';
+import { uniq, uniqBy } from 'ramda';
 
 class SwaggerObject {
   data: Data;
@@ -34,8 +35,8 @@ class SwaggerObject {
         this.data[key][k] = [...this.data[key][k], ...content[k]];
         if (this.data[key][k].length === 0) return;
         this.data[key][k] = is.object(this.data[key][k][0]) ?
-        _.uniqBy((o: {name: string}) => o.name, this.data[key][k])
-        : _.uniq(this.data[key][k]);
+        uniqBy((o: {name: string}) => o.name, this.data[key][k])
+        : uniq(this.data[key][k]);
       } else if (is.object(this.data[key][k])) {
         Object.assign(this.data[key][k], content[k]);
       } else {

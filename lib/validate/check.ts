@@ -1,6 +1,7 @@
 import is from 'is-type-of';
+import { always, cond, equals, T } from 'ramda';
 import validator from 'validator';
-import _ from 'ramda';
+
 
 export interface Expect {
   required?: boolean;
@@ -70,12 +71,12 @@ const cNum = (val: any, expect: Expect) => {
 
 const cBool = (val: any, expect: Expect) => {
   if (!cRequired(val, expect).is) return { is: false };
-  const cond = _.cond([
-    [_.equals('true'), _.always({ is: true, val: true })],
-    [_.equals('false'), _.always({ is: true, val: false })],
-    [_.T, _.always({ is: typeof val === 'boolean', val })]
+  const condition = cond([
+    [equals('true'), always({ is: true, val: true })],
+    [equals('false'), always({ is: true, val: false })],
+    [T, always({ is: typeof val === 'boolean', val })]
   ]);
-  return cond(val);
+  return condition(val);
 };
 // /**
 //  * 对 Object 做检验, 支持嵌套数据
@@ -147,16 +148,16 @@ const cArray = (input: any, expect: Expect) => {
     const check: Function = (func: Function) => () =>
       input.length === input.filter(item => func(item)).length;
 
-    const cond = _.cond([
-      [_.equals('string'), check(is.string)],
-      [_.equals('boolean'), check(is.boolean)],
-      [_.equals('number'), check(is.number)],
-      [_.equals('object'), check(is.object)],
-      [_.equals('array'), check(is.array)],
-      [_.T, true]
+    const condition = cond([
+      [equals('string'), check(is.string)],
+      [equals('boolean'), check(is.boolean)],
+      [equals('number'), check(is.number)],
+      [equals('object'), check(is.object)],
+      [equals('array'), check(is.array)],
+      [T, true]
     ]);
 
-    return { is: cond(expect.items), val: input };
+    return { is: condition(expect.items), val: input };
   }
 
   return res;
@@ -166,16 +167,16 @@ const check = (input: any, expect: Expect) => {
   // 添加对body参数 nullable 情况的支持
   const r = cNullable(input, expect);
   if (r.is === true) return r;
-  const cond = _.cond([
-    [_.equals('string'), () => cString(input, expect)],
-    [_.equals('boolean'), () => cBool(input, expect)],
-    [_.equals('number'), () => cNum(input, expect)],
-    [_.equals('object'), () => cObject(input, expect)],
-    [_.equals('array'), () => cArray(input, expect)],
-    [_.T, () => ({ is: true, val: input })] // 其他类型不做校验，直接返回原数据
+  const condition = cond([
+    [equals('string'), () => cString(input, expect)],
+    [equals('boolean'), () => cBool(input, expect)],
+    [equals('number'), () => cNum(input, expect)],
+    [equals('object'), () => cObject(input, expect)],
+    [equals('array'), () => cArray(input, expect)],
+    [T, () => ({ is: true, val: input })] // 其他类型不做校验，直接返回原数据
   ]);
 
-  return cond(expect.type);
+  return condition(expect.type);
 };
 const Checker = {
   required: cRequired,

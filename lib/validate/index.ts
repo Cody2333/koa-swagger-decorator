@@ -1,4 +1,5 @@
-import _ from 'ramda';
+
+import { clone } from 'ramda';
 import Checker from './check';
 import { Expect } from './check';
 class InputError extends Error {
@@ -18,7 +19,7 @@ export interface Input {
 }
 export default function (rawInput: Input, expect: ExpectObject) {
   // make it pure
-  const input = _.clone(rawInput);
+  const input = clone(rawInput);
 
   Object.keys(expect).forEach((key) => {
     if (expect[key] === undefined) {
