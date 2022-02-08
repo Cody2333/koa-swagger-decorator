@@ -1,6 +1,6 @@
 import { RouterContext, RouterOptions } from '@koa/router';
 import Router from '@koa/router';
-import R from 'ramda';
+
 import is from 'is-type-of';
 import validate from './validate';
 import { swaggerHTML } from './swaggerHTML';
@@ -17,6 +17,7 @@ import { Data } from './types';
 import { writeFileSync } from 'fs';
 import path from 'path';
 import compose from 'koa-compose';
+import { clone } from 'ramda';
 
 export interface Context extends RouterContext {
   validatedQuery: any;
@@ -197,7 +198,7 @@ const handleMap = (
         classParametersFilters.includes('ALL') ||
         classParametersFilters.map(i => i.toLowerCase()).includes(method)
       ) {
-        const globalQuery = R.clone(classParameters.query);
+        const globalQuery = clone(classParameters.query);
         localParams.query = localParams.query ? localParams.query : {};
         // merge local query and class query
         // local query 的优先级更高
@@ -304,7 +305,7 @@ const handleBuildMiddleware = (
         classParametersFilters.includes('ALL') ||
         classParametersFilters.map(i => i.toLowerCase()).includes(method)
       ) {
-        const globalQuery = R.clone(classParameters.query);
+        const globalQuery = clone(classParameters.query);
         localParams.query = localParams.query ? localParams.query : {};
         // merge local query and class query
         // local query 的优先级更高

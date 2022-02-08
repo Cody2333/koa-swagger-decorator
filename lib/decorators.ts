@@ -1,5 +1,6 @@
-import _ from 'ramda';
+
 import is from 'is-type-of';
+import { curry, toLower } from 'ramda';
 import swaggerObject from './swaggerObject';
 
 const _desc = (type: string, text: string | any[]) => (
@@ -62,7 +63,7 @@ const request = (method: string, path: string) => (
   name: string,
   descriptor: PropertyDescriptor
 ) => {
-  method = _.toLower(method);
+  method = toLower(method);
   descriptor.value.method = method;
   descriptor.value.path = path;
   swaggerObject.add(target, name, {
@@ -116,7 +117,7 @@ const responses = (responses: IResponses = defaultResp) => (
   swaggerObject.add(target, name, { responses });
   return descriptor;
 };
-const desc = _.curry(_desc);
+const desc = curry(_desc);
 
 // description and summary
 const description = desc('description');
@@ -125,7 +126,7 @@ const summary = desc('summary');
 
 const tags = desc('tags');
 
-const params = _.curry(_params);
+const params = curry(_params);
 
 // below are [parameters]
 
