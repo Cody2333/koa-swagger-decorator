@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.3](https://github.com/Cody2333/koa-swagger-decorator/compare/v1.8.2...v1.8.3) (2022-02-08)
+
+
+### Bug Fixes
+
+* fix ramda library module export issue ([3dcf5ff](https://github.com/Cody2333/koa-swagger-decorator/commit/3dcf5ff1a096118bf9e6df6dcb2288ce909e580a))
+
 ### [1.8.2](https://github.com/Cody2333/koa-swagger-decorator/compare/v1.8.1...v1.8.2) (2021-12-29)
 
 
