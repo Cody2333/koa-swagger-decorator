@@ -7,7 +7,7 @@ function parseSimpleConfig(config: {[name: string]: any} = {}) {
         if (typeof value === 'string') {
             return `${key}: '${value}',`;
         }
-        if (typeof value === 'number' || typeof value === 'boolean') {
+        if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'function') {
             return `${key}: ${value},`;
         }
         if (typeof value === 'object') {
