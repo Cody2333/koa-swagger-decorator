@@ -1,6 +1,6 @@
 
 import is from 'is-type-of';
-import { curry, toLower } from 'ramda';
+import { curry, toLower, clone } from 'ramda';
 import swaggerObject from './swaggerObject';
 
 const _desc = (type: string, text: string | any[]) => (
@@ -14,11 +14,12 @@ const _desc = (type: string, text: string | any[]) => (
 };
 
 const _stripInvalidStructureFieldsFromBodyParams = (parameters: { [name: string]: any }) => {
-  const keys = Object.keys(parameters);
+  const p = clone(parameters);
+  const keys = Object.keys(p);
   for (const key of keys) {
-    delete parameters[key].required;
+    delete p[key].required;
   }
-  return parameters;
+  return p;
 };
 
 const _params = (type: string, parameters: { [name: string]: any }) => (
