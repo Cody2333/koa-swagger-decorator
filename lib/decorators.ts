@@ -33,19 +33,31 @@ const _params = (type: string, parameters: { [name: string]: any }) => (
   // additional wrapper for body
   let swaggerParameters = parameters;
   if (type === 'body') {
-    swaggerParameters = [
-      {
-        name: 'data',
-        description: 'request body',
-        schema: {
-          type: 'object',
-          required: Object.keys(parameters).filter(parameterName => parameters[parameterName].required),
-          properties: _stripInvalidStructureFieldsFromBodyParams(parameters)
+    if (parameters.$ref) {
+      swaggerParameters = [
+        {
+          name: 'data',
+          description: 'request body',
+          schema: {
+            $ref: parameters.$ref
+          }
         }
+      ];
+    } else {
+      swaggerParameters = [
+        {
+          name: 'data',
+          description: 'request body',
+          schema: {
+            type: 'object',
+            required: Object.keys(parameters).filter(parameterName => parameters[parameterName].required),
+            properties: _stripInvalidStructureFieldsFromBodyParams(parameters)
+          }
+        }
+      ];
+      if (swaggerParameters[0].schema.required.length === 0) {
+        delete swaggerParameters[0].schema.required;
       }
-    ];
-    if (swaggerParameters[0].schema.required.length === 0) {
-      delete swaggerParameters[0].schema.required;
     }
   } else {
     swaggerParameters = Object.keys(swaggerParameters).map(key =>
