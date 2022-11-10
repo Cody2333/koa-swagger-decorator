@@ -1,5 +1,4 @@
 import _path from 'path';
-import globby from 'globby';
 import is from 'is-type-of';
 import { Dictionary } from 'ramda';
 
@@ -32,10 +31,11 @@ enum allowedMethods {
 }
 
 const getFilepaths = (dir: string, recursive: boolean = true, ignore: string[] = []) => {
-  const ignoreDirs = ignore.map((path => `!${path}`));
+    const ignoreDirs = ignore.map((path => `!${path}`));
+    const fg = require('fast-glob'); 
   const paths = recursive
-    ? globby.sync(['**/*.js', '**/*.ts', ...ignoreDirs], { cwd: dir })
-    : globby.sync(['*.js', '*.ts', ...ignoreDirs], { cwd: dir });
+    ? fg.sync(['**/*.js', '**/*.ts', ...ignoreDirs], { cwd: dir })
+    : fg.sync(['*.js', '*.ts', ...ignoreDirs], { cwd: dir });
   return paths.map(path => _path.join(dir, path));
 };
 
