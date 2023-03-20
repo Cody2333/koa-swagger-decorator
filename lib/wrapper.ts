@@ -81,6 +81,19 @@ export interface DumpOptions {
   filename: string,
 }
 
+export interface IMethodWrapperFactory {
+  create(className: any, methodName: string): (ctx: Context) => Promise<void>;
+}
+
+const defaultMethodWrapperFactory: IMethodWrapperFactory = {
+  create(className: any, methodName: string): (ctx: Context) => Promise<void> {
+    return async (ctx: Context) => {
+      const c = new className(ctx);
+      await c[methodName](ctx);
+    };
+  }
+}
+
 const handleDumpSwaggerJSON = (
   router: SwaggerRouter,
   dumpOptions: DumpOptions,
@@ -131,7 +144,7 @@ const handleSwagger = (router: SwaggerRouter, options: SwaggerOptions) => {
 const handleMap = (
   router: SwaggerRouter,
   SwaggerClass: any,
-  { doValidation = true },
+  { doValidation = true, methodWrapperFactory = defaultMethodWrapperFactory },
 ) => {
   if (!SwaggerClass) return;
   const classMiddlewares: any[] = SwaggerClass.middlewares || [];
@@ -158,10 +171,7 @@ const handleMap = (
   const methods = Object.getOwnPropertyNames(SwaggerClassPrototype)
     .filter((method) => !reservedMethodNames.includes(method))
     .map((method) => {
-      const wrapperMethod = async (ctx: Context) => {
-        const c = new SwaggerClass(ctx);
-        await c[method](ctx);
-      };
+      const wrapperMethod = methodWrapperFactory.create(SwaggerClass, method);
       // 添加了一层 wrapper 之后，需要把原函数的名称暴露出来 fnName
       // wrapperMethod 继承原函数的 descriptors
       const descriptors = Object.getOwnPropertyDescriptors(SwaggerClassPrototype[method]);
@@ -345,6 +355,7 @@ export interface MapOptions {
   recursive?: boolean;
   [name: string]: any;
   ignore?: string[];
+  methodWrapperFactory?: IMethodWrapperFactory;
 }
 const wrapper = (router: SwaggerRouter) => {
   router.swagger = (options: SwaggerOptions = {}) => {
