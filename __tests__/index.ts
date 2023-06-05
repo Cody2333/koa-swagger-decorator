@@ -234,14 +234,22 @@ describe('Validate:', () => {
       ipv6: '::1'
     };
     const expect: any = {
-      nax: { type: 'number' },
+      nax: {
+        type: 'number',
+        exclusiveMinimum: 11,
+        exclusiveMaximum: 13,
+        multipleOf: 4
+      },
       foo: {
         type: 'number',
         required: true
       },
       bar: {
         type: 'string',
-        required: false
+        required: false,
+        minLength: 1,
+        maxLength: 3,
+        pattern: '^[qwf]{3,}$'
       },
       baz: {
         type: 'object',
@@ -328,7 +336,7 @@ describe('Validate:', () => {
       assert(err.message === "incorrect field: 'foo', please check again!");
     }
   });
-  it('should throw error when not a number while type=object', () => {
+  it('should throw error when not an object while type=object', () => {
     const input = { foo: 'r' };
     const expect = { foo: { type: 'object' } };
     try {
@@ -338,7 +346,7 @@ describe('Validate:', () => {
       assert(err.message === "incorrect field: 'foo', please check again!");
     }
   });
-  it('should throw error when not a number while type=array', () => {
+  it('should throw error when not an array while type=array', () => {
     const input = { foo: 'r' };
     const expect = { foo: { type: 'array' } };
     try {
@@ -411,6 +419,67 @@ describe('Validate:', () => {
   it('should throw error when using wrong format while type=string format=ipv6', () => {
     const input = { foo: '127.0.0.1' };
     const expect = { foo: { type: 'string', format: 'ipv6' } };
+    try {
+      validate(input, expect);
+      throw new Error();
+    } catch (err) {
+      assert(err.message === "incorrect field: 'foo', please check again!");
+    }
+  });
+  it('should throw error when minLength not satisfied for type=string', () => {
+    const input = { foo: 'asdf' };
+    const expect = { foo: { type: 'string', minLength: 10 } };
+    try {
+      validate(input, expect);
+      throw new Error();
+    } catch (err) {
+      assert(err.message === "incorrect field: 'foo', please check again!");
+    }
+  });
+  it('should throw error when maxLength not satisfied for type=string', () => {
+    const input = { foo: 'foobarbaz' };
+    const expect = { foo: { type: 'string', maxLength: 5 } };
+    try {
+      validate(input, expect);
+      throw new Error();
+    } catch (err) {
+      assert(err.message === "incorrect field: 'foo', please check again!");
+    }
+  });
+  it('should throw error when pattern not satisfied for type=string', () => {
+    const input = { foo: 'foobarbaz' };
+    const expect = { foo: { type: 'string', pattern: '^[0-9]+$' } };
+    try {
+      validate(input, expect);
+      throw new Error();
+    } catch (err) {
+      assert(err.message === "incorrect field: 'foo', please check again!");
+    }
+  });
+
+  it('should throw error when exclusiveMinimum not satisfied for type=number', () => {
+    const input = { foo: 5 };
+    const expect = { foo: { type: 'number', exclusiveMinimum: 5 } };
+    try {
+      validate(input, expect);
+      throw new Error();
+    } catch (err) {
+      assert(err.message === "incorrect field: 'foo', please check again!");
+    }
+  });
+  it('should throw error when exclusiveMaximum not satisfied for type=number', () => {
+    const input = { foo: 5 };
+    const expect = { foo: { type: 'number', exclusiveMaximum: 5 } };
+    try {
+      validate(input, expect);
+      throw new Error();
+    } catch (err) {
+      assert(err.message === "incorrect field: 'foo', please check again!");
+    }
+  });
+  it('should throw error when multipleOf not satisfied for type=number', () => {
+    const input = { foo: 5 };
+    const expect = { foo: { type: 'number', multipleOf: 3 } };
     try {
       validate(input, expect);
       throw new Error();

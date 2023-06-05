@@ -23,7 +23,10 @@ export default class EggRouter {
       type: 'string',
       require: true,
       description: 'yesyesyes',
-      nullable: true
+      nullable: true,
+      minLength: 2,
+      maxLength: 10,
+      pattern: '^[0-9]+$'
     }
   })
   async method2(ctx) {

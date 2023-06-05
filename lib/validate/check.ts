@@ -7,6 +7,16 @@ export interface Expect {
   required?: boolean;
   enum?: any[];
   default?: any;
+  nullable?: any;
+  format?: any;
+  maximum?: any;
+  minimum?: any;
+  exclusiveMaximum?: any;
+  exclusiveMinimum?: any;
+  multipleOf?: any;
+  minLength?: any;
+  maxLength?: any;
+  pattern?: any;
   properties?: any;
   [name: string]: any;
 }
@@ -39,10 +49,32 @@ const cDefault = (input: any, expect: Expect = {}) =>
     ? { is: true, val: expect.default }
     : { is: true, val: input };
 
+const cLength = (input: any, expect: Expect = {}) => {
+  if (
+    (expect.minLength != null || expect.maxLength != null) &&
+    validator.isLength(
+      input,
+      { min: expect.minLength ?? 0, max: expect.maxLength ?? Infinity }
+    )
+  ) {
+      return { is: true, val: input };
+  }
+  return { is: false, val: input };
+};
+
 const cString = (val: any, expect: Expect) => {
   if (!cRequired(val, expect).is) return { is: false };
   if (expect.enum && !cEnum(val, expect).is) return { is: false };
   if (expect.format && !cFormat(val, expect).is) return { is: false };
+  if (
+    (expect.minLength != null || expect.maxLength != null) &&
+    !cLength(val, expect).is
+  ) {
+    return { is: false };
+  }
+  if (expect.pattern && !(new RegExp(expect.pattern, 'u').test(val))) {
+    return { is: false };
+  }
   return typeof val === 'string'
     ? { is: true, val: String(val) }
     : { is: false };
@@ -65,6 +97,15 @@ const cNum = (val: any, expect: Expect) => {
   if (isNaN(Number(val)) || val === '') return { is: false };
   if (expect.minimum && expect.minimum > Number(val)) return { is: false };
   if (expect.maximum && expect.maximum < Number(val)) return { is: false };
+  if (expect.exclusiveMinimum && expect.exclusiveMinimum >= Number(val)) {
+    return { is: false };
+  }
+  if (expect.exclusiveMaximum && expect.exclusiveMaximum <= Number(val)) {
+    return { is: false };
+  }
+  if (expect.multipleOf && Number(val) % expect.multipleOf !== 0) {
+    return { is: false };
+  }
   
   return { is: true, val: Number(val) };
 };
