@@ -39,7 +39,7 @@ npm install
 npm run start
 
 finally open:
-http://localhost:3000/api/swagger-html
+http://localhost:3000/api/v2/swagger-html
 ```
 
 ### Requirements

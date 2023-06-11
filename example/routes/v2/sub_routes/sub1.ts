@@ -26,7 +26,14 @@ export default class OtherRouter {
   @body({
     str: { type: 'string' },
     boo: { type: 'boolean' },
-    nn: { type: 'number' },
+    nn: {
+      type: 'number',
+      minimum: 0,
+      maximum: 7,
+      exclusiveMinimum: -1,
+      exclusiveMaximum: 8,
+      multipleOf: 2
+    },
     foo: {
       type: 'array',
       required: true,
