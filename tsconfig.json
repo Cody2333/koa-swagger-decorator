@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "module": "CommonJS",
+    "target": "esnext",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "inlineSourceMap": true,
+    "outDir": "dist",
+    "moduleResolution": "Node",
+    "strict": true,
+    "skipLibCheck": true,
+    "noImplicitAny": false,
+    "downlevelIteration": true,
+    "jsx": "preserve",
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "types": [
+      "bun-types" // add Bun global
+    ],
+  },
+  "ts-node": {
+    // "esm": true,
+    // "experimentalSpecifierResolution": "node",
+  }
+}
