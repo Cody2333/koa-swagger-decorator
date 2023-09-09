@@ -3,6 +3,7 @@
     "lib": ["ESNext"],
     "module": "CommonJS",
     "target": "esnext",
+    "declaration": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,

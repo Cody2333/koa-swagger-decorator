@@ -1,9 +1,10 @@
 import OpenAPIClientAxios from "openapi-client-axios";
 import { Client } from "./openapi";
+import common from "./config";
 const api = new OpenAPIClientAxios({
   definition: "http://localhost:3000/swagger-json",
   axiosConfigDefaults: {
-    baseURL: "http://localhost:3000",
+    baseURL: common.baseUrl,
   },
 });
 api.init();
