@@ -1,18 +1,8 @@
 import { Context } from "koa";
-import {
-  body,
-  description,
-  pathParams,
-  query,
-  request,
-  responses,
-  summary,
-  tags,
-} from "../../lib/decorator";
+import { body, responses, routeConfig } from "../../lib/decorator";
 import {
   CreateUserReq,
   CreateUserRes,
-  GetUserByIdRequest,
   GetUserByIdResponse,
   ListUserResponse,
   ListUsersRequest,
@@ -22,11 +12,19 @@ import {
 import { z } from "../../lib";
 
 class UserController {
-  @request("get", "/user/{uid}")
-  @summary("第一次测试")
-  @tags(["USER"])
-  @description("详细的接口介绍水果蛋糕打广告发给")
-  @pathParams(GetUserByIdRequest)
+  @routeConfig({
+    method: "get",
+    path: "/user/{uid}",
+    summary: "get user by id",
+    description: "detailed user",
+    tags: ["USER"],
+    operationId: "GetUserById",
+    request: {
+      params: z.object({
+        uid: z.string().nonempty(),
+      }),
+    },
+  })
   @responses(GetUserByIdResponse)
   async GetUserById(ctx: Context) {
     console.log((ctx.request as any).params);
@@ -41,10 +39,17 @@ class UserController {
     } as IGetUserByIdResponse;
   }
 
-  @request("get", "/users")
-  @summary("用户列表")
-  @tags(["USER"])
-  @query(ListUsersRequest)
+  @routeConfig({
+    method: "get",
+    path: "/users",
+    summary: "获取用户列表",
+    description: "merge description",
+    tags: ["USER", "HAHAHA"],
+    operationId: "ListUsers",
+    request: {
+      query: ListUsersRequest,
+    },
+  })
   @responses(ListUserResponse)
   async ListUsers(ctx: Context) {
     console.log(ctx.request.query);
@@ -52,9 +57,13 @@ class UserController {
     ctx.body = { users: [] } as IListUserRes;
   }
 
-  @request("post", "/users")
-  @summary("创建用户")
-  @tags(["USER", "CREATE"])
+  @routeConfig({
+    method: "post",
+    path: "/users",
+    summary: "创建用户",
+    tags: ["USER"],
+    operationId: "CreateUser",
+  })
   @body(CreateUserReq)
   @responses(CreateUserRes)
   async CreateUser(ctx: Context) {
@@ -63,9 +72,12 @@ class UserController {
     ctx.body = { message: "create", id: "123" } as ICreateUserRes;
   }
 
-  @request("put", "/users/update")
-  @summary("修改用户")
-  @tags(["USER", "UPDATE"])
+  @routeConfig({
+    path: "/users/update",
+    method: "put",
+    tags: ["USER"],
+    operationId: "UpdateUser",
+  })
   @body(UpdateUserReq)
   @responses(UpdateUserRes)
   async UpdateUser(ctx: Context) {

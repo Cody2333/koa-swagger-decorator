@@ -2,6 +2,8 @@
 
 > defined your api with simple decorators and generate api docs automatically
 
+[开发中，请勿使用]
+
 这是 koa-swagger-decorator@2 新版本的文档。v2 与 v1 有很大的不同。如果你在找 v1 的文档，访问 [v1.x docs](www.baidu.com)
 
 ## 快速开始
@@ -20,16 +22,11 @@ koa-swagger-decorator 的处理流程包括 4 个阶段：
 2. 解析收集到的路由信息，将路由注册到 koa app 上
 3. 解析收集到的路由信息，转换为 OpenAPI v3 格式的 JSON 结构
 
-To install dependencies:
 
-```bash
-bun install
-```
 
-To run:
+# TODO List
 
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v0.8.1. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+- support schema validation
+- support middleware decorator
+- support adding exist components to spec
+- support generate openapi docs without starting app

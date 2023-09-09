@@ -5,53 +5,42 @@ import {
 import { registry } from "./registry";
 import { OpenAPIObjectConfig } from "@asteasolutions/zod-to-openapi/dist/v3.0/openapi-generator";
 import { Container } from "./utils/container";
-import { CONFIG_SYMBOL, DECORATOR_REQUEST } from "./utils/constant";
+import {
+  CONFIG_SYMBOL,
+  DECORATOR_REQUEST,
+  DECORATOR_SCHEMAS,
+} from "./utils/constant";
+import deepmerge from "deepmerge";
+import { z } from "./index";
 
-function handlePathParams(routeConfig: RouteConfig, identifier: string) {
-  const meta = Container.get(`DECORATOR_PATHPARAMS_${identifier}`);
+function handleRouteConfig(routeConfig: RouteConfig, identifier: string) {
+  const meta = Container.get(`DECORATOR_MERGE_${identifier}`);
   if (meta) {
-    routeConfig.request!.params = meta;
+    return deepmerge(routeConfig, meta);
+  } else {
+    return routeConfig;
   }
 }
 
-function handleQuery(routeConfig: RouteConfig, identifier: string) {
-  const meta = Container.get(`DECORATOR_QUERY_${identifier}`);
+function handleSchemas() {
+  const meta = Container.get(DECORATOR_SCHEMAS);
   if (meta) {
-    routeConfig.request!.query = meta;
-  }
-}
-
-function handleTags(routeConfig: RouteConfig, identifier: string) {
-  const meta = Container.get(`DECORATOR_TAGS_${identifier}`);
-  if (meta) {
-    routeConfig.tags = meta;
-  }
-}
-
-function handleSummary(routeConfig: RouteConfig, identifier: string) {
-  const meta = Container.get(`DECORATOR_SUMMARY_${identifier}`);
-  if (meta) {
-    routeConfig.summary = meta;
-  }
-}
-
-function handleDescription(routeConfig: RouteConfig, identifier: string) {
-  const meta = Container.get(`DECORATOR_DESCRIPTION_${identifier}`);
-  if (meta) {
-    routeConfig.description = meta;
+    for (const o of meta) {
+      registry.register(o.refId, o.zodSchema);
+    }
   }
 }
 
 function handleBody(routeConfig: RouteConfig, identifier: string) {
   const bodyMeta = Container.get(`DECORATOR_BODY_${identifier}`);
   if (bodyMeta) {
-    registry.register(`${identifier}Request`, bodyMeta);
+    registry.register(`${identifier}BodyRequest`, bodyMeta);
     const bodyConfig = {
       body: {
         content: {
           "application/json": {
             schema: {
-              $ref: `#/components/schemas/${identifier}Request`,
+              $ref: `#/components/schemas/${identifier}BodyRequest`,
             },
           },
         },
@@ -91,7 +80,7 @@ function handleResponse(routeConfig: RouteConfig, identifier: string) {
 }
 export function prepareDocs(config: Partial<OpenAPIObjectConfig> = {}) {
   const apiList = Container.get(DECORATOR_REQUEST);
-  for (const { method, path, name } of apiList) {
+  for (const { method, path, identifier } of apiList) {
     const routeConfig: RouteConfig = {
       path,
       method,
@@ -102,16 +91,13 @@ export function prepareDocs(config: Partial<OpenAPIObjectConfig> = {}) {
         },
       },
     };
-    handlePathParams(routeConfig, name);
-    handleQuery(routeConfig, name);
-    handleBody(routeConfig, name);
-    handleResponse(routeConfig, name);
-    handleTags(routeConfig, name);
-    handleSummary(routeConfig, name);
-    handleDescription(routeConfig, name);
+
+    handleBody(routeConfig, identifier);
+    handleResponse(routeConfig, identifier);
+    handleSchemas();
 
     // 注册 swagger 路由
-    registry.registerPath(routeConfig);
+    registry.registerPath(handleRouteConfig(routeConfig, identifier));
   }
   const g = new OpenApiGeneratorV3(registry.definitions);
   return g.generateDocument({

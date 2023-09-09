@@ -7,4 +7,5 @@ extendZodWithOpenApi(z);
 
 export { z, registry };
 
+export * from "./decorator";
 export type { Method };

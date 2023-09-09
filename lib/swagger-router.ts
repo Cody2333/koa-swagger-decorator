@@ -1,29 +1,41 @@
 import { OpenAPIObjectConfig } from "@asteasolutions/zod-to-openapi/dist/v3.0/openapi-generator";
-import Router from "@koa/router";
+import Router, { RouterOptions } from "@koa/router";
 import { Container } from "./utils/container";
-import { CONFIG_SYMBOL, reservedMethodNames } from "./utils/constant";
+import {
+  CONFIG_SYMBOL,
+  convertPath,
+  reservedMethodNames,
+} from "./utils/constant";
 import is from "is-type-of";
 import swaggerHTML from "./swagger-html";
 import { prepareDocs } from "./swagger-builder";
 
-const convertPath = (path: string) => {
-  const re = new RegExp("{(.*?)}", "g");
-  return path.replace(re, ":$1");
-};
-
+export interface SwaggerRouterConfig {
+  swaggerJsonEndpoint?: string;
+  swaggerHtmlEndpoint?: string;
+  doValidation?: boolean;
+  prefix?: string;
+  spec?: Partial<OpenAPIObjectConfig>;
+}
 class SwaggerRouter<StateT = any, CustomT = {}> extends Router<
   StateT,
   CustomT
 > {
-  init(config: Partial<OpenAPIObjectConfig> = {}) {
+  config: SwaggerRouterConfig;
+  constructor(config: SwaggerRouterConfig = {}, opts: RouterOptions = {}) {
+    super(opts);
+    config.swaggerJsonEndpoint = config.swaggerJsonEndpoint ?? "/swagger-json";
+    config.swaggerHtmlEndpoint = config.swaggerHtmlEndpoint ?? "/swagger-html";
+    this.config = config;
     Container.set(CONFIG_SYMBOL, config);
-
-    this.get("/swagger-json", (ctx) => {
+  }
+  swagger() {
+    this.get(this.config.swaggerJsonEndpoint!, (ctx) => {
       ctx.body = prepareDocs();
     });
 
-    this.get("/swagger-html", (ctx) => {
-      ctx.body = swaggerHTML("/swagger-json");
+    this.get(this.config.swaggerHtmlEndpoint!, (ctx) => {
+      ctx.body = swaggerHTML(this.config.swaggerJsonEndpoint!);
     });
   }
 
@@ -84,6 +96,7 @@ class SwaggerRouter<StateT = any, CustomT = {}> extends Router<
         chain.push(item);
         this[method](...chain);
       });
+    return this;
   }
 }
 
