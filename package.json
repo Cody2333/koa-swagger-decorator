@@ -1,15 +1,22 @@
 {
   "name": "koa-swagger-decorator",
   "module": "index.ts",
+  "main": "lib/index",
   "scripts": {
-    "dev": "ts-node example/main.ts"
+    "dev": "ts-node example/main.ts",
+    "build": "tsc",
+    "client:typegen": "typegen http://localhost:3000/swagger-json > example/openapi.d.ts",
+    "client:calltest": "ts-node example/client-example.ts"
   },
   "devDependencies": {
     "@koa/cors": "^4.0.0",
     "@types/deepmerge": "^2.2.0",
     "@types/koa": "^2.13.8",
     "@types/koa__cors": "^4.0.0",
+    "axios": "^1.5.0",
     "bun-types": "latest",
+    "openapi-client-axios": "^7.3.3",
+    "openapi-client-axios-typegen": "^7.3.2",
     "tsx": "^3.12.8"
   },
   "peerDependencies": {

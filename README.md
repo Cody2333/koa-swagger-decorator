@@ -6,7 +6,7 @@
 
 这是 koa-swagger-decorator@2 新版本的文档。v2 与 v1 有很大的不同。如果你在找 v1 的文档，访问 [v1.x docs](www.baidu.com)
 
-
+v2 版本进行了完全重构，会引入 break change 和新的 API 从而提供更加完备的类型定义
 
 
 # TODO List
