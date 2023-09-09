@@ -1,6 +1,6 @@
 import { OpenAPIObjectConfig } from "@asteasolutions/zod-to-openapi/dist/v3.0/openapi-generator";
 import Router from "@koa/router";
-import { Container } from "./container";
+import { Container } from "./utils/container";
 import { CONFIG_SYMBOL, reservedMethodNames } from "./utils/constant";
 import is from "is-type-of";
 import swaggerHTML from "./swagger-html";
