@@ -9,11 +9,23 @@ import {
 import is from "is-type-of";
 import swaggerHTML from "./swagger-html";
 import { prepareDocs } from "./swagger-builder";
+import { registry } from "./registry";
+import { OpenAPIRegistry, RouteConfig } from "@asteasolutions/zod-to-openapi";
+import { Context, Middleware } from "koa";
+import { ZodTypeAny } from "zod";
 
+export interface ItemMeta {
+  bodySchema?: ZodTypeAny;
+  responsesSchema?: ZodTypeAny;
+  routeConfig: RouteConfig;
+  middlewares?: Middleware[];
+}
 export interface SwaggerRouterConfig {
   swaggerJsonEndpoint?: string;
   swaggerHtmlEndpoint?: string;
   doValidation?: boolean;
+  validateResponse?: boolean;
+  validateRequest?: boolean;
   prefix?: string;
   spec?: Partial<OpenAPIObjectConfig>;
 }
@@ -22,11 +34,16 @@ class SwaggerRouter<StateT = any, CustomT = {}> extends Router<
   CustomT
 > {
   config: SwaggerRouterConfig;
+  registry: OpenAPIRegistry;
   constructor(config: SwaggerRouterConfig = {}, opts: RouterOptions = {}) {
     super(opts);
     config.swaggerJsonEndpoint = config.swaggerJsonEndpoint ?? "/swagger-json";
     config.swaggerHtmlEndpoint = config.swaggerHtmlEndpoint ?? "/swagger-html";
+    if (config.doValidation) {
+      config.validateRequest = true;
+    }
     this.config = config;
+    this.registry = registry;
     Container.set(CONFIG_SYMBOL, config);
   }
   swagger() {
@@ -64,24 +81,24 @@ class SwaggerRouter<StateT = any, CustomT = {}> extends Router<
         });
         return wrapperMethod;
       });
-    [...methods]
+    ([...methods] as any)
       // filter methods withour @request decorator
-      .filter((item: any) => {
-        const { path, method } = item;
+      .filter((item: ItemMeta) => {
+        const { routeConfig } = item;
+        if (!routeConfig) {
+          return false;
+        }
+        const { method, path } = routeConfig;
         if (!path && !method) {
           return false;
         }
         return true;
       })
       // add router
-      .forEach((item: any) => {
-        const { path, method } = item;
+      .forEach((item: ItemMeta) => {
+        const { routeConfig, bodySchema, responsesSchema } = item;
         let { middlewares = [] } = item;
-        const localParams = item.parameters || {};
 
-        if (is.function(middlewares)) {
-          middlewares = [middlewares];
-        }
         if (!is.array(middlewares)) {
           throw new Error("middlewares params must be an array or function");
         }
@@ -91,10 +108,32 @@ class SwaggerRouter<StateT = any, CustomT = {}> extends Router<
           }
         });
 
-        const chain: [any] = [`${convertPath(`${path}`)}`];
+        const validationMid = (ctx: Context, next: any) => {
+          ctx._swagger_decorator_meta = item;
+          if (this.config.validateRequest) {
+            if (routeConfig.request?.query) {
+              routeConfig.request?.query.parse(ctx.request.query);
+            }
+            if (routeConfig.request?.params) {
+              routeConfig.request?.params.parse((ctx.request as any).params);
+            }
+            if (bodySchema) {
+              bodySchema.parse(ctx.request.body);
+            }
+          }
+
+          next();
+          // if (this.config.validateResponse) {
+          //   if (responsesSchema) {
+          //     responsesSchema.parse()
+          //   }
+          // }
+        };
+        const chain: [any] = [`${convertPath(`${routeConfig.path}`)}`];
+        chain.push(validationMid);
         chain.push(...middlewares);
         chain.push(item);
-        this[method](...chain);
+        this[routeConfig.method](...chain);
       });
     return this;
   }

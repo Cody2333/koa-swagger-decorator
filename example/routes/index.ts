@@ -1,6 +1,7 @@
 import { SwaggerRouter } from "../../lib/swagger-router";
 import { DemoController } from "../controller/demo";
 import { UserController } from "../controller/user";
+import { registerExtraComponents } from "../schemas/extra";
 
 const router = new SwaggerRouter({
   spec: {
@@ -9,7 +10,10 @@ const router = new SwaggerRouter({
       version: "v1.0",
     },
   },
+  doValidation: true,
 });
+
+registerExtraComponents(router.registry);
 
 // apply swagger docs routes
 router.swagger();

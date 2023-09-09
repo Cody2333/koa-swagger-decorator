@@ -4,6 +4,8 @@ import {
   CreateUserReq,
   CreateUserRes,
   GetUserByIdResponse,
+  ICreateUserRes,
+  IGetUserByIdResponse,
   ListUserResponse,
   ListUsersRequest,
   UpdateUserReq,
@@ -28,7 +30,6 @@ class UserController {
   @responses(GetUserByIdResponse)
   async GetUserById(ctx: Context) {
     console.log((ctx.request as any).params);
-    type IGetUserByIdResponse = z.infer<typeof GetUserByIdResponse>;
     ctx.body = {
       user: {
         id: (ctx.request as any).params.id,
@@ -68,7 +69,6 @@ class UserController {
   @responses(CreateUserRes)
   async CreateUser(ctx: Context) {
     console.log(ctx.request.body);
-    type ICreateUserRes = z.infer<typeof CreateUserRes>;
     ctx.body = { message: "create", id: "123" } as ICreateUserRes;
   }
 

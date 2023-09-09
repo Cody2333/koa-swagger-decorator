@@ -1,11 +1,13 @@
-import { z } from "../../lib";
-import { addSchemas, responses, routeConfig } from "../../lib/decorator";
+import { ItemMeta, z } from "../../lib";
+import { middlewares, responses, routeConfig } from "../../lib/decorator";
 import { Context } from "koa";
+import { AUTH_KEY } from "../schemas/extra";
 
 export class DemoController {
   @routeConfig({
     path: "/demo",
     method: "get",
+    security: [{ [AUTH_KEY]: [] }],
     tags: ["DEMO"],
     request: {
       query: z.object({
@@ -15,12 +17,13 @@ export class DemoController {
       }),
     },
   })
-  @addSchemas(
-    "ExtraStruct",
-    z.object({
-      msg: z.string().openapi({ example: "gg" }),
-    })
-  )
+  @middlewares([
+    async (ctx, next) => {
+      const x = ctx._swagger_decorator_meta as ItemMeta; // get swagger decorator meta info through ctx
+      console.log("biz mid", x.routeConfig);
+      await next();
+    },
+  ])
   @responses(
     z.object({
       msg: z.string().openapi({ example: "gg" }),

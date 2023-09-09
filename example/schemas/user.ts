@@ -28,9 +28,9 @@ const ListUserResponse = z.object({
 
 const CreateUserReq = z.object({
   uid: z.string().nonempty(),
-  name: z.string().nullable(),
+  name: z.string().nullable().optional(),
   age: z.number().min(18).nullable(),
-  operator: z.string().nonempty(),
+  operator: z.string().nonempty().optional(),
 });
 
 const CreateUserRes = z.object({
@@ -60,3 +60,6 @@ export {
   ListUserResponse,
   ListUsersRequest,
 };
+
+export type IGetUserByIdResponse = z.infer<typeof GetUserByIdResponse>;
+export type ICreateUserRes = z.infer<typeof CreateUserRes>;

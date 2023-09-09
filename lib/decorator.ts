@@ -11,24 +11,27 @@ import { RouteConfig } from "@asteasolutions/zod-to-openapi";
 const body =
   (v: ZodObject<any>) =>
   (target: any, name: string, descriptor: PropertyDescriptor) => {
+    descriptor.value.bodySchema = v;
     Container.set(`DECORATOR_BODY_${getIdentifier(target, name)}`, v);
     return descriptor;
   };
-const addSchemas =
-  (refId: string, zodSchema: ZodObject<any>) =>
-  (target: any, name: string, descriptor: PropertyDescriptor) => {
-    const schemas = Container.get(DECORATOR_SCHEMAS);
-    if (!schemas) {
-      Container.set(DECORATOR_SCHEMAS, [{ refId, zodSchema }]);
-    } else {
-      schemas.push({ refId, zodSchema });
-    }
-    return descriptor;
-  };
+
 const responses =
   (v: ZodObject<any>) =>
   (target: any, name: string, descriptor: PropertyDescriptor) => {
+    descriptor.value.responsesSchema = v;
     Container.set(`DECORATOR_RESPONSES_${getIdentifier(target, name)}`, v);
+    return descriptor;
+  };
+
+const middlewares =
+  (middlewares: Function[]) =>
+  (target: any, name: string, descriptor: PropertyDescriptor) => {
+    Container.set(
+      `DECORATOR_MIDDLEWARES_${getIdentifier(target, name)}`,
+      middlewares
+    );
+    descriptor.value.middlewares = middlewares;
     return descriptor;
   };
 
@@ -42,8 +45,7 @@ const routeConfig =
     const identifier = `${className}-${methodName}`;
     Container.set(`DECORATOR_MERGE_${identifier}`, v);
     const { method, path } = v;
-    descriptor.value.method = method;
-    descriptor.value.path = path;
+    descriptor.value.routeConfig = v;
     const apiList = Container.get(DECORATOR_REQUEST);
     if (!apiList) {
       Container.set(DECORATOR_REQUEST, [
@@ -57,4 +59,4 @@ const routeConfig =
     return descriptor;
   };
 
-export { body, responses, routeConfig, addSchemas };
+export { body, responses, routeConfig, middlewares };
