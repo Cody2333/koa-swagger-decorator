@@ -55,8 +55,8 @@ class UserController {
   })
   @responses(ListUserResponse)
   async ListUsers(ctx: Context, args: ParsedArgs<IListUserReq>) {
-    console.log(ctx.request.query, args.query);
-    ctx.body = { users: [] } as IListUserRes;
+    console.log(ctx.request.query, ctx.parsed.query);
+    ctx.body = { users: [], args } as IListUserRes;
   }
 
   @routeConfig({

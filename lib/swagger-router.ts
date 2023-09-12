@@ -61,9 +61,9 @@ class SwaggerRouter<StateT = any, CustomT = {}> extends Router<
     const methods = Object.getOwnPropertyNames(SwaggerClassPrototype)
       .filter((method) => !reservedMethodNames.includes(method))
       .map((method) => {
-        const wrapperMethod = async (ctx) => {
+        const wrapperMethod = async (ctx, ...args) => {
           const c = new SwaggerClass(ctx);
-          await c[method](ctx);
+          await c[method](ctx, ...args);
         };
         // 添加了一层 wrapper 之后，需要把原函数的名称暴露出来 fnName
         // wrapperMethod 继承原函数的 descriptors
@@ -138,6 +138,7 @@ class SwaggerRouter<StateT = any, CustomT = {}> extends Router<
           //   }
           // }
         };
+
         const chain: [any] = [`${convertPath(`${routeConfig.path}`)}`];
         chain.push(validationMid);
         chain.push(...middlewares);
