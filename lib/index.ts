@@ -15,4 +15,5 @@ export interface ParsedArgs<T> {
 export { z, registry };
 
 export * from "./decorator";
+export * from "./swagger-router";
 export type { Method, ItemMeta };

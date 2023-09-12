@@ -1,4 +1,4 @@
-import { SwaggerRouter } from "../../lib/swagger-router";
+import { SwaggerRouter } from "../../lib";
 import { DemoController } from "../controller/demo";
 import { UserController } from "../controller/user";
 import { registerExtraComponents } from "../schemas/extra";
