@@ -4,7 +4,8 @@
 
 ## Important
 
-this docs is written for V2. refer to [V1 Docs](https://github.com/Cody2333/koa-swagger-decorator/tree/develop)
+this docs is written for V2 and it's currently under development. 
+refer to [V1 Docs](https://github.com/Cody2333/koa-swagger-decorator/tree/develop) for V1 version
 
 V2 version has undergone complete refactoring, introducing break change and new APIs to provide more type-safe functionality.
 
