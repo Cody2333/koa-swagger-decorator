@@ -12,12 +12,12 @@ V2 version has undergone complete refactoring, introducing break change and new 
 1. [Installation](#installation)
 2. [Introduction](#introduction)
 3. [Usage](#usage)
-  1. [Quick Example](#quick-example)
-  2. [Runnable Example](#runnable-example)
-  3. [Typescript Configuration](#typescript-configuration)
-  4. [Integrate with Koa](#integrate-with-koa)
-  5. [Define query/path params](#define-querypath-params)
-  6. [Define body/responses params](#define-bodyresponses-params)
+    1. [Quick Example](#quick-example)
+    2. [Runnable Example](#runnable-example)
+    3. [Typescript Configuration](#typescript-configuration)
+    4. [Integrate with Koa](#integrate-with-koa)
+    5. [Define query/path params](#define-querypath-params)
+    6. [Define body/responses params](#define-bodyresponses-params)
 
 4. [TODO List](#todo-list)
 
