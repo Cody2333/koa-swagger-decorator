@@ -9,16 +9,30 @@ refer to [V1 Docs](https://github.com/Cody2333/koa-swagger-decorator/tree/develo
 
 V2 version has undergone complete refactoring, introducing break change and new APIs to provide more type-safe functionality.
 
+1. [Installation](#installation)
+2. [Introduction](#introduction)
+3. [Usage](#usage)
+  1. [Quick Example](#quick-example)
+  2. [Runnable Example](#runnable-example)
+  3. [Typescript Configuration](#typescript-configuration)
+  4. [Integrate with Koa](#integrate-with-koa)
+  5. [Define query/path params](#define-querypath-params)
+  6. [Define body/responses params](#define-bodyresponses-params)
+
+4. [TODO List](#todo-list)
+
 ## Installation
 
 `npm i koa-swagger-decorator@2`
 
 ## Introduction
 
-Creating type-safe API using decorator and zod schema with auto-generated OpenAPI docs based on [OpenAPI V3](https://swagger.io/specification/).
+Creating type-safe API using easy to use decorators and zod schema with auto-generated OpenAPI docs based on [OpenAPI V3](https://swagger.io/specification/).
 
 - use [zod schema](https://github.com/colinhacks/zod) to define and validate Request/Response objects.
 - use [zod-to-openapi](https://github.com/asteasolutions/zod-to-openapi) to convert zod schema into [OpenAPI V3](https://swagger.io/specification/) schemas.
+
+## Usage
 
 ### Quick Example
 ```typescript
@@ -40,7 +54,7 @@ class UserController {
   }
 }
 ```
-### Detailed Example
+### Runnable Example
 
 you can refer to example dir for details.
 
@@ -176,6 +190,41 @@ export default app.listen(config.port, () => {
 // running ts-node ./main.ts and that's all
 ```
 
+### Define query/path params
+```typescript
+@routeConfig({
+  method: "get",
+  path: "/user/{uid}",
+  summary: "get user by id",
+  description: "detailed user",
+  tags: ["USER"],
+  operationId: "GetUserById",
+  request: {
+    params: z.object({
+      uid: z.string().nonempty(), // path params, don't forget to add {uid} in [path] field.
+    }),
+    query: z.object({
+      count: z.coerce.number().default(10), // using z.coerce to convert query string into number & validate
+      limit: z.coerce.number().default(0),
+    })
+  },
+})
+```
+
+### Define body/responses params
+
+define params by adding @body/@responses decorators to your handler
+
+```typescript
+  @routeConfig({
+    path: "/users/update",
+    method: "put",
+    tags: ["USER"],
+    operationId: "UpdateUser",
+  })
+  @body([ZodSchema])
+  @responses([ZodSchema])
+```
 
 # TODO List
 
