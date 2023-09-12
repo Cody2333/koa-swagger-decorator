@@ -1,14 +1,15 @@
 {
   "name": "koa-swagger-decorator",
   "module": "index.ts",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "main": "dist/lib/index.js",
   "types": "dist/lib/index.d.ts",
   "scripts": {
     "dev": "ts-node example/main.ts",
     "build": "rm -rf dist && tsc",
     "client:typegen": "typegen http://localhost:3000/swagger-json > example/client/openapi.d.ts",
-    "client:test": "ts-node example/client-example.ts"
+    "client:test": "ts-node example/client-example.ts",
+    "next": "npm run build && npm publish --registry=https://registry.npmjs.org --tag next"
   },
   "devDependencies": {
     "@koa/cors": "^4.0.0",
