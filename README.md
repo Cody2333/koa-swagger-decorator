@@ -15,11 +15,32 @@ V2 version has undergone complete refactoring, introducing break change and new 
 
 ## Introduction
 
-Creating type-safe API using decorator and zod schema with auto-generated OpenAPI docs based on [OpenAPI V3](https://swagger.io/specification/)
+Creating type-safe API using decorator and zod schema with auto-generated OpenAPI docs based on [OpenAPI V3](https://swagger.io/specification/).
 
-## Quick Start
+- use [zod schema](https://github.com/colinhacks/zod) to define and validate Request/Response objects.
+- use [zod-to-openapi](https://github.com/asteasolutions/zod-to-openapi) to convert zod schema into [OpenAPI V3](https://swagger.io/specification/) schemas.
 
-### Example
+### Quick Example
+```typescript
+// define your api handler with @routeConfig decorator and it will generate OpenAPI Docs automatically
+class UserController {
+  @routeConfig({ // define your API route info using @routeConfig decorator
+    method: "post",
+    path: "/users",
+    summary: "create a user",
+    tags: ["USER"],
+    operationId: "CreateUser",
+  })
+  @body(z.object({uid: z.string(), name: z.string(), age: z.number().min(18).optional()}))
+  async CreateUser(ctx: Context, args) {
+    // body params will be validated using zodSchema.parse(ctx.request.body)
+    // and assigned the parsed value to args.
+    console.log(args, args.body.uid, args.body.name);
+    ctx.body = { message: "create", id: "123" } as ICreateUserRes;
+  }
+}
+```
+### Detailed Example
 
 you can refer to example dir for details.
 
@@ -32,10 +53,10 @@ npm run dev
 // open http://localhost:3000/swagger-html to execute api
 // open example dir for detail codes.
 ```
-
-### Integrate with Koa
+### Typescript Configuration
 
 typescript is required. Please make sure **compilerOptions** is set correctly in tsconfig.json
+
 ```json
 // tsconfig.json
 {
@@ -45,10 +66,13 @@ typescript is required. Please make sure **compilerOptions** is set correctly in
     "esModuleInterop": true,
   }
 }
+```
+
+### Integrate with Koa
 
 following below steps to integrate your koa application with koa-swagger-decorator
 
-```
+
 1. Define your Request/Response with [Zod Schema](https://github.com/colinhacks/zod)
 ```typescript
 // file -> ./schema/user.ts
@@ -87,7 +111,7 @@ class UserController {
   @routeConfig({ // define your API route info using @routeConfig decorator
     method: "post",
     path: "/users",
-    summary: "创建用户",
+    summary: "create a user",
     tags: ["USER"],
     operationId: "CreateUser",
   })
@@ -95,7 +119,7 @@ class UserController {
   @responses(CreateUserRes)
   async CreateUser(ctx: Context, args: ParsedArgs<ICreateUserReq>) {
     // args is injected with values = CreateUserReq.parse(ctx.request.body)
-    console.log(args, args.uid, args.name);
+    console.log(args, args.body.uid, args.body.name);
     ctx.body = { message: "create", id: "123" } as ICreateUserRes;
   }
 
@@ -155,11 +179,11 @@ export default app.listen(config.port, () => {
 
 # TODO List
 
-- support request validation
-- support response validation
-- support middleware decorator
-- support adding exist components to spec
-- support generate openapi docs without starting app
-- add unit test
-- support form-data request
-- support define non-200 responses
+- [x] support request validation
+- [ ] support response validation
+- [x] support middleware decorator
+- [x] support adding exist components to spec
+- [ ] support generate openapi docs without starting app
+- [ ] add unit test
+- [ ] support form-data request
+- [ ] support define non-200 responses
