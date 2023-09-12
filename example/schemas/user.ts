@@ -18,8 +18,8 @@ const GetUserByIdResponse = z.object({
 });
 
 const ListUsersRequest = z.object({
-  count: z.number().default(10),
-  limit: z.number().default(0),
+  count: z.coerce.number().default(10),
+  limit: z.coerce.number().default(0),
 });
 
 const ListUserResponse = z.object({
@@ -63,3 +63,6 @@ export {
 
 export type IGetUserByIdResponse = z.infer<typeof GetUserByIdResponse>;
 export type ICreateUserRes = z.infer<typeof CreateUserRes>;
+export type ICreateUserReq = z.infer<typeof CreateUserReq>;
+export type IListUserRes = z.infer<typeof ListUserResponse>;
+export type IListUserReq = z.infer<typeof ListUsersRequest>;

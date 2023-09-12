@@ -110,15 +110,24 @@ class SwaggerRouter<StateT = any, CustomT = {}> extends Router<
 
         const validationMid = (ctx: Context, next: any) => {
           ctx._swagger_decorator_meta = item;
+          ctx.parsed = {
+            query: ctx.request.query,
+            params: (ctx.request as any)?.params,
+            body: ctx.request.body,
+          };
           if (this.config.validateRequest) {
             if (routeConfig.request?.query) {
-              routeConfig.request?.query.parse(ctx.request.query);
+              ctx.parsed.query = routeConfig.request?.query.parse(
+                ctx.request.query
+              );
             }
             if (routeConfig.request?.params) {
-              routeConfig.request?.params.parse((ctx.request as any).params);
+              ctx.parsed.params = routeConfig.request?.params.parse(
+                (ctx.request as any).params
+              );
             }
             if (bodySchema) {
-              bodySchema.parse(ctx.request.body);
+              ctx.parsed.body = bodySchema.parse(ctx.request.body);
             }
           }
 
@@ -132,7 +141,7 @@ class SwaggerRouter<StateT = any, CustomT = {}> extends Router<
         const chain: [any] = [`${convertPath(`${routeConfig.path}`)}`];
         chain.push(validationMid);
         chain.push(...middlewares);
-        chain.push(item);
+        chain.push((ctx) => (item as any)(ctx, ctx.parsed));
         this[routeConfig.method](...chain);
       });
     return this;

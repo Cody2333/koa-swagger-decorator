@@ -6,12 +6,14 @@ import {
   GetUserByIdResponse,
   ICreateUserRes,
   IGetUserByIdResponse,
+  IListUserReq,
+  IListUserRes,
   ListUserResponse,
   ListUsersRequest,
   UpdateUserReq,
   UpdateUserRes,
 } from "../schemas/user";
-import { z } from "../../lib";
+import { ParsedArgs, z } from "../../lib";
 
 class UserController {
   @routeConfig({
@@ -52,9 +54,8 @@ class UserController {
     },
   })
   @responses(ListUserResponse)
-  async ListUsers(ctx: Context) {
-    console.log(ctx.request.query);
-    type IListUserRes = z.infer<typeof ListUserResponse>;
+  async ListUsers(ctx: Context, args: ParsedArgs<IListUserReq>) {
+    console.log(ctx.request.query, args.query);
     ctx.body = { users: [] } as IListUserRes;
   }
 

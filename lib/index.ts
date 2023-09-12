@@ -6,6 +6,12 @@ import { ItemMeta } from "./swagger-router";
 
 extendZodWithOpenApi(z);
 
+export interface ParsedArgs<T> {
+  query?: T;
+  params?: T;
+  body?: T;
+}
+
 export { z, registry };
 
 export * from "./decorator";
