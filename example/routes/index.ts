@@ -10,8 +10,9 @@ const router = new SwaggerRouter({
       version: "v1.0",
     },
   },
-  doValidation: true,
 });
+
+router.prefix("/api");
 
 registerExtraComponents(router.registry);
 

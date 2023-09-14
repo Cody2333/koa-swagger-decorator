@@ -23,7 +23,6 @@ export interface ItemMeta {
 export interface SwaggerRouterConfig {
   swaggerJsonEndpoint?: string;
   swaggerHtmlEndpoint?: string;
-  doValidation?: boolean;
   validateResponse?: boolean;
   validateRequest?: boolean;
   prefix?: string;
@@ -39,20 +38,22 @@ class SwaggerRouter<StateT = any, CustomT = {}> extends Router<
     super(opts);
     config.swaggerJsonEndpoint = config.swaggerJsonEndpoint ?? "/swagger-json";
     config.swaggerHtmlEndpoint = config.swaggerHtmlEndpoint ?? "/swagger-html";
-    if (config.doValidation) {
-      config.validateRequest = true;
-    }
+    config.validateRequest = true;
+
     this.config = config;
     this.registry = registry;
     Container.set(CONFIG_SYMBOL, config);
   }
   swagger() {
     this.get(this.config.swaggerJsonEndpoint!, (ctx) => {
-      ctx.body = prepareDocs();
+      ctx.body = prepareDocs(this.opts.prefix);
     });
 
     this.get(this.config.swaggerHtmlEndpoint!, (ctx) => {
-      ctx.body = swaggerHTML(this.config.swaggerJsonEndpoint!);
+      const endpoint = this.opts.prefix
+        ? `${this.opts.prefix}${this.config.swaggerJsonEndpoint}`
+        : this.config.swaggerJsonEndpoint!;
+      ctx.body = swaggerHTML(endpoint);
     });
   }
 

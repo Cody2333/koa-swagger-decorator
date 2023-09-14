@@ -3,7 +3,6 @@ import {
   RouteConfig,
 } from "@asteasolutions/zod-to-openapi";
 import { registry } from "./registry";
-import { OpenAPIObjectConfig } from "@asteasolutions/zod-to-openapi/dist/v3.0/openapi-generator";
 import { Container } from "./utils/container";
 import {
   CONFIG_SYMBOL,
@@ -11,10 +10,13 @@ import {
   DECORATOR_SCHEMAS,
 } from "./utils/constant";
 import deepmerge from "deepmerge";
-import { z } from "./index";
 
 function handleRouteConfig(routeConfig: RouteConfig, identifier: string) {
-  const meta = Container.get(`DECORATOR_MERGE_${identifier}`);
+  const meta =
+    (Container.get(`DECORATOR_MERGE_${identifier}`) as Partial<RouteConfig>) ??
+    {};
+  delete meta.path;
+  delete meta.method;
   if (meta) {
     return deepmerge(routeConfig, meta);
   } else {
@@ -78,11 +80,12 @@ function handleResponse(routeConfig: RouteConfig, identifier: string) {
     };
   }
 }
-export function prepareDocs(config: Partial<OpenAPIObjectConfig> = {}) {
+export function prepareDocs(prefix?: string) {
   const apiList = Container.get(DECORATOR_REQUEST);
   for (const { method, path, identifier } of apiList) {
+    const routePath = prefix ? `${prefix}${path}` : path;
     const routeConfig: RouteConfig = {
-      path,
+      path: routePath,
       method,
       request: {},
       responses: {
@@ -107,6 +110,5 @@ export function prepareDocs(config: Partial<OpenAPIObjectConfig> = {}) {
       title: "Swagger OpenAPI",
     },
     ...(Container.get(CONFIG_SYMBOL) ?? {}),
-    ...config,
   });
 }

@@ -156,7 +156,6 @@ const router = new SwaggerRouter({
       version: "v1.0",
     },
   },
-  doValidation: true,
   swaggerHtmlEndpoint: '/swagger-html',
   swaggerJsonEndpoint: '/swagger-json',
 });
@@ -226,6 +225,17 @@ define params by adding @body/@responses decorators to your handler
   @responses([ZodSchema])
 ```
 
+### Using router.prefix
+
+```typescript
+const router = new SwaggerRouter({});
+
+router.prefix("/api");
+```
+
+by calling router.prefix, your swagger docs routes & biz routes will automatically add prefix "/api".
+Open http://localhost:3000/**api**/swagger-html to get swagger docs.
+
 # TODO List
 
 - [x] support request validation
@@ -236,3 +246,5 @@ define params by adding @body/@responses decorators to your handler
 - [ ] add unit test
 - [ ] support form-data request
 - [ ] support define non-200 responses
+- [ ] support class decorators
+
