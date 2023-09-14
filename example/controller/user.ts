@@ -1,5 +1,5 @@
 import { Context } from "koa";
-import { body, responses, routeConfig } from "../../lib/decorator";
+import { body, middlewares, responses, routeConfig } from "../../lib/decorator";
 import {
   CreateUserReq,
   CreateUserRes,
@@ -14,6 +14,7 @@ import {
   UpdateUserRes,
 } from "../schemas/user";
 import { ParsedArgs, z } from "../../lib";
+import { AUTH_KEY } from "../schemas/extra";
 
 class UserController {
   @routeConfig({
@@ -64,8 +65,18 @@ class UserController {
     path: "/users",
     summary: "创建用户",
     tags: ["USER"],
+    security: [{ [AUTH_KEY]: [] }],
     operationId: "CreateUser",
   })
+  @middlewares([
+    async (ctx: Context, next) => {
+      console.log("CreateUser Middleware Test", ctx.headers.authorization);
+      if (!ctx.headers.authorization) {
+        throw new Error("request forbidden");
+      }
+      await next();
+    },
+  ])
   @body(CreateUserReq)
   @responses(CreateUserRes)
   async CreateUser(ctx: Context) {
@@ -77,7 +88,6 @@ class UserController {
     path: "/users/update",
     method: "put",
     tags: ["USER"],
-    operationId: "UpdateUser",
   })
   @body(UpdateUserReq)
   @responses(UpdateUserRes)

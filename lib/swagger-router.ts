@@ -109,7 +109,7 @@ class SwaggerRouter<StateT = any, CustomT = {}> extends Router<
           }
         });
 
-        const validationMid = (ctx: Context, next: any) => {
+        const validationMid = async (ctx: Context, next: any) => {
           ctx._swagger_decorator_meta = item;
           ctx.parsed = {
             query: ctx.request.query,
@@ -132,7 +132,7 @@ class SwaggerRouter<StateT = any, CustomT = {}> extends Router<
             }
           }
 
-          next();
+          await next();
           // if (this.config.validateResponse) {
           //   if (responsesSchema) {
           //     responsesSchema.parse()

@@ -17,6 +17,10 @@ function handleRouteConfig(routeConfig: RouteConfig, identifier: string) {
     {};
   delete meta.path;
   delete meta.method;
+  if (!meta.operationId) {
+    // set default operationId
+    meta.operationId = identifier;
+  }
   if (meta) {
     return deepmerge(routeConfig, meta);
   } else {
