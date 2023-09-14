@@ -1,7 +1,7 @@
 {
   "name": "koa-swagger-decorator",
   "module": "index.ts",
-  "version": "2.1.5",
+  "version": "2.2.0",
   "main": "dist/lib/index.js",
   "types": "dist/lib/index.d.ts",
   "scripts": {
