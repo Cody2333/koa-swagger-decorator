@@ -18,6 +18,7 @@ V2 version has undergone complete refactoring, introducing break change and new 
     4. [Integrate with Koa](#integrate-with-koa)
     5. [Define query/path params](#define-querypath-params)
     6. [Define body/responses params](#define-bodyresponses-params)
+    7. [Using router.prefix](#using-routerprefix)
 
 4. [TODO List](#todo-list)
 
@@ -27,10 +28,11 @@ V2 version has undergone complete refactoring, introducing break change and new 
 
 ## Introduction
 
-Creating type-safe API using easy to use decorators and zod schema with auto-generated OpenAPI docs based on [OpenAPI V3](https://swagger.io/specification/).
+Developing your type-safe API using simple decorators and zod schema with auto-generated OpenAPI docs based on [OpenAPI V3](https://swagger.io/specification/).
 
 - use [zod schema](https://github.com/colinhacks/zod) to define and validate Request/Response objects.
 - use [zod-to-openapi](https://github.com/asteasolutions/zod-to-openapi) to convert zod schema into [OpenAPI V3](https://swagger.io/specification/) schemas.
+- use [@koa/router](https://github.com/koajs/router) to register routes & api handler to Koa application.
 
 ## Usage
 
