@@ -19,6 +19,7 @@ V2 version has undergone complete refactoring, introducing break change and new 
     5. [Define query/path params](#define-querypath-params)
     6. [Define body/responses params](#define-bodyresponses-params)
     7. [Using router.prefix](#using-routerprefix)
+    8. [Using Middlewares](#using-middlewares)
 
 4. [TODO List](#todo-list)
 
@@ -237,6 +238,20 @@ router.prefix("/api");
 
 by calling router.prefix, your swagger docs routes & biz routes will automatically add prefix "/api".
 Open http://localhost:3000/**api**/swagger-html to get swagger docs.
+
+### Using Middlewares
+
+using @middlewares decorator for your handler method
+
+```typescript
+  @middlewares([
+    async (ctx, next) => {
+      const x = ctx._swagger_decorator_meta as ItemMeta; // get swagger decorator meta info through ctx
+      console.log("biz mid", x.routeConfig);
+      await next();
+    },
+  ])
+```
 
 # TODO List
 
