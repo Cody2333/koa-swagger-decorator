@@ -24,7 +24,7 @@ V2 version has undergone complete refactoring, introducing break change and new 
 
 ## Installation
 
-`npm i koa-swagger-decorator@2`
+`npm i koa-swagger-decorator@next`
 
 ## Introduction
 
