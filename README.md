@@ -67,7 +67,7 @@ cd koa-swagger-decorator
 npm i
 npm run dev
 
-// open http://localhost:3000/swagger-html to execute api
+// open http://localhost:3000/api/swagger-html to execute api
 // open example dir for detail codes.
 ```
 ### Typescript Configuration
