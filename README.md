@@ -236,8 +236,8 @@ const router = new SwaggerRouter({});
 router.prefix("/api");
 ```
 
-by calling router.prefix, your swagger docs routes & biz routes will automatically add prefix "/api".
-Open http://localhost:3000/**api**/swagger-html to get swagger docs.
+by calling router.prefix, your swagger docs routes & biz routes will automatically add prefix "**/api**".
+Open http://localhost:3000/api/swagger-html to get swagger docs.
 
 ### Using Middlewares
 
