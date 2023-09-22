@@ -1,11 +1,6 @@
-import { ZodObject, ZodTypeAny } from "zod";
+import { ZodObject } from "zod";
 import { Container } from "./utils/container";
-import {
-  DECORATOR_REQUEST,
-  DECORATOR_SCHEMAS,
-  Method,
-  getIdentifier,
-} from "./utils/constant";
+import { DECORATOR_REQUEST, getIdentifier } from "./utils/constant";
 import { RouteConfig } from "@asteasolutions/zod-to-openapi";
 
 const body =

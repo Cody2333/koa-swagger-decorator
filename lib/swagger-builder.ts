@@ -85,7 +85,9 @@ function handleResponse(routeConfig: RouteConfig, identifier: string) {
   }
 }
 export function prepareDocs(prefix?: string) {
-  const apiList = Container.get(DECORATOR_REQUEST);
+  const apiList = Container.has(DECORATOR_REQUEST)
+    ? Container.get(DECORATOR_REQUEST)
+    : [];
   for (const { method, path, identifier } of apiList) {
     const routePath = prefix ? `${prefix}${path}` : path;
     const routeConfig: RouteConfig = {
@@ -107,12 +109,13 @@ export function prepareDocs(prefix?: string) {
     registry.registerPath(handleRouteConfig(routeConfig, identifier));
   }
   const g = new OpenApiGeneratorV3(registry.definitions);
+  const spec = Container.get(CONFIG_SYMBOL).spec ?? {};
   return g.generateDocument({
     openapi: "3.0.0",
     info: {
       version: "1.0",
       title: "Swagger OpenAPI",
     },
-    ...(Container.get(CONFIG_SYMBOL) ?? {}),
+    ...spec,
   });
 }

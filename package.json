@@ -5,10 +5,11 @@
   "main": "dist/lib/index.js",
   "types": "dist/lib/index.d.ts",
   "scripts": {
-    "dev": "ts-node example/main.ts",
+    "dev": "bun example/main.ts",
     "build": "rm -rf dist && tsc",
+    "test": "bun test --coverage",
     "client:typegen": "typegen http://localhost:3000/swagger-json > example/client/openapi.d.ts",
-    "client:test": "ts-node example/client-example.ts",
+    "client:test": "bun example/client/index.ts",
     "next": "npm run build && npm publish --registry=https://registry.npmjs.org --tag next"
   },
   "devDependencies": {
@@ -22,9 +23,6 @@
     "openapi-client-axios": "^7.3.3",
     "openapi-client-axios-typegen": "^7.3.2",
     "tsx": "^3.12.8",
-    "jest": "^29.6.4",
-    "ts-jest": "^29.1.1",
-    "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },
   "dependencies": {

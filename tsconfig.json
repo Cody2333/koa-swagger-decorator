@@ -21,9 +21,5 @@
     "types": [
       "bun-types" // add Bun global
     ],
-  },
-  "ts-node": {
-    // "esm": true,
-    // "experimentalSpecifierResolution": "node",
   }
 }
