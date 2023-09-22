@@ -15,17 +15,18 @@ function handleRouteConfig(routeConfig: RouteConfig, identifier: string) {
   const meta =
     (Container.get(`DECORATOR_MERGE_${identifier}`) as Partial<RouteConfig>) ??
     {};
-  delete meta.path;
-  delete meta.method;
+
   if (!meta.operationId) {
     // set default operationId
     meta.operationId = identifier;
   }
-  if (meta) {
-    return deepmerge(routeConfig, meta);
-  } else {
-    return routeConfig;
-  }
+  const obj = {
+    ...meta,
+  };
+  delete obj.path;
+  delete obj.method;
+  return deepmerge(routeConfig, obj);
+
 }
 
 function handleSchemas() {

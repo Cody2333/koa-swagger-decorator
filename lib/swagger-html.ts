@@ -1,4 +1,15 @@
-const swaggerHTML = (apiPath: string) => {
+export interface SwaggerHTMLConfig {
+  "swagger-ui-bundle": string;
+  "swagger-ui-css": string;
+}
+const swaggerHTML = (
+  apiPath: string,
+  config: SwaggerHTMLConfig = {
+    "swagger-ui-bundle":
+      "https://unpkg.com/swagger-ui-dist@4.5.0/swagger-ui-bundle.js",
+    "swagger-ui-css": "https://unpkg.com/swagger-ui-dist@4.5.0/swagger-ui.css",
+  }
+) => {
   const result = `
   <!DOCTYPE html>
   <html lang="en">
@@ -10,11 +21,11 @@ const swaggerHTML = (apiPath: string) => {
       content="SwaggerUI"
     />
     <title>SwaggerUI</title>
-    <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@4.5.0/swagger-ui.css" />
+    <link rel="stylesheet" href="${config["swagger-ui-css"]}" />
   </head>
   <body>
   <div id="swagger-ui"></div>
-  <script src="https://unpkg.com/swagger-ui-dist@4.5.0/swagger-ui-bundle.js" crossorigin></script>
+  <script src="${config["swagger-ui-bundle"]}" crossorigin></script>
   <script>
     window.onload = () => {
       window.ui = SwaggerUIBundle({
